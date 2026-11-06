@@ -1,80 +1,87 @@
-# pdf.do - Coming Soon Page
+# pdf.do
 
-A beautiful "Something is brewing" landing page for pdf.do by Thinksolv.
+PDF tools that run entirely in the browser. Work in progress.
 
-## Features
+The live domain still serves the "coming soon" page, which is kept in
+`coming-soon/`. **Vercel deploys `main` to production**, so application work
+happens on the `app` branch and is merged only as a deliberate go-live step.
+Until then it says `noindex, nofollow` in a meta tag on every page and in an `X-Robots-Tag` response header (`vercel.json`, `public/_headers`).
 
-- ✅ Modern, clean design matching Thinksolv aesthetic
-- ✅ HTML `noindex` meta tag to prevent Google indexing
-- ✅ Responsive design (mobile-friendly)
-- ✅ Animated background particles
-- ✅ Smooth fade-in animations
+## Run
 
-## Free Deployment Options
-
-### Option 1: Netlify Drop (Easiest - No Git Required)
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag and drop the `pdf.do` folder
-3. Your site will be live instantly with a URL like `random-name-123.netlify.app`
-4. You can add a custom domain later in settings
-
-### Option 2: Vercel (If you have GitHub)
-1. Push this folder to a GitHub repository
-2. Go to [vercel.com](https://vercel.com)
-3. Import your GitHub repository
-4. Vercel will auto-detect it's a static site
-5. Deploy - done!
-
-### Option 3: GitHub Pages (Free with GitHub)
-1. Create a GitHub repository
-2. Push this folder to the repository
-3. Go to Settings → Pages
-4. Select source branch (usually `main`)
-5. Your site will be at `username.github.io/repo-name`
-
-### Option 4: Cloudflare Pages (Free)
-1. Push to GitHub/GitLab/Bitbucket
-2. Go to [pages.cloudflare.com](https://pages.cloudflare.com)
-3. Connect your repository
-4. Build command: (leave empty for static HTML)
-5. Publish directory: `/` (root)
-6. Deploy!
-
-### Option 5: Surge.sh (Command Line - Fastest)
 ```bash
-# Install surge (if you don't have it)
-npm install -g surge
-
-# Navigate to this folder
-cd pdf.do
-
-# Deploy
-surge
-
-# Follow prompts:
-# - Enter email
-# - Enter password (or create account)
-# - Enter domain: pdf-do.surge.sh (or any available name)
+npm ci
+npm run fixtures                       # test PDFs into fixtures/ (gitignored)
+node scripts/make-jpeg-fixture.mjs     # an already-JPEG scan fixture (needs Chromium)
+npm run dev                            # http://localhost:3000
+npm test                               # builds fresh on :4174, runs Playwright on Chromium, WebKit and a phone-sized WebKit
+npm run lint                           # eslint, then the colour gate (every colour lives in app/globals.css)
+npm run licenses                       # licence gate for everything shipped to the browser
+npm run test:gallery                   # builds with GALLERY=1, serves on :4175, tests the component gallery
 ```
 
-### Option 6: Render (Free Tier)
-1. Go to [render.com](https://render.com)
-2. Create a new Static Site
-3. Connect your GitHub repository
-4. Build command: (leave empty)
-5. Publish directory: `/`
-6. Deploy!
+The component gallery (`/gallery`) shows every UI block in light and dark side by side. It exists in `npm run dev` and in a
+`GALLERY=1` build, and is left out of the live build.
 
-## Custom Domain Setup
+## Tools
 
-After deploying, you can add your `pdf.do` domain:
-- **Netlify**: Settings → Domain management → Add custom domain
-- **Vercel**: Project Settings → Domains → Add domain
-- **Cloudflare Pages**: Custom domains → Add domain
+| Tool | Engine | Notes |
+|---|---|---|
+| Merge PDF | `@cantoo/pdf-lib` in a Web Worker | reorder, per-file page counts, rejects password-protected files |
+| Compress PDF, Smart | qpdf WASM (`--optimize-images`) in a Web Worker | text stays selectable; only recompresses non-JPEG images |
+| Compress PDF, Target size | pdf.js render, JPEG quality/DPI search, pdf-lib assembly | turns pages into images, so text is no longer selectable; says so |
+| Compress PDF to 100 KB to 10 MB | the same tool, preselected | nine pages generated from `lib/tools.ts` |
+| Delete PDF pages, Extract PDF pages | pdf-lib in a Web Worker, pdf.js thumbnails | click pages or type a range; one component, two modes |
+| Split PDF | pdf-lib in a Web Worker, fflate ZIP in a second worker | a file per page, per typed range, or in equal parts; at most 500 files; every file plus one ZIP |
+| Rotate PDF | pdf-lib (page rotation) | thumbnails turn as you press; adds to a page's existing rotation |
+| Add page numbers | pdf-lib, Helvetica | live preview; ten styles of position and format; skip a cover; works on pages that are already turned |
+| Edit PDF metadata | pdf-lib (document information) | title, author, subject, keywords, creator, producer; says when an XMP block exists and leaves it alone |
+| Images to PDF | pdf-lib; canvas for WebP, GIF, BMP | JPEG and PNG are embedded as they are (a JPEG is never recompressed); sideways phone photos are put upright; no HEIC |
+| PDF to JPG, PDF to PNG | pdf.js render, canvas encode, fflate ZIP | 72, 150 or 300 dpi; a page too big for the browser (about 16 million pixels) is drawn smaller and the result says so |
+| Extract text | pdf.js text content | plain text with line breaks; names pages that have none (scans); no OCR yet |
+| Encrypt PDF, Remove PDF password, Unlock PDF | qpdf WASM in a Web Worker | AES-256 with one password; removing needs the password (nothing guesses or cracks); Unlock lifts restrictions from a file that opens freely; the password stays in the worker |
+| Organise pages | pdf-lib; the page grid with undo and redo | move, turn and delete with buttons; no dragging yet |
+| Split PDF in half | pdf-lib (page boxes) | each page cut in two (left and right, or top and bottom) or the document in two files; follows turned pages; the cut half stays hidden in the file |
+| Crop PDF | pdf-lib (page boxes) | four sliders with a shaded preview, all pages or a typed range; the cut-off area is hidden, not deleted, and the page says so |
+| Split PDF by size, by bookmarks | pdf-lib; pdf.js outline | by size packs pages in order under a limit (binary search on trial saves); by bookmarks uses top-level bookmarks only |
+| PDF size analyzer | pdf-lib stream walk | pictures, fonts, page content, other data, and "the rest" (an upper bound, said on the page) |
+| Text to PDF | pdf-lib standard fonts | Latin letters only; other characters become "?" and are counted; text files up to 5 MB |
+| Extract images | pdf.js operator list, canvas PNG | saved as PNG; pictures under 32 px are left out; a logo on every page is saved once per page |
+| Add watermark | pdf-lib | text only; drag on the preview or place with the grid; colour, size, strength and angle; follows turned pages |
+| Sign PDF | pdf-lib; `signature_pad` for drawing | draw, type or upload a signature and place it; a picture of a signature, not a digital signature (the page says so) |
+| Fill PDF form | pdf-lib forms | text, tick boxes, choices; option to make entries permanent; says when a PDF has no fields |
+| Repair PDF | pdf-lib reads object by object, qpdf checks | rebuilds a broken index; says when the original could not be read as it was; cannot recover missing data |
+| Scan to PDF, HEIC to PDF | the Images to PDF tool | scan opens the phone camera first; HEIC only where the browser can open it (Safari) |
+| PDF to Markdown | pdf.js text with sizes | headings, lists and paragraphs are guessed; tables and columns are not recognised |
+| PDF privacy scanner | pdf-lib stream and dictionary walk | names, XMP, GPS in pictures, attachments, scripts, comments, links, layers, earlier versions; reads only; a clear result is not a guarantee |
+| Compare PDFs | pdf.js text, `diff` | page by page text diff; pictures and layout are not compared |
 
-## Notes
+Results can be handed to the next tool in memory ("Keep going with this file"), without a second upload.
 
-- The page includes `<meta name="robots" content="noindex, nofollow">` to prevent search engine indexing
-- Remove this meta tag when you're ready to launch
-- All deployment options above have free tiers suitable for a simple landing page
+## Design rules
 
+- Static export (`output: "export"`), so it runs on any static host. No server features.
+- Every engine is self-hosted under `public/engines/`, runs in a Web Worker, and loads
+  lazily per tool. No third-party CDN.
+- The privacy claim is tested: every test asserts the browser made no request outside
+  its own origin, workers included.
+- No copyleft engines. `npm run licenses` fails on AGPL/GPL/SSPL in anything shipped.
+- Every colour is a token with a light and a dark value, or a component class, in `app/globals.css`; components carry
+  none. `npm run lint` enforces it. The font, Google Sans, is served from this site's own origin.
+
+See `AGENTS.md` for the full working rules.
+
+## Known limits
+
+- Password-protected PDFs are rejected, not decrypted.
+- Merge uses pdf-lib `copyPages`; bookmarks and interactive form fields are untested.
+- Target-size mode is capped at 100 pages and renders on the main thread.
+- Not tested: a real iPhone, files over ~10 MB, CJK or RTL fonts, malformed PDFs.
+- Target-size results differ across browsers (different JPEG encoders).
+- PDF to JPG and PNG draw pages on the main thread, one at a time; very long documents are untested. Extract text has no OCR, so scans give no text.
+- Images to PDF cannot read HEIC (browsers cannot). The upright-photo fix relies on the browser applying a JPEG's own orientation.
+- Not built: OCR, Markdown to PDF, HTML to PDF, the redaction checker and the workflow builder (see `strategy/01-web-tool-map.md` for why), and the format pages of Images to PDF.
+- Repair PDF relies on pdf-lib's tolerant reader: qpdf's own recovery did not work in the WASM build (exit 2 on a damaged index), so qpdf is used only to say whether the original was readable.
+- Page numbers use Helvetica only; the preview is close to, not exactly, where the engine puts the number (within a point or two).
+- The meta CSP only governs the page; worker network access needs response headers
+  once the host is chosen.
