@@ -1,31 +1,39 @@
 import Link from "next/link";
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ComponentPropsWithRef, ReactNode } from "react";
 import { Icon, type IconName } from "./Icon";
+import { Spinner } from "./Spinner";
 
+// One primary per state. "ghost" is the quiet role (Start over, Cancel, Clear); "success" is only the download.
+// The colours of every variant live in app/globals.css (.btn-primary and so on), never here.
 export type Variant = "primary" | "secondary" | "ghost" | "danger" | "success";
-type Size = "md" | "lg";
+type Size = "sm" | "md" | "lg";
 
-const base =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
-const variants: Record<Variant, string> = {
-  primary: "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline-indigo-600",
-  secondary: "bg-white text-slate-900 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus-visible:outline-indigo-600",
-  ghost: "text-slate-700 hover:bg-slate-100 focus-visible:outline-indigo-600",
-  danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600",
-  success: "bg-emerald-700 text-white hover:bg-emerald-800 focus-visible:outline-emerald-700",
-};
-const sizes: Record<Size, string> = { md: "px-5 py-2.5 text-base", lg: "px-6 py-3.5 text-lg" };
+const sizes: Record<Size, string> = { sm: "btn-sm", md: "", lg: "btn-lg" };
 
 export function buttonClasses(variant: Variant = "primary", size: Size = "md", extra = ""): string {
-  return `${base} ${variants[variant]} ${sizes[size]} ${extra}`.trim();
+  return ["btn", `btn-${variant}`, sizes[size], extra].filter(Boolean).join(" ");
 }
 
 type Common = { variant?: Variant; size?: Size; icon?: IconName; children: ReactNode; className?: string };
 
-export function Button({ variant, size, icon, children, className, ...rest }: Common & ButtonHTMLAttributes<HTMLButtonElement>) {
+/**
+ * `loading` swaps the icon for a spinner and marks the button busy. It uses aria-disabled and ignores clicks,
+ * not `disabled`, so keyboard focus is not thrown away while a job runs. Change the label to the progressive
+ * verb yourself ("Compressing…").
+ */
+export function Button({
+  variant, size, icon, loading, children, className, onClick, ...rest
+}: Common & { loading?: boolean } & ComponentPropsWithRef<"button">) {
   return (
-    <button type="button" className={buttonClasses(variant, size, className)} {...rest}>
-      {icon && <Icon name={icon} />}
+    <button
+      type="button"
+      className={buttonClasses(variant, size, className)}
+      aria-busy={loading || undefined}
+      aria-disabled={loading || undefined}
+      onClick={loading ? undefined : onClick}
+      {...rest}
+    >
+      {loading ? <Spinner size={20} /> : icon && <Icon name={icon} />}
       {children}
     </button>
   );

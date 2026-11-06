@@ -5,7 +5,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const SHIPPED = ["@cantoo/pdf-lib", "pdfjs-dist", "@neslinesli93/qpdf-wasm"];
+// lucide-react (icons) and sonner (toasts) added 2026-11-06: both permissive, no runtime dependencies. See the
+// dependency rule in AGENTS.md; reasons are in the commit message that adds them. fflate (ZIP, MIT, no dependencies)
+// was already inside pdf-lib; it is now a direct dependency because the ZIP worker loads it on its own.
+const SHIPPED = ["@cantoo/pdf-lib", "pdfjs-dist", "@neslinesli93/qpdf-wasm", "lucide-react", "sonner", "fflate", "signature_pad", "diff"];
 const BAD = /\b(AGPL|GPL|SSPL|BUSL)\b|Commons Clause/i;
 const seen = new Map();
 
@@ -31,4 +34,10 @@ for (const [name, { version, license }] of [...seen].sort()) {
   console.log(`${bad ? "FAIL" : unknown ? "CHECK" : "ok  "}  ${name}@${version}  ${license}`);
 }
 console.log(failed ? "\nLicence gate FAILED" : `\nLicence gate passed (${seen.size} shipped packages)`);
+// The font is not an npm package, so the walk above cannot see it. Its licence needs the copyright line and the licence text on
+// the licences page; fail if either is missing.
+const page = fs.readFileSync("app/licences/page.tsx", "utf8");
+for (const needle of ["Google Sans", "The Google Sans Project Authors", "SIL OPEN FONT LICENSE Version 1.1"]) {
+  if (!page.includes(needle)) { console.log(`FAIL  app/licences/page.tsx does not contain "${needle}"`); failed = true; }
+}
 process.exit(failed ? 1 : 0);

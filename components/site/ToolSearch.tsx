@@ -16,7 +16,7 @@ export function ToolSearch() {
   return (
     <div role="search" className="relative">
       <label htmlFor={id} className="sr-only">Search tools</label>
-      <Icon name="search" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+      <Icon name="search" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-3" />
       <input
         id={id}
         type="search"
@@ -28,26 +28,26 @@ export function ToolSearch() {
           if (e.key === "Enter" && results[0]) router.push(`/${results[0].slug}`);
           if (e.key === "Escape") setQuery("");
         }}
-        className="block w-full rounded-2xl border border-slate-300 bg-white py-3.5 pl-12 pr-4 text-lg text-slate-900 shadow-sm placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-indigo-600"
+        className="ctl rounded-2xl py-3.5 pl-12 pr-4 text-lg shadow-sm"
       />
       {searching && (
-        <div className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+        <div className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-line-soft bg-raised shadow-lg">
           {results.length ? (
             <ul aria-label="Matching tools">
               {results.map((t) => (
                 <li key={t.slug}>
-                  <Link href={`/${t.slug}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-indigo-600">
-                    <Icon name={t.icon} className="h-5 w-5 shrink-0 text-indigo-700" />
+                  <Link href={`/${t.slug}`} className="menu-link rounded-none px-4 py-3">
+                    <Icon name={t.icon} className="h-5 w-5 shrink-0 text-action-ink" />
                     <span className="min-w-0">
-                      <span className="block font-medium text-slate-900">{t.name}</span>
-                      <span className="block truncate text-sm text-slate-600">{t.short}</span>
+                      <span className="block font-medium">{t.name}</span>
+                      <span className="block truncate text-sm text-ink-3">{t.short}</span>
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
           ) : (
-            <p role="status" className="px-4 py-3 text-slate-700">No tool matches &ldquo;{query.trim()}&rdquo; yet.</p>
+            <p role="status" className="px-4 py-3 text-ink-2">No tool matches &ldquo;{query.trim()}&rdquo; yet.</p>
           )}
         </div>
       )}

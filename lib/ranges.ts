@@ -27,3 +27,23 @@ export function formatRanges(pages: Iterable<number>): string {
   }
   return out.join(", ");
 }
+
+/**
+ * Parses "1-3, 4-6, 9" into separate groups, [[1,2,3],[4,5,6],[9]]: each comma-separated part is its own group, in the
+ * order typed (Split PDF makes one file per group). Returns an error message for input the user can fix.
+ */
+export function parseGroups(input: string, max: number): { groups: number[][]; error?: string } {
+  const text = input.trim().replace(/\s*[-–]\s*/g, "-");
+  if (!text) return { groups: [] };
+  const groups: number[][] = [];
+  for (const part of text.split(/[,;]+/).map((p) => p.trim()).filter(Boolean)) {
+    const m = /^(\d+)(?:-(\d+))?$/.exec(part);
+    if (!m) return { groups: [], error: `"${part}" isn't a page or a range. Try 1-3, 4-6.` };
+    const a = Number(m[1]);
+    const b = m[2] ? Number(m[2]) : a;
+    if (a < 1 || b < 1 || a > max || b > max) return { groups: [], error: `Pages go from 1 to ${max}.` };
+    if (b < a) return { groups: [], error: `"${part}" runs backwards. Try ${b}-${a}.` };
+    groups.push(Array.from({ length: b - a + 1 }, (_, i) => a + i));
+  }
+  return { groups };
+}

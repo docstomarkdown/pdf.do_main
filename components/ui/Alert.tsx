@@ -1,20 +1,26 @@
 import type { ReactNode } from "react";
 import { Icon, type IconName } from "./Icon";
+import { IconButton } from "./IconButton";
 
 type Tone = "info" | "warn" | "error" | "success";
-const tones: Record<Tone, { box: string; icon: IconName }> = {
-  info: { box: "border-sky-200 bg-sky-50 text-sky-950", icon: "info" },
-  warn: { box: "border-amber-300 bg-amber-50 text-amber-950", icon: "alert" },
-  error: { box: "border-red-300 bg-red-50 text-red-900", icon: "alert" },
-  success: { box: "border-emerald-300 bg-emerald-50 text-emerald-950", icon: "check" },
-};
+const icons: Record<Tone, IconName> = { info: "info", warn: "alert", error: "alert", success: "check" };
 
-export function Alert({ tone = "info", children, className = "" }: { tone?: Tone; children: ReactNode; className?: string }) {
-  const t = tones[tone];
+/**
+ * A message inside the page. Errors and limits live here and stay put (a toast is never the only place they appear).
+ * `action` is one button for the obvious next step; `onDismiss` adds a close button.
+ */
+export function Alert({
+  tone = "info", title, children, action, onDismiss, className = "",
+}: { tone?: Tone; title?: ReactNode; children?: ReactNode; action?: ReactNode; onDismiss?: () => void; className?: string }) {
   return (
-    <div role={tone === "error" || tone === "warn" ? "alert" : "status"} className={`flex gap-3 rounded-xl border px-4 py-3 text-sm ${t.box} ${className}`}>
-      <Icon name={t.icon} className="mt-0.5 h-5 w-5 shrink-0" />
-      <div className="min-w-0">{children}</div>
+    <div role={tone === "error" || tone === "warn" ? "alert" : "status"} className={`alert alert-${tone} ${className}`.trim()}>
+      <Icon name={icons[tone]} className="mt-0.5 h-5 w-5 shrink-0" />
+      <div className="alert-body">
+        {title && <p className="alert-title">{title}</p>}
+        {children}
+        {action && <div className="alert-actions">{action}</div>}
+      </div>
+      {onDismiss && <IconButton icon="close" label="Dismiss" onClick={onDismiss} className="alert-dismiss" />}
     </div>
   );
 }

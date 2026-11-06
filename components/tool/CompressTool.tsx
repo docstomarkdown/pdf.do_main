@@ -1,69 +1,58 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { FileCard } from "./FileCard";
 import { FileDrop } from "./FileDrop";
 import { ResultPanel } from "./ResultPanel";
+import { ActionBar } from "@/components/ui/ActionBar";
 import { Alert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { SelectField } from "@/components/ui/Field";
-import { Icon } from "@/components/ui/Icon";
+import { JobProgress } from "@/components/ui/JobProgress";
 import { OptionCards } from "@/components/ui/OptionCards";
-import { Progress } from "@/components/ui/Progress";
+import { SizeComparison } from "@/components/ui/SizeComparison";
 import { qpdfCompress } from "@/lib/engines";
 import { formatBytes, stem } from "@/lib/format";
-import { clearHandoff, peekHandoff } from "@/lib/handoff";
 import { rasterCompress } from "@/lib/raster-compress";
 import { COMPRESS_SIZES } from "@/lib/tools";
+import { useHandoff } from "@/lib/use-handoff";
+import { useLeaveGuard } from "@/lib/use-leave-guard";
+import { useToolJob } from "@/lib/use-tool-job";
 
 type Mode = "smart" | "target";
-type Result = { url: string; file: File; original: number; size: number; note: string };
+type Result = { file: File; original: number; size: number; note: string; flattened: boolean };
 
 const NEXT = ["merge-pdf", "delete-pdf-pages", "extract-pdf-pages"];
 const TARGETS = [...COMPRESS_SIZES].sort((a, b) => a.bytes - b.bytes);
 
 export function CompressTool({ presetBytes }: { presetBytes?: number }) {
-  const [file, setFile] = useState<File | null>(() => peekHandoff()?.file ?? null);
-  const [from] = useState(() => peekHandoff()?.from);
+  const { file: handed, from } = useHandoff();
+  const [file, setFile] = useState<File | null>(handed);
   const [mode, setMode] = useState<Mode>(presetBytes ? "target" : "smart");
   const [target, setTarget] = useState(presetBytes ?? 200 * 1024);
-  const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<Result | null>(null);
-  const urlRef = useRef<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const job = useToolJob<Result>();
+  useLeaveGuard(job.busy);
 
-  useEffect(() => {
-    clearHandoff();
-    return () => { if (urlRef.current) URL.revokeObjectURL(urlRef.current); };
-  }, []);
+  const choose = (f: File) => { job.reset(); setFile(f); };
 
-  const reset = () => {
-    if (urlRef.current) URL.revokeObjectURL(urlRef.current);
-    urlRef.current = null;
-    setResult(null);
-    setError(null);
-  };
-
-  async function run() {
+  function run() {
     if (!file) return;
-    reset();
-    setBusy(true);
-    const abort = new AbortController();
-    abortRef.current = abort;
-    try {
+    void job.run(async ({ signal, setStatus }) => {
       const original = await file.arrayBuffer();
       setStatus("Optimising structure and images…");
-      const q = await qpdfCompress(original.slice(0), true, abort.signal);
+      const q = await qpdfCompress(original.slice(0), true, signal);
       let bytes = q.bytes;
       let note = "Structure and images optimised. Text stays selectable.";
+      let flattened = false;
 
       if (mode === "target") {
         if (bytes.length <= target) {
           note = "Target reached by optimising structure and images. Text stays selectable.";
         } else {
-          const r = await rasterCompress(original.slice(0), target, { onStatus: setStatus, signal: abort.signal });
+          const r = await rasterCompress(original.slice(0), target, { onStatus: setStatus, signal });
           bytes = r.bytes;
+          flattened = true;
           note = r.reached
             ? `Pages were converted to images (${r.dpi} dpi, quality ${Math.round(r.quality * 100)}) to reach the target. Text is no longer selectable.`
             : `Could not reach the target. This is the smallest result (${r.dpi} dpi, quality ${Math.round(r.quality * 100)}); text is no longer selectable.`;
@@ -76,65 +65,52 @@ export function CompressTool({ presetBytes }: { presetBytes?: number }) {
       }
 
       const out = new File([bytes], `${stem(file.name)}-compressed.pdf`, { type: "application/pdf" });
-      const url = URL.createObjectURL(out);
-      urlRef.current = url;
-      setResult({ url, file: out, original: file.size, size: out.size, note });
-    } catch (e) {
-      if (!(e instanceof DOMException && e.name === "AbortError")) {
-        setError(e instanceof Error ? e.message : "Compression failed.");
-      }
-    } finally {
-      setBusy(false);
-      setStatus("");
-      abortRef.current = null;
-    }
+      return { file: out, original: file.size, size: out.size, note, flattened };
+    }, "Compression failed.");
   }
 
+  const result = job.result;
   const saved = result ? Math.round((1 - result.size / result.original) * 100) : 0;
-  const afterPct = result ? Math.max(2, Math.min(100, (result.size / result.original) * 100)) : 0;
 
   return (
     <div className="space-y-6">
       {!file ? (
-        <FileDrop label="Choose a PDF" onFiles={(f) => { reset(); setFile(f[0]); }} />
+        <FileDrop label="Choose a PDF" onFiles={(f) => choose(f[0])} />
       ) : (
         <>
           {from && <Alert tone="info">Carried over from {from}.</Alert>}
-          <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 items-center gap-3">
-              <Icon name="file" className="h-6 w-6 shrink-0 text-slate-500" />
-              <div className="min-w-0">
-                <p className="truncate font-semibold text-slate-900">{file.name}</p>
-                <p className="text-sm text-slate-600">{formatBytes(file.size)}</p>
-              </div>
-            </div>
-            <FileDrop compact label="Choose a different file" onFiles={(f) => { reset(); setFile(f[0]); }} />
-          </div>
-
+          <FileCard file={file} dim={job.busy} onReplace={choose} />
           <OptionCards
             legend="How should it be compressed?"
             name="mode"
             value={mode}
             onChange={setMode}
-            disabled={busy}
+            disabled={job.busy}
             options={[
               { value: "smart", label: "Smart", description: "Smaller file, and text stays selectable." },
               { value: "target", label: "Target size", description: "Keeps going, even by turning pages into images, until it fits." },
             ]}
           />
           {mode === "target" && (
-            <SelectField label="Make it at most" value={target} onChange={(e) => setTarget(Number(e.target.value))} disabled={busy} className="max-w-xs">
+            <SelectField label="Make it at most" value={target} onChange={(e) => setTarget(Number(e.target.value))} disabled={job.busy} className="max-w-xs">
               {TARGETS.map((t) => (<option key={t.bytes} value={t.bytes}>{t.label}</option>))}
             </SelectField>
           )}
         </>
       )}
 
-      {error && <Alert tone="error">{error}</Alert>}
-      {busy && <Progress label={status || "Working…"} onCancel={() => abortRef.current?.abort()} />}
+      {job.error && <Alert tone="error">{job.error}</Alert>}
 
       {file && !result && (
-        <Button size="lg" disabled={busy} onClick={run} className="w-full sm:w-auto">{busy ? "Compressing…" : "Compress PDF"}</Button>
+        <ActionBar>
+          {job.busy ? (
+            <div className="min-w-0 flex-1">
+              <JobProgress label={job.status || "Working…"} sublabel="Your file stays on this device." onCancel={job.cancel} />
+            </div>
+          ) : (
+            <Button size="lg" onClick={run}>Compress PDF</Button>
+          )}
+        </ActionBar>
       )}
 
       {result && file && (
@@ -145,20 +121,18 @@ export function CompressTool({ presetBytes }: { presetBytes?: number }) {
           fromTool="Compress PDF"
           nextSlugs={NEXT}
           downloadLabel="Download compressed PDF"
-          onReset={() => { reset(); }}
+          onReset={job.reset}
           summary={
             <p className="text-lg">
               <span data-testid="size-before">{formatBytes(result.original)}</span> →{" "}
               <strong data-testid="size-after">{formatBytes(result.size)}</strong>{" "}
-              <span className="font-semibold text-emerald-800">({saved > 0 ? `${saved}% smaller` : "no saving"})</span>
+              <span className="font-semibold text-success-ink">({saved > 0 ? `${saved}% smaller` : "no saving"})</span>
             </p>
           }
         >
-          <div aria-hidden="true" className="space-y-2 text-xs font-semibold text-slate-700">
-            <div className="flex items-center gap-3"><span className="w-12 shrink-0">Before</span><div className="h-2.5 flex-1 rounded-full bg-slate-400" /></div>
-            <div className="flex items-center gap-3"><span className="w-12 shrink-0">After</span><div className="flex-1"><div className="h-2.5 rounded-full bg-emerald-700" style={{ width: `${afterPct}%` }} /></div></div>
-          </div>
-          <p data-testid="result-note" className="mt-3 text-sm text-slate-800">{result.note}</p>
+          <SizeComparison before={result.original} after={result.size} />
+          {result.flattened && <p className="mt-3"><Badge tone="warn" icon="alert">Text not selectable</Badge></p>}
+          <p data-testid="result-note" className={`note ${result.flattened ? "note-warn" : ""}`.trim()}>{result.note}</p>
         </ResultPanel>
       )}
     </div>

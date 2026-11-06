@@ -6,7 +6,7 @@ const { PDFDocument } = PDFLib;
 async function loadChecked(buffer, label) {
   const doc = await PDFDocument.load(buffer, { ignoreEncryption: true, updateMetadata: false });
   if (doc.isEncrypted) {
-    throw new Error(label + " is password-protected. Password support is not built yet.");
+    throw new Error(label + " is encrypted. If it needs a password to open, use Remove PDF password first; if it opens but forbids changes, use Unlock PDF first.");
   }
   return doc;
 }

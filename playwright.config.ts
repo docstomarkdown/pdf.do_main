@@ -10,7 +10,7 @@ export default defineConfig({
   // Tests always build the production export fresh and serve it on their own port (4174), so they can
   // never run against a stale build or collide with a preview server on 4173.
   webServer: {
-    command: "npm run build && npx serve out -l 4174 --no-clipboard",
+    command: "npm run build && npx serve out -l 4174 --no-clipboard -c ../serve.json",
     url: "http://localhost:4174",
     reuseExistingServer: false,
     timeout: 240_000,

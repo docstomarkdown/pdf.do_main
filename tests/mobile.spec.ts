@@ -6,7 +6,7 @@ const noSideScroll = (page: Page) => page.evaluate(() => document.documentElemen
 
 test("every page fits the phone width without sideways scrolling", async ({ page }) => {
   const errors = watchErrors(page);
-  for (const path of ["/", "/merge-pdf", "/compress-pdf", "/delete-pdf-pages", "/extract-pdf-pages", "/compress-pdf-to-200kb", "/how-it-works"]) {
+  for (const path of ["/", "/merge-pdf", "/compress-pdf", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/compress-pdf-to-200kb", "/how-it-works", "/licences"]) {
     await page.goto(path, { waitUntil: "networkidle" });
     expect(await noSideScroll(page), `${path} scrolls sideways`).toBe(true);
   }
@@ -55,4 +55,18 @@ test("delete pages with a thumb: tap pages, the action bar stays in reach, downl
   await expect(page.getByTestId("pages-after")).toHaveText("2 pages");
   await page.screenshot({ path: "test-results/shots/delete-result-phone.png", fullPage: true });
   expect(await pageCount(await download(page, "Download PDF without those pages"))).toBe(2);
+});
+
+test("the busiest wave 1 pages fit the phone with a file loaded", async ({ page }) => {
+  for (const [path, file] of [["/split-pdf", "text-3p.pdf"], ["/page-numbers", "text-3p.pdf"], ["/pdf-to-jpg", "text-3p.pdf"], ["/rotate-pdf", "text-3p.pdf"], ["/edit-pdf-metadata", "text-2p.pdf"]] as const) {
+    await page.goto(path);
+    await page.setInputFiles('input[type="file"]', fixture(file));
+    await page.getByText(/pages? ·/).first().waitFor();
+    await page.waitForTimeout(500);
+    expect(await noSideScroll(page), `${path} with a file scrolls sideways`).toBe(true);
+  }
+  await page.goto("/images-to-pdf");
+  await page.setInputFiles('input[type="file"]', { name: "a.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64") });
+  await page.getByText("1 × 1").waitFor();
+  expect(await noSideScroll(page), "/images-to-pdf with a file scrolls sideways").toBe(true);
 });

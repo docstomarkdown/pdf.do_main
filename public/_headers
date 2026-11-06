@@ -1,0 +1,4 @@
+# Response headers for hosts that read this file (Cloudflare Pages, Netlify). Vercel reads vercel.json instead.
+# Prototype: not for indexing. Remove with the noindex meta tag (app/layout.tsx) and vercel.json, only as part of go-live.
+/*
+  X-Robots-Tag: noindex, nofollow

@@ -11,14 +11,14 @@ export function OptionCards<T extends string>({
 }) {
   return (
     <fieldset disabled={disabled} className="min-w-0">
-      <legend className="mb-3 text-base font-semibold text-slate-900">{legend}</legend>
+      <legend className="mb-3 text-base font-semibold">{legend}</legend>
       <div className="grid gap-3 sm:grid-cols-2">
         {options.map((o) => (
-          <label key={o.value} className="relative block cursor-pointer has-disabled:cursor-not-allowed has-disabled:opacity-60">
-            <input type="radio" name={name} checked={value === o.value} onChange={() => onChange(o.value)} className="peer sr-only" />
-            <span className="block h-full rounded-xl border border-slate-300 bg-white p-4 transition-colors hover:border-slate-400 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 peer-checked:ring-2 peer-checked:ring-indigo-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-indigo-600">
-              <span className="block font-semibold text-slate-900">{o.label}</span>
-              <span className="mt-1 block text-sm text-slate-600">{o.description}</span>
+          <label key={o.value} className="optcard">
+            <input type="radio" name={name} checked={value === o.value} onChange={() => onChange(o.value)} className="optcard-input" />
+            <span className="optcard-box">
+              <span className="optcard-title">{o.label}</span>
+              <span className="optcard-text">{o.description}</span>
             </span>
           </label>
         ))}

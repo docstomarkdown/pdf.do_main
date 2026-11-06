@@ -9,6 +9,7 @@ const files = [
   ["node_modules/@neslinesli93/qpdf-wasm/dist/qpdf.js", "qpdf.js"],
   ["node_modules/@neslinesli93/qpdf-wasm/dist/qpdf.wasm", "qpdf.wasm"],
   ["node_modules/pdfjs-dist/build/pdf.worker.min.mjs", "pdf.worker.min.mjs"],
+  ["node_modules/fflate/umd/index.js", "fflate.umd.js"],
 ];
 for (const [from, to] of files) {
   fs.copyFileSync(from, `${out}/${to}`);
