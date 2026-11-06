@@ -1,80 +1,52 @@
-# pdf.do - Coming Soon Page
+# pdf.do
 
-A beautiful "Something is brewing" landing page for pdf.do by Thinksolv.
+PDF tools that run entirely in the browser. Work in progress.
 
-## Features
+The live domain still serves the "coming soon" page, which is kept in
+`coming-soon/`. **Vercel deploys `main` to production**, so application work
+happens on the `app` branch and is merged only as a deliberate go-live step.
+The app is built with `noindex` until then.
 
-- ✅ Modern, clean design matching Thinksolv aesthetic
-- ✅ HTML `noindex` meta tag to prevent Google indexing
-- ✅ Responsive design (mobile-friendly)
-- ✅ Animated background particles
-- ✅ Smooth fade-in animations
+## Run
 
-## Free Deployment Options
-
-### Option 1: Netlify Drop (Easiest - No Git Required)
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag and drop the `pdf.do` folder
-3. Your site will be live instantly with a URL like `random-name-123.netlify.app`
-4. You can add a custom domain later in settings
-
-### Option 2: Vercel (If you have GitHub)
-1. Push this folder to a GitHub repository
-2. Go to [vercel.com](https://vercel.com)
-3. Import your GitHub repository
-4. Vercel will auto-detect it's a static site
-5. Deploy - done!
-
-### Option 3: GitHub Pages (Free with GitHub)
-1. Create a GitHub repository
-2. Push this folder to the repository
-3. Go to Settings → Pages
-4. Select source branch (usually `main`)
-5. Your site will be at `username.github.io/repo-name`
-
-### Option 4: Cloudflare Pages (Free)
-1. Push to GitHub/GitLab/Bitbucket
-2. Go to [pages.cloudflare.com](https://pages.cloudflare.com)
-3. Connect your repository
-4. Build command: (leave empty for static HTML)
-5. Publish directory: `/` (root)
-6. Deploy!
-
-### Option 5: Surge.sh (Command Line - Fastest)
 ```bash
-# Install surge (if you don't have it)
-npm install -g surge
-
-# Navigate to this folder
-cd pdf.do
-
-# Deploy
-surge
-
-# Follow prompts:
-# - Enter email
-# - Enter password (or create account)
-# - Enter domain: pdf-do.surge.sh (or any available name)
+npm ci
+npm run fixtures                       # test PDFs into fixtures/ (gitignored)
+node scripts/make-jpeg-fixture.mjs     # an already-JPEG scan fixture (needs Chromium)
+npm run dev                            # http://localhost:3000
+npm test                               # builds fresh on :4174, runs Playwright on Chromium, WebKit and a phone-sized WebKit
+npm run licenses                       # licence gate for everything shipped to the browser
 ```
 
-### Option 6: Render (Free Tier)
-1. Go to [render.com](https://render.com)
-2. Create a new Static Site
-3. Connect your GitHub repository
-4. Build command: (leave empty)
-5. Publish directory: `/`
-6. Deploy!
+## Tools
 
-## Custom Domain Setup
+| Tool | Engine | Notes |
+|---|---|---|
+| Merge PDF | `@cantoo/pdf-lib` in a Web Worker | reorder, per-file page counts, rejects password-protected files |
+| Compress PDF, Smart | qpdf WASM (`--optimize-images`) in a Web Worker | text stays selectable; only recompresses non-JPEG images |
+| Compress PDF, Target size | pdf.js render, JPEG quality/DPI search, pdf-lib assembly | turns pages into images, so text is no longer selectable; says so |
+| Compress PDF to 100 KB to 10 MB | the same tool, preselected | nine pages generated from `lib/tools.ts` |
+| Delete PDF pages, Extract PDF pages | pdf-lib in a Web Worker, pdf.js thumbnails | click pages or type a range; one component, two modes |
 
-After deploying, you can add your `pdf.do` domain:
-- **Netlify**: Settings → Domain management → Add custom domain
-- **Vercel**: Project Settings → Domains → Add domain
-- **Cloudflare Pages**: Custom domains → Add domain
+Results can be handed to the next tool in memory ("Keep going with this file"), without a second upload.
 
-## Notes
+## Design rules
 
-- The page includes `<meta name="robots" content="noindex, nofollow">` to prevent search engine indexing
-- Remove this meta tag when you're ready to launch
-- All deployment options above have free tiers suitable for a simple landing page
+- Static export (`output: "export"`), so it runs on any static host. No server features.
+- Every engine is self-hosted under `public/engines/`, runs in a Web Worker, and loads
+  lazily per tool. No third-party CDN.
+- The privacy claim is tested: every test asserts the browser made no request outside
+  its own origin, workers included.
+- No copyleft engines. `npm run licenses` fails on AGPL/GPL/SSPL in anything shipped.
 
+See `AGENTS.md` for the full working rules.
+
+## Known limits
+
+- Password-protected PDFs are rejected, not decrypted.
+- Merge uses pdf-lib `copyPages`; bookmarks and interactive form fields are untested.
+- Target-size mode is capped at 100 pages and renders on the main thread.
+- Not tested: a real iPhone, files over ~10 MB, CJK or RTL fonts, malformed PDFs.
+- Target-size results differ across browsers (different JPEG encoders).
+- The meta CSP only governs the page; worker network access needs response headers
+  once the host is chosen.

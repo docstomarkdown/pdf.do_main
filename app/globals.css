@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+:root { color-scheme: light; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@keyframes pdfdo-slide {
+  0% { margin-left: -35%; }
+  100% { margin-left: 100%; }
+}
+
+/* Keep motion gentle for people who ask for less of it. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

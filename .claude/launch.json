@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "pdf-do-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000 },
+    { "name": "pdf-do-export", "runtimeExecutable": "sh", "runtimeArgs": ["-c", "npm run build && npm run serve"], "port": 4173 }
+  ]
+}
