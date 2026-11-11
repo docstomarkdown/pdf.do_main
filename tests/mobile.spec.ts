@@ -6,7 +6,7 @@ const noSideScroll = (page: Page) => page.evaluate(() => document.documentElemen
 
 test("every page fits the phone width without sideways scrolling", async ({ page }) => {
   const errors = watchErrors(page);
-  for (const path of ["/", "/merge-pdf", "/compress-pdf", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/compress-pdf-to-200kb", "/how-it-works", "/licences"]) {
+  for (const path of ["/", "/merge-pdf", "/compress-pdf", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/bates-numbering", "/add-image", "/add-text", "/make-pdf-fillable", "/annotate-pdf", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/compress-pdf-to-200kb", "/how-it-works", "/licences", "/blog"]) {
     await page.goto(path, { waitUntil: "networkidle" });
     expect(await noSideScroll(page), `${path} scrolls sideways`).toBe(true);
   }
@@ -58,7 +58,7 @@ test("delete pages with a thumb: tap pages, the action bar stays in reach, downl
 });
 
 test("the busiest wave 1 pages fit the phone with a file loaded", async ({ page }) => {
-  for (const [path, file] of [["/split-pdf", "text-3p.pdf"], ["/page-numbers", "text-3p.pdf"], ["/pdf-to-jpg", "text-3p.pdf"], ["/rotate-pdf", "text-3p.pdf"], ["/edit-pdf-metadata", "text-2p.pdf"]] as const) {
+  for (const [path, file] of [["/split-pdf", "text-3p.pdf"], ["/page-numbers", "text-3p.pdf"], ["/bates-numbering", "text-3p.pdf"], ["/pdf-to-jpg", "text-3p.pdf"], ["/rotate-pdf", "text-3p.pdf"], ["/edit-pdf-metadata", "text-2p.pdf"]] as const) {
     await page.goto(path);
     await page.setInputFiles('input[type="file"]', fixture(file));
     await page.getByText(/pages? ·/).first().waitFor();
@@ -69,4 +69,16 @@ test("the busiest wave 1 pages fit the phone with a file loaded", async ({ page 
   await page.setInputFiles('input[type="file"]', { name: "a.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64") });
   await page.getByText("1 × 1").waitFor();
   expect(await noSideScroll(page), "/images-to-pdf with a file scrolls sideways").toBe(true);
+});
+
+test("a blog post fits the phone: no sideways scroll, and the table scrolls inside its own box", async ({ page }) => {
+  await page.goto("/blog");
+  const link = page.getByTestId("post-card").first().getByRole("heading", { level: 2 }).getByRole("link");
+  test.skip((await link.count()) === 0, "no posts yet");
+  await page.goto((await link.getAttribute("href"))!);
+  expect(await noSideScroll(page)).toBe(true);
+  for (const region of await page.locator(".table-scroll").all()) {
+    const box = (await region.boundingBox())!;
+    expect(box.x + box.width).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+  }
 });

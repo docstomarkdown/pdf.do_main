@@ -60,22 +60,27 @@ function Workspace({ file, from, onChoose }: { file: File; from?: string; onChoo
 
       {doc && !result && (
         <>
-          <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
-            <span className="crop-dim" style={{ top: 0, left: 0, right: 0, height: percent(margins.top) }} />
-            <span className="crop-dim" style={{ bottom: 0, left: 0, right: 0, height: percent(margins.bottom) }} />
-            <span className="crop-dim" style={{ top: percent(margins.top), bottom: percent(margins.bottom), left: 0, width: percent(margins.left) }} />
-            <span className="crop-dim" style={{ top: percent(margins.top), bottom: percent(margins.bottom), right: 0, width: percent(margins.right) }} />
-            <span className="crop-frame" data-testid="crop-frame" style={{ top: percent(margins.top), bottom: percent(margins.bottom), left: percent(margins.left), right: percent(margins.right) }} />
-          </PagePreview>
+          {/* The page beside its options from 680 px, stacked below that (the approved mocks' page stage). */}
+          <div className="stage-split">
+            <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
+              <span className="crop-dim" style={{ top: 0, left: 0, right: 0, height: percent(margins.top) }} />
+              <span className="crop-dim" style={{ bottom: 0, left: 0, right: 0, height: percent(margins.bottom) }} />
+              <span className="crop-dim" style={{ top: percent(margins.top), bottom: percent(margins.bottom), left: 0, width: percent(margins.left) }} />
+              <span className="crop-dim" style={{ top: percent(margins.top), bottom: percent(margins.bottom), right: 0, width: percent(margins.right) }} />
+              <span className="crop-frame" data-testid="crop-frame" style={{ top: percent(margins.top), bottom: percent(margins.bottom), left: percent(margins.left), right: percent(margins.right) }} />
+            </PagePreview>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Slider label="Top" min={0} max={MAX} value={margins.top} onChange={set("top")} format={percent} />
-            <Slider label="Bottom" min={0} max={MAX} value={margins.bottom} onChange={set("bottom")} format={percent} />
-            <Slider label="Left" min={0} max={MAX} value={margins.left} onChange={set("left")} format={percent} />
-            <Slider label="Right" min={0} max={MAX} value={margins.right} onChange={set("right")} format={percent} />
+            <div className="stage-opts">
+              <div className="stage-fields">
+                <Slider label="Top" min={0} max={MAX} value={margins.top} onChange={set("top")} format={percent} />
+                <Slider label="Bottom" min={0} max={MAX} value={margins.bottom} onChange={set("bottom")} format={percent} />
+                <Slider label="Left" min={0} max={MAX} value={margins.left} onChange={set("left")} format={percent} />
+                <Slider label="Right" min={0} max={MAX} value={margins.right} onChange={set("right")} format={percent} />
+              </div>
+              <RangeField label="Pages to crop" value={pick.rangeText} onChange={pick.onRange} error={pick.rangeError} disabled={job.busy}
+                placeholder="All pages" hint="Leave empty for every page, or type page numbers and ranges." />
+            </div>
           </div>
-          <RangeField label="Pages to crop" value={pick.rangeText} onChange={pick.onRange} error={pick.rangeError} disabled={job.busy} className="sm:w-80"
-            placeholder="All pages" hint="Leave empty for every page, or type page numbers and ranges." />
 
           <ActionBar>
             {job.busy ? (

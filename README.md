@@ -4,7 +4,7 @@ PDF tools that run entirely in the browser. Work in progress.
 
 The live domain still serves the "coming soon" page, which is kept in
 `coming-soon/`. **Vercel deploys `main` to production**, so application work
-happens on the `app` branch and is merged only as a deliberate go-live step.
+happens on the `app` branch and is merged only on the owner's say-so. The app has been live on `main` since 2026-11-06, with noindex.
 Until then it says `noindex, nofollow` in a meta tag on every page and in an `X-Robots-Tag` response header (`vercel.json`, `public/_headers`).
 
 ## Run
@@ -35,6 +35,7 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Split PDF | pdf-lib in a Web Worker, fflate ZIP in a second worker | a file per page, per typed range, or in equal parts; at most 500 files; every file plus one ZIP |
 | Rotate PDF | pdf-lib (page rotation) | thumbnails turn as you press; adds to a page's existing rotation |
 | Add page numbers | pdf-lib, Helvetica | live preview; ten styles of position and format; skip a cover; works on pages that are already turned |
+| Bates numbering | the same page engine, Helvetica | prefix, a number padded with zeros (3 to 10 digits), suffix; live preview; all pages or a typed range; reports the range written and the number to start the next file from; one file at a time; a character the font cannot write is refused, never swapped |
 | Edit PDF metadata | pdf-lib (document information) | title, author, subject, keywords, creator, producer; says when an XMP block exists and leaves it alone |
 | Images to PDF | pdf-lib; canvas for WebP, GIF, BMP | JPEG and PNG are embedded as they are (a JPEG is never recompressed); sideways phone photos are put upright; no HEIC |
 | PDF to JPG, PDF to PNG | pdf.js render, canvas encode, fflate ZIP | 72, 150 or 300 dpi; a page too big for the browser (about 16 million pixels) is drawn smaller and the result says so |
@@ -48,8 +49,12 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Text to PDF | pdf-lib standard fonts | Latin letters only; other characters become "?" and are counted; text files up to 5 MB |
 | Extract images | pdf.js operator list, canvas PNG | saved as PNG; pictures under 32 px are left out; a logo on every page is saved once per page |
 | Add watermark | pdf-lib | text only; drag on the preview or place with the grid; colour, size, strength and angle; follows turned pages |
-| Sign PDF | pdf-lib; `signature_pad` for drawing | draw, type or upload a signature and place it; a picture of a signature, not a digital signature (the page says so) |
+| Sign PDF | pdf-lib; `signature_pad` for drawing | draw, type or upload a signature and place it; a picture of a signature, not a digital signature (the page says so); an uploaded photo has its paper taken out on a canvas (by brightness, with a slider), or is used as it is when nothing darker than the paper is found |
+| Add image to PDF | pdf-lib (the same placing as Sign) | one picture per run, on this page, every page or typed pages; drag, grid, nudge and a width slider; JPEG and PNG go in as they are, WebP, GIF and BMP as PNG |
+| Add text to PDF | pdf-lib, Helvetica regular and bold (the page engine's `draw` operation) | any number of text boxes on any pages, with line breaks; drag, arrow keys, grid and nudge; four colours, 6 to 72 pt; undo and redo; a character the font cannot write is refused, never swapped |
+| Annotate PDF | pdf-lib (the page engine's `draw` operation) | see-through highlights (four colours), outline boxes and freehand pen lines (three colours, two widths) on any pages; shapes move and size by drag or keyboard, pen lines are drawn with a pointer; a list of the marks on each page; undo and redo |
 | Fill PDF form | pdf-lib forms | text, tick boxes, choices; option to make entries permanent; says when a PDF has no fields |
+| Make PDF fillable | pdf-lib forms (the page engine's `formAdd` operation) | one-line text fields, large text fields and tick boxes, placed and sized on the preview and named; undo and redo; a name that is empty, has a full stop, is used twice or is already in the file is refused; the result opens in Fill PDF form |
 | Repair PDF | pdf-lib reads object by object, qpdf checks | rebuilds a broken index; says when the original could not be read as it was; cannot recover missing data |
 | Scan to PDF, HEIC to PDF | the Images to PDF tool | scan opens the phone camera first; HEIC only where the browser can open it (Safari) |
 | PDF to Markdown | pdf.js text with sizes | headings, lists and paragraphs are guessed; tables and columns are not recognised |
@@ -57,6 +62,12 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Compare PDFs | pdf.js text, `diff` | page by page text diff; pictures and layout are not compared |
 
 Results can be handed to the next tool in memory ("Keep going with this file"), without a second upload.
+
+## Blog
+
+Posts are Markdown files in `content/blog/`; `content/README.md` says how to write one. Preview with `npm run dev` (drafts show
+there); `npm run build` checks every post and stops with a list of problems if one breaks a rule. Pages are `/blog`, `/blog/<slug>`
+and `/blog/tags/<tag>`. No RSS feed or sitemap yet.
 
 ## Design rules
 
@@ -83,5 +94,11 @@ See `AGENTS.md` for the full working rules.
 - Not built: OCR, Markdown to PDF, HTML to PDF, the redaction checker and the workflow builder (see `strategy/01-web-tool-map.md` for why), and the format pages of Images to PDF.
 - Repair PDF relies on pdf-lib's tolerant reader: qpdf's own recovery did not work in the WASM build (exit 2 on a damaged index), so qpdf is used only to say whether the original was readable.
 - Page numbers use Helvetica only; the preview is close to, not exactly, where the engine puts the number (within a point or two).
+- Bates numbering works on one file at a time (no single sequence across several files in one run), writes Latin letters, digits and common punctuation only, has no colour or font choice, and shares the page-number preview's one-or-two-point tolerance.
+- The paper remover in Sign judges by brightness alone: the paper must be lighter than the ink. Lined or coloured paper, hard shadows and pale pencil can leave marks or thin the strokes, and the slider is the only control. Photos are scaled to 1600 px on the long side.
+- Add image places one picture per run, has no opacity or rotation, and the picture cannot be taken off afterwards.
+- Add text writes Latin letters, digits and common punctuation in Helvetica only, has no rotation or alignment choice, does not edit text already in the PDF, and its preview is close to, not exactly, where the engine puts the text (within a point or two).
+- Make PDF fillable adds text fields and tick boxes only (no dropdowns, radio buttons or signature fields), cannot change or remove a field once saved, does not find blanks by itself, and refuses pages that are turned sideways.
+- Annotate draws onto the page: its marks are not PDF comments, a reader will not list them, and they cannot be taken off afterwards. A highlight is a box you place yourself and does not follow lines of text. The pen needs a pointer (there is no keyboard way to draw), and a pen line cannot be moved once drawn, only removed.
 - The meta CSP only governs the page; worker network access needs response headers
   once the host is chosen.

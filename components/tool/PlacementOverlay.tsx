@@ -12,7 +12,7 @@ const clamp = (n: number, low = 0, high = 100) => Math.min(high, Math.max(low, n
  * `onMove` runs during a change; `onCommit` runs when the change is finished, so an editor can make one undo step.
  */
 export function PlacementOverlay({
-  x, y, onMove, onCommit, label, size, onResize, minSize = 5, maxSize = 100, rotate = 0, step = 2, className = "", children,
+  x, y, onMove, onCommit, label, size, onResize, height, onResizeBox, selected, onSelect, minSize = 5, maxSize = 100, rotate = 0, step = 2, className = "", children,
 }: {
   x: number;
   y: number;
@@ -22,6 +22,13 @@ export function PlacementOverlay({
   /** Width as a percentage of the page's width. Leave it out for something that sizes itself, like text. */
   size?: number;
   onResize?: (size: number) => void;
+  /** Height as a percentage of the page's height, for a box sized both ways. Give it with `onResizeBox`, not `onResize`. */
+  height?: number;
+  onResizeBox?: (width: number, height: number) => void;
+  /** Marks the one being edited, where a page holds several. */
+  selected?: boolean;
+  /** Runs when this one is picked: pressed, or reached with the keyboard. */
+  onSelect?: () => void;
   minSize?: number;
   maxSize?: number;
   rotate?: number;
@@ -32,7 +39,8 @@ export function PlacementOverlay({
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef<{ mode: "move" | "resize"; dx: number; dy: number } | null>(null);
   const hint = useId();
-  const resizable = onResize !== undefined && size !== undefined;
+  const box = onResizeBox !== undefined && size !== undefined && height !== undefined;
+  const resizable = box || (onResize !== undefined && size !== undefined);
 
   const pointer = (e: PointerEvent) => {
     const page = ref.current!.parentElement!.getBoundingClientRect();
@@ -43,6 +51,7 @@ export function PlacementOverlay({
     if (e.pointerType === "mouse" && e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
+    onSelect?.();
     const { px, py } = pointer(e);
     drag.current = { mode, dx: px - x, dy: py - y };
     ref.current!.setPointerCapture(e.pointerId); // so the drag carries on outside the mark
@@ -53,6 +62,7 @@ export function PlacementOverlay({
     if (!drag.current) return;
     const { px, py } = pointer(e);
     if (drag.current.mode === "move") onMove(clamp(px - drag.current.dx), clamp(py - drag.current.dy));
+    else if (box) onResizeBox(clamp(2 * Math.abs(px - x), minSize, maxSize), clamp(2 * Math.abs(py - y), minSize, maxSize));
     else onResize?.(clamp(2 * Math.abs(px - x), minSize, maxSize));
   }
 
@@ -72,7 +82,9 @@ export function PlacementOverlay({
       onCommit?.();
     } else if (resizable && (e.key === "+" || e.key === "=" || e.key === "-")) {
       e.preventDefault();
-      onResize(clamp(size + (e.key === "-" ? -amount : amount), minSize, maxSize));
+      const by = e.key === "-" ? -amount : amount;
+      if (box) onResizeBox(clamp(size + by, minSize, maxSize), clamp(height + by, minSize, maxSize));
+      else onResize?.(clamp(size + by, minSize, maxSize));
       onCommit?.();
     }
   }
@@ -84,8 +96,9 @@ export function PlacementOverlay({
       aria-label={label}
       aria-describedby={hint}
       tabIndex={0}
-      className={`mark ${className}`.trim()}
-      style={{ left: `${x}%`, top: `${y}%`, width: size === undefined ? undefined : `${size}%`, transform: `translate(-50%, -50%) rotate(${rotate}deg)` }}
+      className={`mark ${selected ? "mark-selected" : ""} ${className}`.replace(/\s+/g, " ").trim()}
+      style={{ left: `${x}%`, top: `${y}%`, width: size === undefined ? undefined : `${size}%`, height: height === undefined ? undefined : `${height}%`, transform: `translate(-50%, -50%) rotate(${rotate}deg)` }}
+      onFocus={() => onSelect?.()}
       onPointerDown={(e) => start(e, "move")}
       onPointerMove={move}
       onPointerUp={end}

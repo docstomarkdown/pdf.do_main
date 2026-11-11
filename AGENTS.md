@@ -7,7 +7,9 @@ are binding.
 ## Branches and deploys — read first
 
 - **Vercel deploys `main` to production**, and the domain points at it. Pushing `main` puts the site live.
-  `main` still serves the old coming-soon page (kept here in `coming-soon/`).
+  `main` has served the app since 2026-11-06 (pull request 1, merged by the owner's instruction); the old coming-soon page is
+  kept in `coming-soon/`. `vercel.json` carries the build settings (Next.js preset, `npm ci`, `npm run build`): the Vercel
+  project was first made for a plain HTML site, and the repo's settings override that.
 - **Work on `app`.** Never push `main`. Don't push `app` either unless the owner says so: every pushed
   branch gets a Vercel preview deployment.
 - **Commit only when asked.** No pushes, no merges to `main`, no GitHub settings changes (rename, visibility,
@@ -129,13 +131,27 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   with names from `lib/zip-names.ts`; `lib/use-object-urls.ts` makes and revokes the download links. The page stage is also there: `PagePreview` (one page drawn large, with turn and zoom),
   `PlacementOverlay` (a mark on the page, placed by percentages: drag, arrow keys, resize), `AnchorGrid` and `NudgePad` (the
   same placement by buttons), `PageGrid` (thumbnails you move, turn and delete with buttons) and `ThumbPaper` (the lazy
-  thumbnail). Anything placed on a page goes inside `PagePreview` and is positioned in percent, never pixels.
+  thumbnail). Anything placed on a page goes inside `PagePreview` and is positioned in percent, never pixels. A tool that
+  pairs a page with options wraps both in `.stage-split` (`app/globals.css`): the page on the left and the options on the
+  right from 680 px of container width, one column below that, as the approved mocks show. The options go in `.stage-opts`
+  (a container of its own) and paired fields in `.stage-fields`, which makes two columns only when the options column has
+  room; `.stage-wide` spans both. The one primary action stays in an `ActionBar` under the two columns. A tool with a third
+  part that must come first on a phone (Sign's signature box) adds `.stage-split-3` and the `.stage-make`, `.stage-page`
+  and `.stage-rest` areas. Watermark, Page numbers, Crop and Sign are built this way; a new placement tool follows them.
 - A tool's logic lives in three hooks: `useHandoff` (the file handed over by the previous tool), `useToolJob` (the life of
   one run: busy, status, progress, error, cancel, and the result's object URL, which it makes and revokes) and
   `useLeaveGuard` (the browser asks before closing while a job runs). Don't copy that scaffolding into a tool again.
   Tools that show pages use `usePdfDocument` (opens the PDF once; page sizes and cancellable renders) and `useThumbs`
   (thumbnails on demand, revoked on exit), and editors that undo use `useHistory`: `set` for a finished change, `preview`
   then `commit` for a drag or a slider. Don't open the same PDF in pdf.js a second time in one tool.
+- **The blog is Markdown in `content/blog/`** (guide: `content/README.md`), read and checked at build time by `lib/content.ts`
+  (unified, remark and rehype; they run on the server during the build and never reach the browser, so they are not in the
+  licence gate's list). A post that breaks a rule fails `npm run build` with every problem listed: front matter, headings, raw
+  HTML, pictures without alt text, links that lead nowhere, a tool that does not exist. Pages: `/blog`, `/blog/<slug>`,
+  `/blog/tags/<tag>`. Posts are English only and carry the site's `noindex` like every other page. `tests/content.spec.ts` tests
+  the rules without a browser; `tests/blog.spec.ts` tests the pages. The blog's text styling is `@tailwindcss/typography` with every
+  colour mapped to a token in `globals.css`, in the utilities layer (the plugin's colours live there, so a rule in the components
+  layer would lose). Not built, because each needs a static route handler and this file says to ask first: an RSS feed and a sitemap.
 - `lib/handoff.ts` passes a result file to the next tool **in memory only** (no storage, lost on reload). `ResultPanel`
   uses it for "Keep going with this file". Don't persist files anywhere.
 - `app/[slug]/page.tsx` renders registry entries that have `presetBytes` (the compress-size pages). Static export needs

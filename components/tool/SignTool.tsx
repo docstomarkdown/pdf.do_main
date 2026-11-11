@@ -64,26 +64,33 @@ function Workspace({ file, from, onChoose }: { file: File; from?: string; onChoo
 
       {doc && !result && (
         <>
-          <SignatureMaker onChange={made} />
-          <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
-            {urls[0] && (
-              <PlacementOverlay x={at.x} y={at.y} size={at.width} minSize={6} maxSize={80} label="Signature"
-                onMove={(x, y) => { job.reset(); setAt((p) => ({ ...p, x, y, anchor: null })); }}
-                onResize={(width) => { job.reset(); setAt((p) => ({ ...p, width })); }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={urls[0]} alt="" className="sigimg" draggable={false} data-testid="signature-preview" />
-              </PlacementOverlay>
-            )}
-          </PagePreview>
-          {!urls[0] && <p className="hint" style={{ marginTop: "-0.75rem" }}>Make your signature above and it appears on the page.</p>}
-
-          <div className="flex flex-wrap items-start gap-6">
-            <AnchorGrid legend="Position" value={at.anchor} onChange={(a) => { job.reset(); setAt((p) => ({ ...p, ...ANCHOR_POINTS[a], anchor: a })); }} disabled={job.busy} />
-            <NudgePad onNudge={(dx, dy) => { job.reset(); setAt((p) => ({ ...p, x: clamp(p.x + dx), y: clamp(p.y + dy), anchor: null })); }} />
-            <Segmented<Where> legend="Sign" name="sign-where" value={where} onChange={(w) => { job.reset(); setWhere(w); }} disabled={job.busy}
-              options={[{ value: "shown", label: "This page" }, { value: "last", label: "Last page" }, { value: "all", label: "Every page" }]} />
+          {/* The page beside the signature box and its options from 680 px. Below that they stack in the same order as
+              before: make, page, options. The order in the page's markup is that order at every width. */}
+          <div className="stage-split stage-split-3">
+            <div className="stage-make"><SignatureMaker onChange={made} /></div>
+            <div className="stage-page">
+              <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
+                {urls[0] && (
+                  <PlacementOverlay x={at.x} y={at.y} size={at.width} minSize={6} maxSize={80} label="Signature"
+                    onMove={(x, y) => { job.reset(); setAt((p) => ({ ...p, x, y, anchor: null })); }}
+                    onResize={(width) => { job.reset(); setAt((p) => ({ ...p, width })); }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={urls[0]} alt="" className="sigimg" draggable={false} data-testid="signature-preview" />
+                  </PlacementOverlay>
+                )}
+              </PagePreview>
+              {!urls[0] && <p className="hint">Make your signature and it appears on the page.</p>}
+            </div>
+            <div className="stage-rest">
+              <div className="flex flex-wrap items-start gap-6">
+                <AnchorGrid legend="Position" value={at.anchor} onChange={(a) => { job.reset(); setAt((p) => ({ ...p, ...ANCHOR_POINTS[a], anchor: a })); }} disabled={job.busy} />
+                <NudgePad onNudge={(dx, dy) => { job.reset(); setAt((p) => ({ ...p, x: clamp(p.x + dx), y: clamp(p.y + dy), anchor: null })); }} />
+                <Segmented<Where> legend="Sign" name="sign-where" value={where} onChange={(w) => { job.reset(); setWhere(w); }} disabled={job.busy}
+                  options={[{ value: "shown", label: "This page" }, { value: "last", label: "Last page" }, { value: "all", label: "Every page" }]} />
+              </div>
+              <p className="hint" data-testid="signature-position">Centre at {Math.round(at.x)}% across and {Math.round(at.y)}% down, {Math.round(at.width)}% of the page wide.</p>
+            </div>
           </div>
-          <p className="hint" data-testid="signature-position" style={{ marginTop: 0 }}>Centre at {Math.round(at.x)}% across and {Math.round(at.y)}% down, {Math.round(at.width)}% of the page wide.</p>
 
           <ActionBar>
             {job.busy ? (

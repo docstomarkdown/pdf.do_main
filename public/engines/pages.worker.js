@@ -2,7 +2,7 @@
    Classic worker with a self-hosted pdf-lib, like the other engines. Every operation posts one final message:
    { done: true, ... }, or { error } with a message a person can read. */
 importScripts("/engines/vendor/pdf-lib.min.js");
-const { PDFDocument, StandardFonts, degrees, rgb } = PDFLib;
+const { PDFDocument, StandardFonts, BlendMode, LineCapStyle, degrees, rgb } = PDFLib;
 
 const OPTIONS = { useObjectStreams: true };
 
@@ -267,6 +267,49 @@ const operations = {
     self.postMessage({ done: true, fields });
   },
 
+  /**
+   * Adds form fields to the file. m.fields: each { page (1-based), kind: "text" | "multiline" | "check", name, x, y (the
+   * centre), width, height (percentages of the page, from its top left) }. Refused, with nothing written: a name the file
+   * already uses, a name used twice, an empty name, a name with a full stop (PDF uses the full stop to nest fields), and
+   * a field on a turned page (it would sit sideways, which is not handled yet).
+   */
+  async formAdd(src, m, total) {
+    const fields = (m.fields || []).map((f) => ({ ...f, name: String(f.name || "").trim() }));
+    if (!fields.length) throw new Error("There are no fields to add yet.");
+    const form = src.getForm();
+    const inFile = new Set(form.getFields().map((f) => f.getName()));
+    const seen = new Set();
+    for (const f of fields) {
+      if (f.name === "") throw new Error("Every field needs a name.");
+      if (f.name.includes(".")) throw new Error(`“${f.name}” has a full stop in it. A field name cannot use one.`);
+      if (inFile.has(f.name)) throw new Error(`This PDF already has a field called “${f.name}”. Give the new one another name.`);
+      if (seen.has(f.name)) throw new Error(`“${f.name}” is used by more than one field. Every field needs its own name.`);
+      seen.add(f.name);
+      if (!(f.page >= 1 && f.page <= total)) throw new Error("A field is on a page this PDF does not have.");
+      if (turnOf(src.getPage(f.page - 1)) !== 0) throw new Error(`Page ${f.page} is turned sideways. Fields cannot be added to a turned page yet.`);
+    }
+    const touched = new Set();
+    for (const f of fields) {
+      const page = src.getPage(f.page - 1);
+      const { width: w, height: h } = page.getSize();
+      const wi = (f.width / 100) * w;
+      const hi = (f.height / 100) * h;
+      const box = { x: (f.x / 100) * w - wi / 2, y: (1 - f.y / 100) * h - hi / 2, width: wi, height: hi, borderWidth: 0.75, borderColor: rgb(0.42, 0.47, 0.55) };
+      if (f.kind === "check") {
+        form.createCheckBox(f.name).addToPage(page, box);
+      } else {
+        const field = form.createTextField(f.name);
+        if (f.kind === "multiline") field.enableMultiline();
+        field.addToPage(page, box);
+        field.setFontSize(11);
+      }
+      touched.add(f.page);
+    }
+    src.setProducer("pdf.do");
+    const bytes = await src.save(OPTIONS);
+    self.postMessage({ done: true, bytes, pages: total, total, added: fields.length, touched: touched.size }, [bytes.buffer]);
+  },
+
   /** m.values: { fieldName: text | boolean }, m.flatten: make the entries permanent and remove the fields. */
   async formFill(src, m, total) {
     const { PDFTextField, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = PDFLib;
@@ -305,9 +348,75 @@ const operations = {
   },
 
   /**
+   * Draws a list of things on pages. m.items: each { page (1-based), kind, ... }, with positions as percentages of the page
+   * as seen, from its top left:
+   *   "text": { x, y (the centre of the block), text (line breaks allowed), size (points), color: [r, g, b], bold }
+   *           Helvetica. A character it cannot write is refused, never swapped for another.
+   *   "rect": { x, y (the centre), width, height, color, opacity (0 to 1), fill } filled and see-through (a highlight, which
+   *           darkens what is under it instead of hiding it), or with `fill` false an outline `line` points thick.
+   *   "path": { points: [[x, y], ...], color, opacity, line (points) } a freehand line through the points.
+   * Text that is only spaces is left out. The answer counts what was drawn and the pages it is on.
+   */
+  async draw(src, m, total) {
+    const items = (m.items || []).filter((it) => it.page >= 1 && it.page <= total && (it.kind !== "text" || String(it.text || "").trim() !== ""));
+    if (!items.length) throw new Error("There is nothing to add yet.");
+    const fonts = {};
+    const fontFor = async (bold) => (fonts[bold ? "b" : "r"] ||= await src.embedFont(bold ? StandardFonts.HelveticaBold : StandardFonts.Helvetica));
+    const touched = new Set();
+    for (const it of items) {
+      const page = src.getPage(it.page - 1);
+      const { width: w, height: h } = page.getSize();
+      const turn = turnOf(page);
+      const vw = turn % 180 === 0 ? w : h;
+      const vh = turn % 180 === 0 ? h : w;
+      // A point on the page as seen (x from the left, y from the bottom) in the page's own axes.
+      const own = (vx, vy) => ({ 0: [vx, vy], 90: [w - vy, vx], 180: [w - vx, h - vy], 270: [vy, h - vx] }[turn]);
+      const color = rgb(it.color[0], it.color[1], it.color[2]);
+      if (it.kind === "text") {
+        const font = await fontFor(it.bold);
+        const known = new Set(font.getCharacterSet());
+        const lines = String(it.text).replace(/\r\n?/g, "\n").split("\n");
+        const bad = [...lines.join("")].find((ch) => !known.has(ch.codePointAt(0)));
+        if (bad) throw new Error(`The text has a character this font cannot write: “${bad}”. Use Latin letters, digits and common punctuation.`);
+        const lineHeight = it.size * 1.2;
+        const blockWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, it.size)));
+        const left = (it.x / 100) * vw - blockWidth / 2;
+        const top = (1 - it.y / 100) * vh + (lines.length * lineHeight) / 2;
+        lines.forEach((line, i) => {
+          if (line === "") return;
+          const [x, y] = own(left, top - i * lineHeight - it.size * 0.95);
+          page.drawText(line, { x, y, size: it.size, font, color, rotate: degrees(turn) });
+        });
+      } else if (it.kind === "rect") {
+        const wi = (it.width / 100) * vw;
+        const hi = (it.height / 100) * vh;
+        const [x, y] = own((it.x / 100) * vw - wi / 2, (1 - it.y / 100) * vh - hi / 2);
+        if (it.fill) page.drawRectangle({ x, y, width: wi, height: hi, rotate: degrees(turn), color, opacity: it.opacity, blendMode: BlendMode.Multiply });
+        else page.drawRectangle({ x, y, width: wi, height: hi, rotate: degrees(turn), borderColor: color, borderWidth: it.line || 1.5, borderOpacity: it.opacity });
+      } else if (it.kind === "path") {
+        const points = (it.points || []).map(([px, py]) => own((px / 100) * vw, (1 - py / 100) * vh));
+        if (points.length === 1) points.push(points[0]);
+        for (let i = 1; i < points.length; i++) {
+          page.drawLine({ start: { x: points[i - 1][0], y: points[i - 1][1] }, end: { x: points[i][0], y: points[i][1] }, thickness: it.line || 2, color, opacity: it.opacity, lineCap: LineCapStyle.Round });
+        }
+      } else {
+        continue;
+      }
+      touched.add(it.page);
+    }
+    src.setProducer("pdf.do");
+    const bytes = await src.save(OPTIONS);
+    self.postMessage({ done: true, bytes, pages: total, total, drawn: items.length, touched: touched.size }, [bytes.buffer]);
+  },
+
+  /**
    * m.options: { pages: [1-based pages to number], position: "tl".."br", format: "n" | "page-n" | "n-of-m" | "page-n-of-m",
    * start: number on the first numbered page, size: points, margin: points }. The number counts up over the numbered
    * pages only, so skipping the cover starts the count on page 2.
+   * With m.options.bates: { prefix, suffix, digits } each page gets an identifier instead: the prefix, the number padded
+   * with zeros to `digits`, then the suffix (ABC000123), and `format` is not used. A character Helvetica cannot write is
+   * refused, never swapped for another: a wrong identifier is worse than none.
+   * The answer carries the first and last text written, so the page reports what the file really holds.
    */
   async numbers(src, m, total) {
     const o = m.options;
@@ -315,9 +424,17 @@ const operations = {
     if (!pages.length) throw new Error("No pages were selected.");
     const font = await src.embedFont(StandardFonts.Helvetica);
     const last = o.start + pages.length - 1;
+    const bates = o.bates ? { prefix: String(o.bates.prefix || ""), suffix: String(o.bates.suffix || ""), digits: Math.min(12, Math.max(1, Math.floor(o.bates.digits) || 1)) } : null;
+    if (bates) {
+      const known = new Set(font.getCharacterSet());
+      const bad = [...(bates.prefix + bates.suffix)].find((ch) => !known.has(ch.codePointAt(0)));
+      if (bad) throw new Error(`The prefix or suffix has a character this font cannot write: “${bad}”. Use Latin letters, digits and common punctuation.`);
+    }
+    const labelOf = (value) => bates
+      ? `${bates.prefix}${String(value).padStart(bates.digits, "0")}${bates.suffix}`
+      : { n: `${value}`, "page-n": `Page ${value}`, "n-of-m": `${value} of ${last}`, "page-n-of-m": `Page ${value} of ${last}` }[o.format] || `${value}`;
     pages.forEach((n, i) => {
-      const value = o.start + i;
-      const label = { n: `${value}`, "page-n": `Page ${value}`, "n-of-m": `${value} of ${last}`, "page-n-of-m": `Page ${value} of ${last}` }[o.format] || `${value}`;
+      const label = labelOf(o.start + i);
       const page = src.getPage(n - 1);
       const { width: w, height: h } = page.getSize();
       const turn = ((page.getRotation().angle % 360) + 360) % 360;
@@ -334,7 +451,7 @@ const operations = {
     });
     src.setProducer("pdf.do");
     const bytes = await src.save(OPTIONS);
-    self.postMessage({ done: true, bytes, pages: total, total, numbered: pages.length }, [bytes.buffer]);
+    self.postMessage({ done: true, bytes, pages: total, total, numbered: pages.length, firstLabel: labelOf(o.start), lastLabel: labelOf(last) }, [bytes.buffer]);
   },
 };
 

@@ -83,30 +83,35 @@ function Workspace({ file, from, onChoose }: { file: File; from?: string; onChoo
 
       {doc && !result && (
         <>
-          <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
-            {!noText && current && (
-              <PlacementOverlay x={at.x} y={at.y} rotate={rotation} label="Watermark"
-                onMove={(x, y) => { touch(); setAt({ x, y, anchor: null }); }}>
-                <span className={`wm-text ${INK[ink].className}`} data-testid="watermark-text" style={{ fontSize: `${(size / current.width) * 100}cqw`, opacity: opacity / 100 }}>{text}</span>
-              </PlacementOverlay>
-            )}
-          </PagePreview>
-          <p className="hint" style={{ marginTop: "-0.75rem" }} data-testid="watermark-position">Centre at {Math.round(at.x)}% across and {Math.round(at.y)}% down.</p>
-
-          <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-            <div className="flex flex-wrap items-start gap-6">
-              <AnchorGrid legend="Position" value={at.anchor} onChange={(a) => { touch(); setAt({ ...ANCHOR_POINTS[a], anchor: a }); }} disabled={job.busy} />
-              <NudgePad onNudge={(dx, dy) => { touch(); setAt((p) => ({ x: clamp(p.x + dx), y: clamp(p.y + dy), anchor: null })); }} />
+          {/* The page beside its options from 680 px, stacked below that (the approved mocks' page stage). */}
+          <div className="stage-split">
+            <div className="min-w-0">
+              <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
+                {!noText && current && (
+                  <PlacementOverlay x={at.x} y={at.y} rotate={rotation} label="Watermark"
+                    onMove={(x, y) => { touch(); setAt({ x, y, anchor: null }); }}>
+                    <span className={`wm-text ${INK[ink].className}`} data-testid="watermark-text" style={{ fontSize: `${(size / current.width) * 100}cqw`, opacity: opacity / 100 }}>{text}</span>
+                  </PlacementOverlay>
+                )}
+              </PagePreview>
+              <p className="hint" data-testid="watermark-position">Centre at {Math.round(at.x)}% across and {Math.round(at.y)}% down.</p>
             </div>
-            <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-              <TextField label="Text" value={text} onChange={(e) => { touch(); setText(e.target.value); }} error={noText ? "Type the text for the watermark." : undefined} disabled={job.busy} className="sm:col-span-2" maxLength={60} />
+
+            <div className="stage-opts">
+              <TextField label="Text" value={text} onChange={(e) => { touch(); setText(e.target.value); }} error={noText ? "Type the text for the watermark." : undefined} disabled={job.busy} maxLength={60} />
               <Segmented<Ink> legend="Colour" name="watermark-ink" value={ink} onChange={(v) => { touch(); setInk(v); }} disabled={job.busy}
-                options={(Object.keys(INK) as Ink[]).map((k) => ({ value: k, label: INK[k].label }))} className="sm:col-span-2" />
-              <Slider label="Size" min={16} max={160} value={size} onChange={(v) => { touch(); setSize(v); }} format={(n) => `${n} pt`} />
-              <Slider label="Strength" min={5} max={100} value={opacity} onChange={(v) => { touch(); setOpacity(v); }} format={(n) => `${n}%`} />
-              <Slider label="Angle" min={-90} max={90} step={5} value={rotation} onChange={(v) => { touch(); setRotation(v); }} format={(n) => `${n}°`} />
-              <RangeField label="Pages to mark" value={pick.rangeText} onChange={pick.onRange} error={pick.rangeError} disabled={job.busy}
-                placeholder="All pages" hint="Leave empty for every page, or type page numbers and ranges." />
+                options={(Object.keys(INK) as Ink[]).map((k) => ({ value: k, label: INK[k].label }))} />
+              <div className="flex flex-wrap items-start gap-6">
+                <AnchorGrid legend="Position" value={at.anchor} onChange={(a) => { touch(); setAt({ ...ANCHOR_POINTS[a], anchor: a }); }} disabled={job.busy} />
+                <NudgePad onNudge={(dx, dy) => { touch(); setAt((p) => ({ x: clamp(p.x + dx), y: clamp(p.y + dy), anchor: null })); }} />
+              </div>
+              <div className="stage-fields">
+                <Slider label="Size" min={16} max={160} value={size} onChange={(v) => { touch(); setSize(v); }} format={(n) => `${n} pt`} />
+                <Slider label="Strength" min={5} max={100} value={opacity} onChange={(v) => { touch(); setOpacity(v); }} format={(n) => `${n}%`} />
+                <Slider label="Angle" min={-90} max={90} step={5} value={rotation} onChange={(v) => { touch(); setRotation(v); }} format={(n) => `${n}°`} />
+                <RangeField label="Pages to mark" value={pick.rangeText} onChange={pick.onRange} error={pick.rangeError} disabled={job.busy}
+                  placeholder="All pages" hint="Leave empty for every page, or type page numbers and ranges." />
+              </div>
             </div>
           </div>
 

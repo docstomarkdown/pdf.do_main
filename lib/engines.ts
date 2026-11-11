@@ -75,10 +75,16 @@ export type NumberOptions = {
   size: number;
   /** Distance from the page edge in points. */
   margin: number;
+  /**
+   * A Bates identifier instead of a plain number: the prefix, the number padded with zeros to `digits`, the suffix
+   * (ABC000123). `format` is then not used. The engine refuses a prefix or suffix its font cannot write.
+   */
+  bates?: { prefix: string; suffix: string; digits: number };
 };
 
+/** `firstLabel` and `lastLabel` are the text the engine wrote on the first and last numbered page. */
 export async function numberPdf(buffer: ArrayBuffer, options: NumberOptions, signal?: AbortSignal) {
-  return callWorker<{ bytes: Bytes; pages: number; total: number; numbered: number }>(PAGES, { op: "numbers", buffer, options }, { transfer: [buffer], signal });
+  return callWorker<{ bytes: Bytes; pages: number; total: number; numbered: number; firstLabel: string; lastLabel: string }>(PAGES, { op: "numbers", buffer, options }, { transfer: [buffer], signal });
 }
 
 const META = "/engines/meta.worker.js";
@@ -198,6 +204,25 @@ export async function signPdf(buffer: ArrayBuffer, sign: Signature, pages: numbe
   return callWorker<{ bytes: Bytes; pages: number; total: number; signed: number }>(PAGES, { op: "sign", buffer, sign, pages }, { transfer: [buffer, sign.image], signal });
 }
 
+type Rgb = [number, number, number];
+
+/**
+ * Something drawn on a page. Positions are percentages of the page as seen, from its top left; `x` and `y` are the centre.
+ * Text is Helvetica, and a character it cannot write is refused by the engine.
+ */
+export type DrawItem =
+  | { kind: "text"; page: number; x: number; y: number; text: string; size: number; color: Rgb; bold?: boolean }
+  | { kind: "rect"; page: number; x: number; y: number; width: number; height: number; color: Rgb; opacity: number; fill: boolean; line?: number }
+  | { kind: "path"; page: number; points: [number, number][]; color: Rgb; opacity: number; line: number };
+
+/** Draws the items on their pages. `drawn` is how many were drawn, `touched` how many pages they are on. */
+export async function drawOnPdf(buffer: ArrayBuffer, items: DrawItem[], signal?: AbortSignal) {
+  return callWorker<{ bytes: Bytes; pages: number; total: number; drawn: number; touched: number }>(PAGES, { op: "draw", buffer, items }, { transfer: [buffer], signal });
+}
+
+/** A picture on chosen pages: the same placing as a signature, under the name Add image uses. `signed` counts the pages. */
+export const placePicture = signPdf;
+
 /** A copy written out again with a fresh index, from the objects that can be read. `mended` is true when qpdf could not read the original. */
 export async function repairPdf(buffer: ArrayBuffer, signal?: AbortSignal) {
   return callWorker<{ bytes: Bytes; pages: number; mended: boolean }>(SECURITY, { op: "repair", buffer }, { transfer: [buffer], signal });
@@ -211,6 +236,14 @@ export async function readForm(buffer: ArrayBuffer, signal?: AbortSignal) {
 }
 
 /** Fills the named fields. With `flatten` the entries become part of the page and the fields are removed. */
+/** A form field to add. Positions are percentages of the page, from its top left; `x` and `y` are the centre. */
+export type NewField = { page: number; kind: "text" | "multiline" | "check"; name: string; x: number; y: number; width: number; height: number };
+
+/** Adds fields to the file. The engine refuses a name already in use, a name with a full stop, and a turned page. */
+export async function addFormFields(buffer: ArrayBuffer, fields: NewField[], signal?: AbortSignal) {
+  return callWorker<{ bytes: Bytes; pages: number; total: number; added: number; touched: number }>(PAGES, { op: "formAdd", buffer, fields }, { transfer: [buffer], signal });
+}
+
 export async function fillForm(buffer: ArrayBuffer, values: Record<string, string | boolean>, flatten: boolean, signal?: AbortSignal) {
   return callWorker<{ bytes: Bytes; pages: number; total: number; changed: number }>(PAGES, { op: "formFill", buffer, values, flatten }, { transfer: [buffer], signal });
 }
