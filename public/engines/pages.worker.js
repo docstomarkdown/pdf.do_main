@@ -267,6 +267,49 @@ const operations = {
     self.postMessage({ done: true, fields });
   },
 
+  /**
+   * Adds form fields to the file. m.fields: each { page (1-based), kind: "text" | "multiline" | "check", name, x, y (the
+   * centre), width, height (percentages of the page, from its top left) }. Refused, with nothing written: a name the file
+   * already uses, a name used twice, an empty name, a name with a full stop (PDF uses the full stop to nest fields), and
+   * a field on a turned page (it would sit sideways, which is not handled yet).
+   */
+  async formAdd(src, m, total) {
+    const fields = (m.fields || []).map((f) => ({ ...f, name: String(f.name || "").trim() }));
+    if (!fields.length) throw new Error("There are no fields to add yet.");
+    const form = src.getForm();
+    const inFile = new Set(form.getFields().map((f) => f.getName()));
+    const seen = new Set();
+    for (const f of fields) {
+      if (f.name === "") throw new Error("Every field needs a name.");
+      if (f.name.includes(".")) throw new Error(`“${f.name}” has a full stop in it. A field name cannot use one.`);
+      if (inFile.has(f.name)) throw new Error(`This PDF already has a field called “${f.name}”. Give the new one another name.`);
+      if (seen.has(f.name)) throw new Error(`“${f.name}” is used by more than one field. Every field needs its own name.`);
+      seen.add(f.name);
+      if (!(f.page >= 1 && f.page <= total)) throw new Error("A field is on a page this PDF does not have.");
+      if (turnOf(src.getPage(f.page - 1)) !== 0) throw new Error(`Page ${f.page} is turned sideways. Fields cannot be added to a turned page yet.`);
+    }
+    const touched = new Set();
+    for (const f of fields) {
+      const page = src.getPage(f.page - 1);
+      const { width: w, height: h } = page.getSize();
+      const wi = (f.width / 100) * w;
+      const hi = (f.height / 100) * h;
+      const box = { x: (f.x / 100) * w - wi / 2, y: (1 - f.y / 100) * h - hi / 2, width: wi, height: hi, borderWidth: 0.75, borderColor: rgb(0.42, 0.47, 0.55) };
+      if (f.kind === "check") {
+        form.createCheckBox(f.name).addToPage(page, box);
+      } else {
+        const field = form.createTextField(f.name);
+        if (f.kind === "multiline") field.enableMultiline();
+        field.addToPage(page, box);
+        field.setFontSize(11);
+      }
+      touched.add(f.page);
+    }
+    src.setProducer("pdf.do");
+    const bytes = await src.save(OPTIONS);
+    self.postMessage({ done: true, bytes, pages: total, total, added: fields.length, touched: touched.size }, [bytes.buffer]);
+  },
+
   /** m.values: { fieldName: text | boolean }, m.flatten: make the entries permanent and remove the fields. */
   async formFill(src, m, total) {
     const { PDFTextField, PDFCheckBox, PDFRadioGroup, PDFDropdown, PDFOptionList } = PDFLib;

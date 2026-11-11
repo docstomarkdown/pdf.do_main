@@ -665,6 +665,26 @@ const base: Tool[] = [
     ],
     related: ["fill-pdf-form", "sign-pdf", "add-image"],
   },
+  {
+    slug: "make-pdf-fillable",
+    name: "Make PDF fillable",
+    short: "Add text fields and tick boxes to a PDF, so it can be filled in on screen.",
+    intro: "Put a field on each blank of a form: a line of text, a larger box for several lines, or a tick box. Name each one and save. The PDF can then be filled in with a PDF reader, or with Fill PDF form here.",
+    category: "edit",
+    icon: "form-input",
+    keywords: ["fillable pdf", "create fillable form", "add form fields", "pdf form creator", "add text field", "add checkbox", "editable pdf form"],
+    steps: ["Choose your PDF.", "Add a field, drag it over a blank on the page, size it and give it a name. Repeat for each blank.", "Press Add fields, then download the fillable PDF."],
+    faq: [
+      privacyFaq("Adding the fields"),
+      { q: "Which kinds of field can I add?", a: "A one-line text field, a larger text field for several lines, and a tick box. Dropdown lists, radio buttons and signature fields are not built yet." },
+      { q: "Does it find the blanks by itself?", a: "No. You place each field yourself, on the preview. Nothing is detected for you." },
+      { q: "What is a field name for?", a: "It is how a program tells the fields apart when it reads the form, so each field needs its own. Pick names you would recognise later, such as full_name or agree. A name cannot be empty or contain a full stop." },
+      { q: "Can I change or remove a field after saving?", a: "Not with this tool yet. Check the preview before you save, and keep your original file." },
+      { q: "Does it work on a page that is turned sideways?", a: "Not yet. The page says so when you try, and nothing is written." },
+      passwordFaq,
+    ],
+    related: ["fill-pdf-form", "add-text", "sign-pdf"],
+  },
 
   {
     slug: "repair-pdf",

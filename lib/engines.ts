@@ -236,6 +236,14 @@ export async function readForm(buffer: ArrayBuffer, signal?: AbortSignal) {
 }
 
 /** Fills the named fields. With `flatten` the entries become part of the page and the fields are removed. */
+/** A form field to add. Positions are percentages of the page, from its top left; `x` and `y` are the centre. */
+export type NewField = { page: number; kind: "text" | "multiline" | "check"; name: string; x: number; y: number; width: number; height: number };
+
+/** Adds fields to the file. The engine refuses a name already in use, a name with a full stop, and a turned page. */
+export async function addFormFields(buffer: ArrayBuffer, fields: NewField[], signal?: AbortSignal) {
+  return callWorker<{ bytes: Bytes; pages: number; total: number; added: number; touched: number }>(PAGES, { op: "formAdd", buffer, fields }, { transfer: [buffer], signal });
+}
+
 export async function fillForm(buffer: ArrayBuffer, values: Record<string, string | boolean>, flatten: boolean, signal?: AbortSignal) {
   return callWorker<{ bytes: Bytes; pages: number; total: number; changed: number }>(PAGES, { op: "formFill", buffer, values, flatten }, { transfer: [buffer], signal });
 }
