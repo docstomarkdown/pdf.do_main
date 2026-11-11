@@ -35,6 +35,7 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Split PDF | pdf-lib in a Web Worker, fflate ZIP in a second worker | a file per page, per typed range, or in equal parts; at most 500 files; every file plus one ZIP |
 | Rotate PDF | pdf-lib (page rotation) | thumbnails turn as you press; adds to a page's existing rotation |
 | Add page numbers | pdf-lib, Helvetica | live preview; ten styles of position and format; skip a cover; works on pages that are already turned |
+| Bates numbering | the same page engine, Helvetica | prefix, a number padded with zeros (3 to 10 digits), suffix; live preview; all pages or a typed range; reports the range written and the number to start the next file from; one file at a time; a character the font cannot write is refused, never swapped |
 | Edit PDF metadata | pdf-lib (document information) | title, author, subject, keywords, creator, producer; says when an XMP block exists and leaves it alone |
 | Images to PDF | pdf-lib; canvas for WebP, GIF, BMP | JPEG and PNG are embedded as they are (a JPEG is never recompressed); sideways phone photos are put upright; no HEIC |
 | PDF to JPG, PDF to PNG | pdf.js render, canvas encode, fflate ZIP | 72, 150 or 300 dpi; a page too big for the browser (about 16 million pixels) is drawn smaller and the result says so |
@@ -89,5 +90,6 @@ See `AGENTS.md` for the full working rules.
 - Not built: OCR, Markdown to PDF, HTML to PDF, the redaction checker and the workflow builder (see `strategy/01-web-tool-map.md` for why), and the format pages of Images to PDF.
 - Repair PDF relies on pdf-lib's tolerant reader: qpdf's own recovery did not work in the WASM build (exit 2 on a damaged index), so qpdf is used only to say whether the original was readable.
 - Page numbers use Helvetica only; the preview is close to, not exactly, where the engine puts the number (within a point or two).
+- Bates numbering works on one file at a time (no single sequence across several files in one run), writes Latin letters, digits and common punctuation only, has no colour or font choice, and shares the page-number preview's one-or-two-point tolerance.
 - The meta CSP only governs the page; worker network access needs response headers
   once the host is chosen.

@@ -308,6 +308,10 @@ const operations = {
    * m.options: { pages: [1-based pages to number], position: "tl".."br", format: "n" | "page-n" | "n-of-m" | "page-n-of-m",
    * start: number on the first numbered page, size: points, margin: points }. The number counts up over the numbered
    * pages only, so skipping the cover starts the count on page 2.
+   * With m.options.bates: { prefix, suffix, digits } each page gets an identifier instead: the prefix, the number padded
+   * with zeros to `digits`, then the suffix (ABC000123), and `format` is not used. A character Helvetica cannot write is
+   * refused, never swapped for another: a wrong identifier is worse than none.
+   * The answer carries the first and last text written, so the page reports what the file really holds.
    */
   async numbers(src, m, total) {
     const o = m.options;
@@ -315,9 +319,17 @@ const operations = {
     if (!pages.length) throw new Error("No pages were selected.");
     const font = await src.embedFont(StandardFonts.Helvetica);
     const last = o.start + pages.length - 1;
+    const bates = o.bates ? { prefix: String(o.bates.prefix || ""), suffix: String(o.bates.suffix || ""), digits: Math.min(12, Math.max(1, Math.floor(o.bates.digits) || 1)) } : null;
+    if (bates) {
+      const known = new Set(font.getCharacterSet());
+      const bad = [...(bates.prefix + bates.suffix)].find((ch) => !known.has(ch.codePointAt(0)));
+      if (bad) throw new Error(`The prefix or suffix has a character this font cannot write: “${bad}”. Use Latin letters, digits and common punctuation.`);
+    }
+    const labelOf = (value) => bates
+      ? `${bates.prefix}${String(value).padStart(bates.digits, "0")}${bates.suffix}`
+      : { n: `${value}`, "page-n": `Page ${value}`, "n-of-m": `${value} of ${last}`, "page-n-of-m": `Page ${value} of ${last}` }[o.format] || `${value}`;
     pages.forEach((n, i) => {
-      const value = o.start + i;
-      const label = { n: `${value}`, "page-n": `Page ${value}`, "n-of-m": `${value} of ${last}`, "page-n-of-m": `Page ${value} of ${last}` }[o.format] || `${value}`;
+      const label = labelOf(o.start + i);
       const page = src.getPage(n - 1);
       const { width: w, height: h } = page.getSize();
       const turn = ((page.getRotation().angle % 360) + 360) % 360;
@@ -334,7 +346,7 @@ const operations = {
     });
     src.setProducer("pdf.do");
     const bytes = await src.save(OPTIONS);
-    self.postMessage({ done: true, bytes, pages: total, total, numbered: pages.length }, [bytes.buffer]);
+    self.postMessage({ done: true, bytes, pages: total, total, numbered: pages.length, firstLabel: labelOf(o.start), lastLabel: labelOf(last) }, [bytes.buffer]);
   },
 };
 

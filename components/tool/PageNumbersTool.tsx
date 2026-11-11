@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { AnchorGrid, type Anchor } from "./AnchorGrid";
 import { FileCard } from "./FileCard";
 import { PagePreview } from "./PagePreview";
@@ -16,6 +16,7 @@ import { JobProgress } from "@/components/ui/JobProgress";
 import { Slider } from "@/components/ui/Slider";
 import { numberPdf, type NumberOptions } from "@/lib/engines";
 import { formatBytes, stem } from "@/lib/format";
+import { markStyle } from "@/lib/number-mark";
 import { NUMBER_FORMATS, numberLabel, type NumberFormat } from "@/lib/numbering";
 import { useLeaveGuard } from "@/lib/use-leave-guard";
 import { usePageSelection } from "@/lib/use-page-selection";
@@ -25,22 +26,6 @@ import { useToolJob } from "@/lib/use-tool-job";
 /** Put a number on each page. The preview shows the number where it will be, and follows every change. */
 export function PageNumbersTool() {
   return <PdfTool>{({ file, from, onChoose }) => <Workspace file={file} from={from} onChoose={onChoose} />}</PdfTool>;
-}
-
-/** Where the number sits on the preview, from the page's own size, so it matches the saved page at any zoom. */
-function markStyle(position: Anchor, margin: number, size: number, width: number, height: number): CSSProperties {
-  const [row, column] = position;
-  const style: CSSProperties = { position: "absolute", fontSize: `${(size / width) * 100}cqw`, lineHeight: 1, whiteSpace: "nowrap" };
-  if (column === "l") style.left = `${(margin / width) * 100}%`;
-  else if (column === "r") style.right = `${(margin / width) * 100}%`;
-  else style.left = "50%";
-  if (row === "t") style.top = `${(margin / height) * 100}%`;
-  else if (row === "b") style.bottom = `${(margin / height) * 100}%`;
-  else style.top = "50%";
-  const x = column === "c" ? "-50%" : "0";
-  const y = row === "m" ? "-50%" : "0";
-  if (x !== "0" || y !== "0") style.transform = `translate(${x}, ${y})`;
-  return style;
 }
 
 function Workspace({ file, from, onChoose }: { file: File; from?: string; onChoose: (file: File) => void }) {

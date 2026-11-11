@@ -6,7 +6,7 @@ const noSideScroll = (page: Page) => page.evaluate(() => document.documentElemen
 
 test("every page fits the phone width without sideways scrolling", async ({ page }) => {
   const errors = watchErrors(page);
-  for (const path of ["/", "/merge-pdf", "/compress-pdf", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/compress-pdf-to-200kb", "/how-it-works", "/licences", "/blog"]) {
+  for (const path of ["/", "/merge-pdf", "/compress-pdf", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/bates-numbering", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/compress-pdf-to-200kb", "/how-it-works", "/licences", "/blog"]) {
     await page.goto(path, { waitUntil: "networkidle" });
     expect(await noSideScroll(page), `${path} scrolls sideways`).toBe(true);
   }
@@ -58,7 +58,7 @@ test("delete pages with a thumb: tap pages, the action bar stays in reach, downl
 });
 
 test("the busiest wave 1 pages fit the phone with a file loaded", async ({ page }) => {
-  for (const [path, file] of [["/split-pdf", "text-3p.pdf"], ["/page-numbers", "text-3p.pdf"], ["/pdf-to-jpg", "text-3p.pdf"], ["/rotate-pdf", "text-3p.pdf"], ["/edit-pdf-metadata", "text-2p.pdf"]] as const) {
+  for (const [path, file] of [["/split-pdf", "text-3p.pdf"], ["/page-numbers", "text-3p.pdf"], ["/bates-numbering", "text-3p.pdf"], ["/pdf-to-jpg", "text-3p.pdf"], ["/rotate-pdf", "text-3p.pdf"], ["/edit-pdf-metadata", "text-2p.pdf"]] as const) {
     await page.goto(path);
     await page.setInputFiles('input[type="file"]', fixture(file));
     await page.getByText(/pages? ·/).first().waitFor();

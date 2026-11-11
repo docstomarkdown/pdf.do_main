@@ -75,10 +75,16 @@ export type NumberOptions = {
   size: number;
   /** Distance from the page edge in points. */
   margin: number;
+  /**
+   * A Bates identifier instead of a plain number: the prefix, the number padded with zeros to `digits`, the suffix
+   * (ABC000123). `format` is then not used. The engine refuses a prefix or suffix its font cannot write.
+   */
+  bates?: { prefix: string; suffix: string; digits: number };
 };
 
+/** `firstLabel` and `lastLabel` are the text the engine wrote on the first and last numbered page. */
 export async function numberPdf(buffer: ArrayBuffer, options: NumberOptions, signal?: AbortSignal) {
-  return callWorker<{ bytes: Bytes; pages: number; total: number; numbered: number }>(PAGES, { op: "numbers", buffer, options }, { transfer: [buffer], signal });
+  return callWorker<{ bytes: Bytes; pages: number; total: number; numbered: number; firstLabel: string; lastLabel: string }>(PAGES, { op: "numbers", buffer, options }, { transfer: [buffer], signal });
 }
 
 const META = "/engines/meta.worker.js";
