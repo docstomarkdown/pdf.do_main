@@ -51,6 +51,7 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Add watermark | pdf-lib | text only; drag on the preview or place with the grid; colour, size, strength and angle; follows turned pages |
 | Sign PDF | pdf-lib; `signature_pad` for drawing | draw, type or upload a signature and place it; a picture of a signature, not a digital signature (the page says so); an uploaded photo has its paper taken out on a canvas (by brightness, with a slider), or is used as it is when nothing darker than the paper is found |
 | Add image to PDF | pdf-lib (the same placing as Sign) | one picture per run, on this page, every page or typed pages; drag, grid, nudge and a width slider; JPEG and PNG go in as they are, WebP, GIF and BMP as PNG |
+| Add text to PDF | pdf-lib, Helvetica regular and bold (the page engine's `draw` operation) | any number of text boxes on any pages, with line breaks; drag, arrow keys, grid and nudge; four colours, 6 to 72 pt; undo and redo; a character the font cannot write is refused, never swapped |
 | Fill PDF form | pdf-lib forms | text, tick boxes, choices; option to make entries permanent; says when a PDF has no fields |
 | Repair PDF | pdf-lib reads object by object, qpdf checks | rebuilds a broken index; says when the original could not be read as it was; cannot recover missing data |
 | Scan to PDF, HEIC to PDF | the Images to PDF tool | scan opens the phone camera first; HEIC only where the browser can open it (Safari) |
@@ -94,5 +95,6 @@ See `AGENTS.md` for the full working rules.
 - Bates numbering works on one file at a time (no single sequence across several files in one run), writes Latin letters, digits and common punctuation only, has no colour or font choice, and shares the page-number preview's one-or-two-point tolerance.
 - The paper remover in Sign judges by brightness alone: the paper must be lighter than the ink. Lined or coloured paper, hard shadows and pale pencil can leave marks or thin the strokes, and the slider is the only control. Photos are scaled to 1600 px on the long side.
 - Add image places one picture per run, has no opacity or rotation, and the picture cannot be taken off afterwards.
+- Add text writes Latin letters, digits and common punctuation in Helvetica only, has no rotation or alignment choice, does not edit text already in the PDF, and its preview is close to, not exactly, where the engine puts the text (within a point or two).
 - The meta CSP only governs the page; worker network access needs response headers
   once the host is chosen.

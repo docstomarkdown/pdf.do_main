@@ -2,7 +2,7 @@
    Classic worker with a self-hosted pdf-lib, like the other engines. Every operation posts one final message:
    { done: true, ... }, or { error } with a message a person can read. */
 importScripts("/engines/vendor/pdf-lib.min.js");
-const { PDFDocument, StandardFonts, degrees, rgb } = PDFLib;
+const { PDFDocument, StandardFonts, BlendMode, LineCapStyle, degrees, rgb } = PDFLib;
 
 const OPTIONS = { useObjectStreams: true };
 
@@ -302,6 +302,68 @@ const operations = {
     out.setProducer("pdf.do");
     const bytes = await out.save(OPTIONS);
     self.postMessage({ done: true, bytes, pages: order.length, total }, [bytes.buffer]);
+  },
+
+  /**
+   * Draws a list of things on pages. m.items: each { page (1-based), kind, ... }, with positions as percentages of the page
+   * as seen, from its top left:
+   *   "text": { x, y (the centre of the block), text (line breaks allowed), size (points), color: [r, g, b], bold }
+   *           Helvetica. A character it cannot write is refused, never swapped for another.
+   *   "rect": { x, y (the centre), width, height, color, opacity (0 to 1), fill } filled and see-through (a highlight, which
+   *           darkens what is under it instead of hiding it), or with `fill` false an outline `line` points thick.
+   *   "path": { points: [[x, y], ...], color, opacity, line (points) } a freehand line through the points.
+   * Text that is only spaces is left out. The answer counts what was drawn and the pages it is on.
+   */
+  async draw(src, m, total) {
+    const items = (m.items || []).filter((it) => it.page >= 1 && it.page <= total && (it.kind !== "text" || String(it.text || "").trim() !== ""));
+    if (!items.length) throw new Error("There is nothing to add yet.");
+    const fonts = {};
+    const fontFor = async (bold) => (fonts[bold ? "b" : "r"] ||= await src.embedFont(bold ? StandardFonts.HelveticaBold : StandardFonts.Helvetica));
+    const touched = new Set();
+    for (const it of items) {
+      const page = src.getPage(it.page - 1);
+      const { width: w, height: h } = page.getSize();
+      const turn = turnOf(page);
+      const vw = turn % 180 === 0 ? w : h;
+      const vh = turn % 180 === 0 ? h : w;
+      // A point on the page as seen (x from the left, y from the bottom) in the page's own axes.
+      const own = (vx, vy) => ({ 0: [vx, vy], 90: [w - vy, vx], 180: [w - vx, h - vy], 270: [vy, h - vx] }[turn]);
+      const color = rgb(it.color[0], it.color[1], it.color[2]);
+      if (it.kind === "text") {
+        const font = await fontFor(it.bold);
+        const known = new Set(font.getCharacterSet());
+        const lines = String(it.text).replace(/\r\n?/g, "\n").split("\n");
+        const bad = [...lines.join("")].find((ch) => !known.has(ch.codePointAt(0)));
+        if (bad) throw new Error(`The text has a character this font cannot write: “${bad}”. Use Latin letters, digits and common punctuation.`);
+        const lineHeight = it.size * 1.2;
+        const blockWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, it.size)));
+        const left = (it.x / 100) * vw - blockWidth / 2;
+        const top = (1 - it.y / 100) * vh + (lines.length * lineHeight) / 2;
+        lines.forEach((line, i) => {
+          if (line === "") return;
+          const [x, y] = own(left, top - i * lineHeight - it.size * 0.95);
+          page.drawText(line, { x, y, size: it.size, font, color, rotate: degrees(turn) });
+        });
+      } else if (it.kind === "rect") {
+        const wi = (it.width / 100) * vw;
+        const hi = (it.height / 100) * vh;
+        const [x, y] = own((it.x / 100) * vw - wi / 2, (1 - it.y / 100) * vh - hi / 2);
+        if (it.fill) page.drawRectangle({ x, y, width: wi, height: hi, rotate: degrees(turn), color, opacity: it.opacity, blendMode: BlendMode.Multiply });
+        else page.drawRectangle({ x, y, width: wi, height: hi, rotate: degrees(turn), borderColor: color, borderWidth: it.line || 1.5, borderOpacity: it.opacity });
+      } else if (it.kind === "path") {
+        const points = (it.points || []).map(([px, py]) => own((px / 100) * vw, (1 - py / 100) * vh));
+        if (points.length === 1) points.push(points[0]);
+        for (let i = 1; i < points.length; i++) {
+          page.drawLine({ start: { x: points[i - 1][0], y: points[i - 1][1] }, end: { x: points[i][0], y: points[i][1] }, thickness: it.line || 2, color, opacity: it.opacity, lineCap: LineCapStyle.Round });
+        }
+      } else {
+        continue;
+      }
+      touched.add(it.page);
+    }
+    src.setProducer("pdf.do");
+    const bytes = await src.save(OPTIONS);
+    self.postMessage({ done: true, bytes, pages: total, total, drawn: items.length, touched: touched.size }, [bytes.buffer]);
   },
 
   /**

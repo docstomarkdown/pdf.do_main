@@ -2,7 +2,7 @@ import type { LucideProps } from "lucide-react";
 import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, ChevronDown, ChevronLeft, ChevronRight, Copy, Download, Eye,
   EyeOff, File, FileDigit, FileOutput, FileText, Hash, House, Image, ImagePlus, Images, Info, Lock, Menu, Merge, Minimize2, Minus, Plus, Redo2,
-  RotateCcw, RotateCw, Scissors, Search, ShieldCheck, Tags, Trash2, TriangleAlert, Undo2, Upload, X, ZoomIn, ZoomOut,
+  RotateCcw, RotateCw, Scissors, Search, ShieldCheck, Tags, Trash2, TriangleAlert, Type, Undo2, Upload, X, ZoomIn, ZoomOut,
 } from "lucide-react";
 
 // Icons come from lucide-react (ISC), imported one at a time so only these ship. Our names stay stable
@@ -48,6 +48,7 @@ const icons = {
   hash: Hash,
   bates: FileDigit,
   "image-plus": ImagePlus,
+  type: Type,
   tags: Tags,
   images: Images,
 };

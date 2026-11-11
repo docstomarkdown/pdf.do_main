@@ -646,6 +646,25 @@ const base: Tool[] = [
     ],
     related: ["add-watermark", "sign-pdf", "images-to-pdf"],
   },
+  {
+    slug: "add-text",
+    name: "Add text to PDF",
+    short: "Type text onto the pages of a PDF, in as many places as you need.",
+    intro: "Add a text box, type into it and drag it where it belongs on the page. Use it to fill in a form that has no fields, or to add a date, a name or a note.",
+    category: "edit",
+    icon: "type",
+    keywords: ["type on pdf", "write on pdf", "insert text", "fill pdf without fields", "add date", "add note", "text box"],
+    steps: ["Choose your PDF.", "Add a text box, type your text, and drag it into place. Add more boxes on any page.", "Press Add text, then download the result."],
+    faq: [
+      privacyFaq("Adding the text"),
+      { q: "Can I change the text that is already in the PDF?", a: "No. This tool adds new text on top of the page. It does not edit or remove what is there." },
+      { q: "Can I fill in a form with it?", a: "Yes, for a form that is only a picture of boxes and lines: put a text box on each blank. If the PDF has real form fields, Fill PDF form is the better tool." },
+      { q: "Which characters and fonts can I use?", a: "The text is written in Helvetica, regular or bold, in Latin letters, digits and common punctuation. Other scripts are not supported yet, and the page tells you before anything is written." },
+      { q: "Can I change the text after downloading?", a: "Not with this tool. The text becomes part of the page, so keep your original file." },
+      passwordFaq,
+    ],
+    related: ["fill-pdf-form", "sign-pdf", "add-image"],
+  },
 
   {
     slug: "repair-pdf",

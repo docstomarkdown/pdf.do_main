@@ -204,6 +204,22 @@ export async function signPdf(buffer: ArrayBuffer, sign: Signature, pages: numbe
   return callWorker<{ bytes: Bytes; pages: number; total: number; signed: number }>(PAGES, { op: "sign", buffer, sign, pages }, { transfer: [buffer, sign.image], signal });
 }
 
+type Rgb = [number, number, number];
+
+/**
+ * Something drawn on a page. Positions are percentages of the page as seen, from its top left; `x` and `y` are the centre.
+ * Text is Helvetica, and a character it cannot write is refused by the engine.
+ */
+export type DrawItem =
+  | { kind: "text"; page: number; x: number; y: number; text: string; size: number; color: Rgb; bold?: boolean }
+  | { kind: "rect"; page: number; x: number; y: number; width: number; height: number; color: Rgb; opacity: number; fill: boolean; line?: number }
+  | { kind: "path"; page: number; points: [number, number][]; color: Rgb; opacity: number; line: number };
+
+/** Draws the items on their pages. `drawn` is how many were drawn, `touched` how many pages they are on. */
+export async function drawOnPdf(buffer: ArrayBuffer, items: DrawItem[], signal?: AbortSignal) {
+  return callWorker<{ bytes: Bytes; pages: number; total: number; drawn: number; touched: number }>(PAGES, { op: "draw", buffer, items }, { transfer: [buffer], signal });
+}
+
 /** A picture on chosen pages: the same placing as a signature, under the name Add image uses. `signed` counts the pages. */
 export const placePicture = signPdf;
 
