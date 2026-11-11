@@ -89,6 +89,10 @@
   --color-wm-red: #dc2626;
   --color-wm-blue: #2772ed;
   --color-wm-black: #111827;
+  --color-hl-yellow: #fde047;
+  --color-hl-green: #86efac;
+  --color-hl-pink: #f9a8d4;
+  --color-hl-blue: #93c5fd;
   --color-diff-add-bg: #dcfce7;
   --color-diff-add-fg: #14532d;
   --color-diff-del-bg: #fee2e2;
@@ -190,6 +194,10 @@
   --color-wm-red: #dc2626;
   --color-wm-blue: #2772ed;
   --color-wm-black: #111827;
+  --color-hl-yellow: #fde047;
+  --color-hl-green: #86efac;
+  --color-hl-pink: #f9a8d4;
+  --color-hl-blue: #93c5fd;
   --color-diff-add-bg: #dcfce7;
   --color-diff-add-fg: #14532d;
   --color-diff-del-bg: #fee2e2;
@@ -275,6 +283,10 @@
   --color-wm-red: #dc2626;
   --color-wm-blue: #2772ed;
   --color-wm-black: #111827;
+  --color-hl-yellow: #fde047;
+  --color-hl-green: #86efac;
+  --color-hl-pink: #f9a8d4;
+  --color-hl-blue: #93c5fd;
   --color-diff-add-bg: rgba(52, 211, 153, 0.16);
   --color-diff-add-fg: #bbf7d0;
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
@@ -361,6 +373,10 @@
   --color-wm-red: #dc2626;
   --color-wm-blue: #2772ed;
   --color-wm-black: #111827;
+  --color-hl-yellow: #fde047;
+  --color-hl-green: #86efac;
+  --color-hl-pink: #f9a8d4;
+  --color-hl-blue: #93c5fd;
   --color-diff-add-bg: rgba(52, 211, 153, 0.16);
   --color-diff-add-fg: #bbf7d0;
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
@@ -714,6 +730,20 @@
   /* A mark that is a box with its own size (a form field): the outline is its edge, so it takes no padding. */
   .mark-box { padding: 0; }
   .mark-box .mark-corner { display: none; } /* the outline is the edge; three corner dots would crowd a small box */
+  /* Marks drawn on a page by Annotate. They sit on white paper in both themes, so the colours do not change with the theme.
+     A highlight darkens what is under it, as the saved page does. */
+  .an-hl { display: block; width: 100%; height: 100%; opacity: 0.6; mix-blend-mode: multiply; }
+  .an-hl-yellow { background: var(--color-hl-yellow); } .an-hl-green { background: var(--color-hl-green); }
+  .an-hl-pink { background: var(--color-hl-pink); } .an-hl-blue { background: var(--color-hl-blue); }
+  .an-box { display: block; width: 100%; height: 100%; border: 0.28cqw solid currentColor; }
+  .an-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .an-pen { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .an-draw { position: absolute; inset: 0; cursor: crosshair; touch-action: none; }
+  .an-draw:focus-visible { outline: 3px solid var(--color-focus); outline-offset: -3px; }
+  .marklist { display: grid; gap: 0.25rem; }
+  .marklist li { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.125rem 0.25rem 0.125rem 0.75rem; border: 1px solid var(--color-line-soft); border-radius: 0.75rem; }
+  .marklist li[data-selected="true"] { border-color: var(--color-action); background: var(--color-action-soft); }
+  .marklist button.marklist-name { flex: 1; min-height: 2.75rem; text-align: left; font-weight: 500; border-radius: 0.5rem; }
   .ff-box {
     display: flex; align-items: center; width: 100%; height: 100%; padding: 0 0.8cqw; overflow: hidden;
     font-size: 2cqw; line-height: 1; white-space: nowrap; color: var(--color-paper-ink); background: var(--color-action-soft);

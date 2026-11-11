@@ -685,6 +685,25 @@ const base: Tool[] = [
     ],
     related: ["fill-pdf-form", "add-text", "sign-pdf"],
   },
+  {
+    slug: "annotate-pdf",
+    name: "Annotate PDF",
+    short: "Highlight, box and draw on the pages of a PDF.",
+    intro: "Mark up a PDF: put a highlight over a passage, a box around something, or draw freehand with the pen. Place and size each mark on the preview, on any page.",
+    category: "edit",
+    icon: "highlighter",
+    keywords: ["highlight pdf", "mark up pdf", "draw on pdf", "pdf highlighter", "underline", "circle", "pen", "markup"],
+    steps: ["Choose your PDF.", "Add a highlight or a box and drag it into place, or turn the pen on and draw on the page.", "Press Save marks, then download the result."],
+    faq: [
+      privacyFaq("Marking up"),
+      { q: "Are these comments that another program can list or remove?", a: "No. The marks are drawn onto the page itself. A PDF reader will not show them in its comments list, and they cannot be taken off afterwards, so keep your original file." },
+      { q: "Does a highlight follow the words?", a: "No. A highlight is a see-through box that you place and size yourself over whatever is on the page, so it works on scans and pictures too. It does not snap to lines of text." },
+      { q: "Can I use the pen without a mouse or a touch screen?", a: "The pen needs a pointer: a mouse, a finger or a stylus. Highlights and boxes can be added, moved and sized with the keyboard alone." },
+      { q: "Can I add text notes?", a: "Use Add text for that: the result of this tool can be handed straight to it." },
+      passwordFaq,
+    ],
+    related: ["add-text", "add-watermark", "sign-pdf"],
+  },
 
   {
     slug: "repair-pdf",

@@ -1,7 +1,7 @@
 import type { LucideProps } from "lucide-react";
 import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, ChevronDown, ChevronLeft, ChevronRight, Copy, Download, Eye,
-  EyeOff, File, FileDigit, FileOutput, FileText, FormInput, Hash, House, Image, ImagePlus, Images, Info, Lock, Menu, Merge, Minimize2, Minus, Plus, Redo2,
+  EyeOff, File, FileDigit, FileOutput, FileText, FormInput, Hash, Highlighter, House, Image, ImagePlus, Images, Info, Lock, Menu, Merge, Minimize2, Minus, PenLine, Plus, Redo2,
   RotateCcw, RotateCw, Scissors, Search, ShieldCheck, Tags, Trash2, TriangleAlert, Type, Undo2, Upload, X, ZoomIn, ZoomOut,
 } from "lucide-react";
 
@@ -50,6 +50,8 @@ const icons = {
   "image-plus": ImagePlus,
   type: Type,
   "form-input": FormInput,
+  highlighter: Highlighter,
+  pen: PenLine,
   tags: Tags,
   images: Images,
 };

@@ -52,6 +52,7 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Sign PDF | pdf-lib; `signature_pad` for drawing | draw, type or upload a signature and place it; a picture of a signature, not a digital signature (the page says so); an uploaded photo has its paper taken out on a canvas (by brightness, with a slider), or is used as it is when nothing darker than the paper is found |
 | Add image to PDF | pdf-lib (the same placing as Sign) | one picture per run, on this page, every page or typed pages; drag, grid, nudge and a width slider; JPEG and PNG go in as they are, WebP, GIF and BMP as PNG |
 | Add text to PDF | pdf-lib, Helvetica regular and bold (the page engine's `draw` operation) | any number of text boxes on any pages, with line breaks; drag, arrow keys, grid and nudge; four colours, 6 to 72 pt; undo and redo; a character the font cannot write is refused, never swapped |
+| Annotate PDF | pdf-lib (the page engine's `draw` operation) | see-through highlights (four colours), outline boxes and freehand pen lines (three colours, two widths) on any pages; shapes move and size by drag or keyboard, pen lines are drawn with a pointer; a list of the marks on each page; undo and redo |
 | Fill PDF form | pdf-lib forms | text, tick boxes, choices; option to make entries permanent; says when a PDF has no fields |
 | Make PDF fillable | pdf-lib forms (the page engine's `formAdd` operation) | one-line text fields, large text fields and tick boxes, placed and sized on the preview and named; undo and redo; a name that is empty, has a full stop, is used twice or is already in the file is refused; the result opens in Fill PDF form |
 | Repair PDF | pdf-lib reads object by object, qpdf checks | rebuilds a broken index; says when the original could not be read as it was; cannot recover missing data |
@@ -98,5 +99,6 @@ See `AGENTS.md` for the full working rules.
 - Add image places one picture per run, has no opacity or rotation, and the picture cannot be taken off afterwards.
 - Add text writes Latin letters, digits and common punctuation in Helvetica only, has no rotation or alignment choice, does not edit text already in the PDF, and its preview is close to, not exactly, where the engine puts the text (within a point or two).
 - Make PDF fillable adds text fields and tick boxes only (no dropdowns, radio buttons or signature fields), cannot change or remove a field once saved, does not find blanks by itself, and refuses pages that are turned sideways.
+- Annotate draws onto the page: its marks are not PDF comments, a reader will not list them, and they cannot be taken off afterwards. A highlight is a box you place yourself and does not follow lines of text. The pen needs a pointer (there is no keyboard way to draw), and a pen line cannot be moved once drawn, only removed.
 - The meta CSP only governs the page; worker network access needs response headers
   once the host is chosen.
