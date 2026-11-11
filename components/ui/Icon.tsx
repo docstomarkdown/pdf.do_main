@@ -1,5 +1,9 @@
 import type { LucideProps } from "lucide-react";
 import {
+  Bookmark, Camera, ChartPie, Columns2, Crop, FileCode, FileImage, FileType, GitCompare, ImageDown, KeyRound,
+  LayoutGrid, ListChecks, LockOpen, Ruler, Signature, Smartphone, Stamp, Wrench,
+} from "lucide-react";
+import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, ChevronDown, ChevronLeft, ChevronRight, Copy, Download, Eye,
   EyeOff, File, FileDigit, FileOutput, FileText, FormInput, Hash, Highlighter, House, Image, ImagePlus, Images, Info, Lock, Menu, Merge, Minimize2, Minus, PenLine, Plus, Redo2,
   RotateCcw, RotateCw, Scissors, Search, ShieldCheck, Tags, Trash2, TriangleAlert, Type, Undo2, Upload, X, ZoomIn, ZoomOut,
@@ -52,6 +56,25 @@ const icons = {
   "form-input": FormInput,
   highlighter: Highlighter,
   pen: PenLine,
+  grid: LayoutGrid,
+  halves: Columns2,
+  ruler: Ruler,
+  bookmark: Bookmark,
+  wrench: Wrench,
+  "file-type": FileType,
+  camera: Camera,
+  phone: Smartphone,
+  "file-image": FileImage,
+  "image-down": ImageDown,
+  "file-code": FileCode,
+  stamp: Stamp,
+  signature: Signature,
+  "list-checks": ListChecks,
+  crop: Crop,
+  compare: GitCompare,
+  key: KeyRound,
+  "lock-open": LockOpen,
+  pie: ChartPie,
   tags: Tags,
   images: Images,
 };

@@ -170,6 +170,14 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   file. Use the semantic tokens (`bg-surface`, `text-ink-3`) or a component class, never a raw colour. `npm run lint`
   fails on a violation (`scripts/check-colours.mjs`). The script's legacy list is empty and must stay
   empty. Every token has a light and a dark value, written in four places that the same script keeps in step.
+- **The look is a small system; use its parts** (owner direction, 2026-11-11). The page is the `canvas` colour and
+  cards, fields and panels sit on it in `surface`. Headings use `.display` (home), `.title` (a page) and `.section-title`;
+  an opening paragraph uses `.lead`; numbers that line up use `.nums`. Depth has three steps: `.lift-1` at rest, `.lift-2`
+  raised, `.lift-3` floating. Each group of tools has its own colour: put `cat-<group id>` on a wrapper and what is inside
+  reads `--cat-bg` and `--cat-ink` (`.tool-card-icon`, `.cat-ink`). Every tool has its own icon in `lib/tools.ts`; don't
+  share one between two tools. The header stays at the top of the screen, so anything that scrolls to an element must
+  leave room for it (`scroll-padding-top` on `html` does this for links). The approved mocks still show the earlier
+  colours: take structure, states and copy from the mocks, and colour, type and depth from `globals.css`.
 - **One obvious next step.** An empty tool shows the drop zone; once a file is chosen the drop zone shrinks to
   "Choose a different file" and the options and one primary action take over. A finished tool shows the result panel:
   download first, then "Keep going with this file".

@@ -14,8 +14,8 @@ export default function Home() {
   return (
     <div>
       <section className="mx-auto max-w-3xl text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">PDF tools that run in your browser</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-2">
+        <h1 className="display">PDF tools that run in your browser</h1>
+        <p className="lead mx-auto mt-5 max-w-2xl">
           Merge, split, convert, edit and protect PDFs without sending them anywhere. No account, no watermark.
         </p>
         <div className="mx-auto mt-8 max-w-xl text-left"><ToolSearch /></div>
@@ -24,7 +24,7 @@ export default function Home() {
       <ul className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
         {promises.map((p) => (
           <li key={p.title} className="flex gap-3">
-            <Icon name={p.icon} className="mt-0.5 h-6 w-6 shrink-0 text-action-ink" />
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-action-soft text-action-ink"><Icon name={p.icon} className="h-5 w-5" /></span>
             <div>
               <p className="font-semibold">{p.title}</p>
               <p className="text-sm text-ink-2">{p.text}</p>
@@ -37,7 +37,7 @@ export default function Home() {
         {toolsByCategory().map((c) => (
           <section key={c.id} aria-labelledby={`cat-${c.id}`}>
             <div className="mb-4">
-              <h2 id={`cat-${c.id}`} className="text-2xl font-bold tracking-tight">{c.name}</h2>
+              <h2 id={`cat-${c.id}`} className="section-title">{c.name}</h2>
               <p className="text-ink-2">{c.blurb}</p>
             </div>
             <ul className="grid gap-4 sm:grid-cols-2">

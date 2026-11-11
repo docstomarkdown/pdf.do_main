@@ -34,7 +34,7 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="relative z-30 border-b border-line-soft bg-surface">
+    <header className="site-header">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3.5">
         <Link href="/" className="rounded-lg text-xl font-bold tracking-tight">
           pdf<span className="text-action">.do</span>
@@ -66,16 +66,16 @@ export function Header() {
       {open && (
         <>
           <div className="fixed inset-0 top-[var(--header-h,3.75rem)] -z-10 bg-scrim" onClick={() => setOpenAt(null)} aria-hidden="true" />
-          <div id="all-tools" className="absolute inset-x-0 top-full border-b border-line-soft bg-surface shadow-lg">
+          <div id="all-tools" className="site-menu absolute inset-x-0 top-full border-b border-line-soft bg-surface">
             <div className="mx-auto grid max-w-5xl gap-8 px-4 py-6 sm:grid-cols-2">
               {toolsByCategory().map((c) => (
-                <section key={c.id} aria-labelledby={`menu-${c.id}`}>
+                <section key={c.id} aria-labelledby={`menu-${c.id}`} className={`cat-${c.id}`}>
                   <h2 id={`menu-${c.id}`} className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-3">{c.name}</h2>
                   <ul className="space-y-1">
                     {c.tools.map((t) => (
                       <li key={t.slug}>
                         <Link href={`/${t.slug}`} className="menu-link">
-                          <Icon name={t.icon} className="h-5 w-5 text-action-ink" />
+                          <Icon name={t.icon} className="cat-ink h-5 w-5" />
                           <span className="font-medium">{t.name}</span>
                         </Link>
                       </li>

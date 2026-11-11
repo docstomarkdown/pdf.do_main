@@ -73,7 +73,7 @@ export function FileDrop({
       className={`dropzone px-6 py-12 sm:py-16 ${over ? "dropzone-over" : ""}`.trim()}
     >
       {hidden}
-      <Icon name="upload" className="mx-auto h-10 w-10 text-action-ink" />
+      <span className="dropzone-icon"><Icon name="upload" className="h-7 w-7" /></span>
       <div className="mt-4">
         <Button size="lg" onClick={() => input.current?.click()}>{label}</Button>
       </div>

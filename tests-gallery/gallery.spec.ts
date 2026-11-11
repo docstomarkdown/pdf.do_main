@@ -28,7 +28,7 @@ test("both themes resolve: the dark panel is dark, the light panel is light, and
   const bg = (scheme: Scheme) => panel(page, "Buttons and choices", scheme).evaluate((el) => getComputedStyle(el).backgroundColor);
   const primary = (scheme: Scheme) => panel(page, "Buttons and choices", scheme).locator(".btn-primary").first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(await bg("light")).toBe("rgb(255, 255, 255)");
-  expect(await bg("dark")).toBe("rgb(15, 23, 42)");
+  expect(await bg("dark")).toBe("rgb(16, 24, 41)"); // the card colour of the 2026-11-11 palette
   expect(await primary("light")).toBe("rgb(38, 112, 236)");
   expect(await primary("dark")).toBe("rgb(38, 112, 236)");
 });
@@ -220,7 +220,7 @@ test.describe("notifier", () => {
     await page.getByRole("button", { name: "Status toast" }).click();
     const toast = page.locator(".toast").filter({ hasText: "3 files added" });
     await expect(toast).toBeVisible();
-    expect(await toast.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(30, 41, 59)");
+    expect(await toast.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(24, 34, 58)");
   });
 });
 

@@ -15,7 +15,7 @@ test.describe("dark mode", () => {
       text: getComputedStyle(document.body).color,
       scheme: getComputedStyle(document.documentElement).colorScheme,
     }));
-    expect(style).toEqual({ surface: "rgb(15, 23, 42)", text: "rgb(241, 245, 249)", scheme: "dark" });
+    expect(style).toEqual({ surface: "rgb(9, 14, 25)", text: "rgb(241, 244, 249)", scheme: "dark" }); // the page tint and ink of the 2026-11-11 palette
   });
 
   for (const path of PAGES) {
@@ -80,6 +80,6 @@ test.describe("light mode", () => {
       text: getComputedStyle(document.body).color,
       scheme: getComputedStyle(document.documentElement).colorScheme,
     }));
-    expect(style).toEqual({ surface: "rgb(255, 255, 255)", text: "rgb(15, 23, 42)", scheme: "light" });
+    expect(style).toEqual({ surface: "rgb(246, 248, 251)", text: "rgb(12, 19, 34)", scheme: "light" });
   });
 });

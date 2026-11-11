@@ -331,7 +331,7 @@ const base: Tool[] = [
     short: "Turn PDF pages into sharp PNG pictures, all of them or the ones you pick.",
     intro: "Pick the pages and a resolution, and get one PNG for each page, with a ZIP of the lot. PNG keeps hard edges, such as text and line art, perfectly sharp.",
     category: "from-pdf",
-    icon: "image",
+    icon: "file-image",
     keywords: ["pdf to image", "convert pdf to picture", "save pages as images", "lossless"],
     steps: [
       "Choose your PDF and wait for the page thumbnails.",
@@ -397,7 +397,7 @@ const base: Tool[] = [
     short: "Open a PDF with its password and save a copy that needs none.",
     intro: "Type the password for a protected PDF and get a copy that opens without one. You need the password: this tool cannot open a file without it.",
     category: "security",
-    icon: "lock",
+    icon: "key",
     keywords: ["unlock pdf with password", "decrypt pdf", "remove pdf password", "open protected pdf"],
     steps: [
       "Choose your protected PDF.",
@@ -418,7 +418,7 @@ const base: Tool[] = [
     short: "Lift restrictions such as no printing or no copying from a PDF that opens freely.",
     intro: "Some PDFs open without a password but forbid printing, copying or editing. Unlock saves a copy without those restrictions.",
     category: "security",
-    icon: "lock",
+    icon: "lock-open",
     keywords: ["remove restrictions", "enable printing", "enable copying", "remove owner password", "pdf permissions"],
     steps: [
       "Choose your PDF.",
@@ -439,7 +439,7 @@ const base: Tool[] = [
     short: "Reorder, turn and delete pages on one grid of thumbnails, then save the new PDF.",
     intro: "Pick a page, then move it earlier or later, turn it or delete it. Undo and redo are there, and nothing needs dragging.",
     category: "organise",
-    icon: "merge",
+    icon: "grid",
     keywords: ["reorder pages", "rearrange pages", "move pages", "sort pages", "page order"],
     steps: [
       "Choose your PDF and wait for the page thumbnails.",
@@ -461,7 +461,7 @@ const base: Tool[] = [
     short: "Cut every page in two, or cut the whole document into two files.",
     intro: "For a scanned two-page spread, cut each page down the middle and get one PDF with twice the pages. Or split the document into a first half and a second half.",
     category: "organise",
-    icon: "split",
+    icon: "halves",
     keywords: ["cut pages in half", "split scanned spread", "two pages per sheet", "divide pdf in two"],
     steps: [
       "Choose your PDF.",
@@ -483,7 +483,7 @@ const base: Tool[] = [
     short: "Cut the margins off pages, with a preview that shades what will go.",
     intro: "Move the four sliders to choose how much to cut from each edge. The preview shades the part that will go. Crop every page or only the ones you type.",
     category: "edit",
-    icon: "extract",
+    icon: "crop",
     keywords: ["trim pdf", "cut margins", "remove white space", "crop pages", "resize page"],
     steps: [
       "Choose your PDF.",
@@ -506,7 +506,7 @@ const base: Tool[] = [
     short: "See what makes a PDF big: pictures, fonts, page content, and its biggest pictures.",
     intro: "Choose a PDF and see where its bytes go, as a bar and a list, with its biggest pictures named. Nothing is changed; it only reads.",
     category: "compress",
-    icon: "compress",
+    icon: "pie",
     keywords: ["why is my pdf so big", "pdf file size", "what is taking space", "pdf size breakdown", "large pdf"],
     steps: ["Choose your PDF.", "Read the bar and the list: pictures, fonts, page content and the rest.", "If pictures are most of the file, open Compress PDF."],
     faq: [
@@ -523,7 +523,7 @@ const base: Tool[] = [
     short: "Type or paste text, or open a .txt file, and get a PDF.",
     intro: "Lay plain text out on pages in a font, size and margin you choose, and download the PDF.",
     category: "to-pdf",
-    icon: "text",
+    icon: "file-type",
     keywords: ["txt to pdf", "text file to pdf", "plain text to pdf", "notes to pdf"],
     steps: ["Type or paste your text, or open a .txt file.", "Choose the page size, margin, font and text size.", "Press Make PDF, then download it."],
     faq: [
@@ -540,7 +540,7 @@ const base: Tool[] = [
     short: "Pull the pictures out of a PDF and save them as PNG files.",
     intro: "Choose a PDF and get every picture on its pages as a PNG, with a ZIP of the lot. Tiny pictures such as icons are left out.",
     category: "from-pdf",
-    icon: "image",
+    icon: "image-down",
     keywords: ["save images from pdf", "get pictures out of pdf", "pdf images", "extract photos"],
     steps: ["Choose your PDF.", "Leave the pages empty for all of them, or type the pages to look at.", "Press Extract pictures, then save them one by one or as a ZIP."],
     faq: [
@@ -558,7 +558,7 @@ const base: Tool[] = [
     short: "Split a PDF into files that are each no bigger than a size you choose.",
     intro: "Choose a largest file size, such as 5 MB, and get as few files as possible that fit it, with the pages kept in order.",
     category: "organise",
-    icon: "split",
+    icon: "ruler",
     keywords: ["split pdf under 5mb", "pdf too big to email", "divide pdf by megabytes", "split large pdf"],
     steps: ["Choose your PDF.", "Type the largest file size you want.", "Press Split PDF, then download the files or the ZIP."],
     faq: [
@@ -576,7 +576,7 @@ const base: Tool[] = [
     short: "Write text such as DRAFT or CONFIDENTIAL across pages, placed where you want it.",
     intro: "Type the text, choose a colour, size and angle, and drag it where you want on the preview. Mark every page or only the ones you type.",
     category: "edit",
-    icon: "text",
+    icon: "stamp",
     keywords: ["stamp pdf", "draft watermark", "confidential watermark", "text watermark", "mark pdf pages"],
     steps: ["Choose your PDF.", "Type the text, then drag it on the preview or pick a position, and set its colour, size and strength.", "Press Add watermark, then download the result."],
     faq: [
@@ -595,7 +595,7 @@ const base: Tool[] = [
     short: "Split a PDF into a file for each top-level bookmark, such as one per chapter.",
     intro: "Many long PDFs carry bookmarks, a clickable outline in the side panel. Each top-level bookmark starts a new file that runs to the next one.",
     category: "organise",
-    icon: "split",
+    icon: "bookmark",
     keywords: ["split by chapter", "split pdf at bookmarks", "pdf outline split", "chapters to files"],
     steps: ["Choose your PDF. The page reads its bookmarks and lists the files it would make.", "Check the list.", "Press Split, then download the files or the ZIP."],
     faq: [
@@ -614,7 +614,7 @@ const base: Tool[] = [
     short: "Draw, type or upload your signature and place it on a page.",
     intro: "Make your signature, drag it where it belongs on the page, size it, and download the signed copy. It is a picture of your signature, not a digital signature.",
     category: "edit",
-    icon: "tags",
+    icon: "signature",
     keywords: ["e-sign pdf", "add signature to pdf", "sign document", "draw signature", "electronic signature", "signature background remover", "transparent signature", "signature maker"],
     steps: ["Choose your PDF.", "Draw your signature, type your name, or upload a picture of it.", "Drag it into place on the preview, size it, then press Add signature and download."],
     faq: [
@@ -711,7 +711,7 @@ const base: Tool[] = [
     short: "Try to mend a PDF that will not open or opens with errors.",
     intro: "Reads the file object by object without trusting its index, and writes it out again with a fresh one, which mends many broken downloads. It cannot bring back data that is missing.",
     category: "organise",
-    icon: "extract",
+    icon: "wrench",
     keywords: ["fix pdf", "corrupt pdf", "damaged pdf", "pdf will not open", "recover pdf"],
     steps: ["Choose the damaged PDF.", "Press Repair PDF.", "Download the copy and look through it before relying on it."],
     faq: [
@@ -728,7 +728,7 @@ const base: Tool[] = [
     short: "Photograph pages with your phone's camera and make them into one PDF.",
     intro: "Take a photo of each page, put them in order, and download one PDF. On a computer, choose pictures of your pages instead.",
     category: "to-pdf",
-    icon: "images",
+    icon: "camera",
     keywords: ["camera to pdf", "document scanner", "phone scan", "photo to pdf", "scan documents"],
     steps: ["Press Take a photo and photograph the first page. On a computer, choose the pictures instead.", "Add the other pages, and put them in order.", "Press Make a PDF, then download it."],
     faq: [
@@ -745,7 +745,7 @@ const base: Tool[] = [
     short: "Put iPhone HEIC photos on PDF pages, in a browser that can open them.",
     intro: "Choose HEIC photos and get one PDF. This only works in a browser that can open HEIC files, which today means Safari on an iPhone, iPad or Mac.",
     category: "to-pdf",
-    icon: "images",
+    icon: "phone",
     keywords: ["heic to pdf", "iphone photo to pdf", "heif to pdf", "apple photos to pdf"],
     steps: ["Open this page in Safari, and choose your HEIC photos.", "Put them in order and pick a page size and margin.", "Press Make a PDF, then download it."],
     faq: [
@@ -761,7 +761,7 @@ const base: Tool[] = [
     short: "Turn the text of a PDF into Markdown, with headings and lists guessed.",
     intro: "Reads the text stored in the file and gives it back as Markdown, which suits notes and AI tools. Headings, lists and paragraphs are guessed, so check the result.",
     category: "from-pdf",
-    icon: "text",
+    icon: "file-code",
     keywords: ["pdf to md", "pdf to text for ai", "convert pdf to markdown", "pdf for llm"],
     steps: ["Choose your PDF.", "Leave the pages empty for all of them, or type the pages you want.", "Press Convert, then read, copy or download the .md file."],
     faq: [
@@ -780,7 +780,7 @@ const base: Tool[] = [
     short: "Type into the fields of a PDF form, tick boxes, pick choices, and save a copy.",
     intro: "Open a PDF with fillable fields, fill them in here, and download the filled copy. You can keep the fields editable or make your entries permanent.",
     category: "edit",
-    icon: "tags",
+    icon: "list-checks",
     keywords: ["fill out pdf", "pdf form filler", "complete form", "fillable pdf", "type into pdf"],
     steps: ["Choose your PDF form. The page lists its fields.", "Fill in the fields.", "Press Save filled PDF, then download it."],
     faq: [
@@ -816,7 +816,7 @@ const base: Tool[] = [
     short: "Compare the text of two PDFs page by page and see what was added or removed.",
     intro: "Choose an original and a revised PDF. The page lists the lines added and removed on each page that differs. Only text is compared.",
     category: "edit",
-    icon: "text",
+    icon: "compare",
     keywords: ["diff pdf", "compare two pdf files", "pdf difference", "what changed in pdf"],
     steps: ["Choose the original PDF and the revised PDF.", "Wait while both are read.", "Read the pages that differ: added lines are marked + and removed lines \u2212."],
     faq: [

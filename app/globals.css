@@ -14,25 +14,25 @@
 @theme static {
   /* Surfaces */
   --color-surface: #ffffff;
-  --color-surface-2: #f8fafc;
-  --color-surface-3: #f1f5f9;
+  --color-surface-2: #f3f5f9;
+  --color-surface-3: #e9edf4;
   --color-raised: #ffffff;
   --color-field: #ffffff;
   /* Text */
-  --color-ink: #0f172a;
-  --color-ink-2: #334155;
-  --color-ink-3: #475569;
-  --color-placeholder: #64748b;
+  --color-ink: #0c1322;
+  --color-ink-2: #2f3a4f;
+  --color-ink-3: #4f5b73;
+  --color-placeholder: #6a768c;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #cbd5e1;
-  --color-line-soft: #e2e8f0;
-  --color-control: #7b8aa0;
+  --color-line: #d5dbe6;
+  --color-line-soft: #e7ebf2;
+  --color-control: #74829a;
   --color-focus: #2772ed;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
   --color-action: #2670ec;
   --color-action-hover: #1d5fd6;
   --color-on-action: #ffffff;
-  --color-action-soft: #eaf2fe;
+  --color-action-soft: #e9f1fe;
   --color-action-ink: #1b4fb0;
   /* Success (Download, finished work) */
   --color-success: #047857;
@@ -72,11 +72,11 @@
   --color-badge-act-fg: #1b4fb0;
   /* Overlays, shadows, loading placeholders */
   --color-scrim: rgba(15, 23, 42, 0.45);
-  --color-shadow: rgba(15, 23, 42, 0.18);
-  --color-skeleton-a: #e2e8f0;
-  --color-skeleton-b: #f1f5f9;
+  --color-shadow: rgba(12, 19, 34, 0.16);
+  --color-skeleton-a: #e7ebf2;
+  --color-skeleton-b: #f3f5f9;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #dde2ea;
+  --color-stage: #e3e7ef;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -97,6 +97,28 @@
   --color-diff-add-fg: #14532d;
   --color-diff-del-bg: #fee2e2;
   --color-diff-del-fg: #7f1d1d;
+  /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+  --color-canvas: #f6f8fb;
+  --color-header: rgba(255, 255, 255, 0.93);
+  --color-action-deep: #1b58cf;
+  --color-success-deep: #03684b;
+  --color-shadow-soft: rgba(12, 19, 34, 0.07);
+  --color-glow: rgba(38, 112, 236, 0.38);
+  --color-sheen: rgba(255, 255, 255, 0.22);
+  --color-wash: rgba(38, 112, 236, 0.1);
+  --color-drop-line: #4f86ee;
+  --color-cat-organise-bg: #e8f1fe;
+  --color-cat-organise-ink: #1b4fb0;
+  --color-cat-to-pdf-bg: #f0ebfe;
+  --color-cat-to-pdf-ink: #5a2fc2;
+  --color-cat-from-pdf-bg: #def5f1;
+  --color-cat-from-pdf-ink: #0b665d;
+  --color-cat-edit-bg: #fdefdc;
+  --color-cat-edit-ink: #8f4406;
+  --color-cat-security-bg: #fde7ee;
+  --color-cat-security-ink: #a31845;
+  --color-cat-compress-bg: #e3f6ea;
+  --color-cat-compress-ink: #14602f;
 }
 
 /* The font comes from next/font (app/layout.tsx) as --font-google-sans; the system stack is the fallback. */
@@ -119,25 +141,25 @@
   color-scheme: light; background: var(--color-surface); color: var(--color-ink);
   /* Surfaces */
   --color-surface: #ffffff;
-  --color-surface-2: #f8fafc;
-  --color-surface-3: #f1f5f9;
+  --color-surface-2: #f3f5f9;
+  --color-surface-3: #e9edf4;
   --color-raised: #ffffff;
   --color-field: #ffffff;
   /* Text */
-  --color-ink: #0f172a;
-  --color-ink-2: #334155;
-  --color-ink-3: #475569;
-  --color-placeholder: #64748b;
+  --color-ink: #0c1322;
+  --color-ink-2: #2f3a4f;
+  --color-ink-3: #4f5b73;
+  --color-placeholder: #6a768c;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #cbd5e1;
-  --color-line-soft: #e2e8f0;
-  --color-control: #7b8aa0;
+  --color-line: #d5dbe6;
+  --color-line-soft: #e7ebf2;
+  --color-control: #74829a;
   --color-focus: #2772ed;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
   --color-action: #2670ec;
   --color-action-hover: #1d5fd6;
   --color-on-action: #ffffff;
-  --color-action-soft: #eaf2fe;
+  --color-action-soft: #e9f1fe;
   --color-action-ink: #1b4fb0;
   /* Success (Download, finished work) */
   --color-success: #047857;
@@ -177,11 +199,11 @@
   --color-badge-act-fg: #1b4fb0;
   /* Overlays, shadows, loading placeholders */
   --color-scrim: rgba(15, 23, 42, 0.45);
-  --color-shadow: rgba(15, 23, 42, 0.18);
-  --color-skeleton-a: #e2e8f0;
-  --color-skeleton-b: #f1f5f9;
+  --color-shadow: rgba(12, 19, 34, 0.16);
+  --color-skeleton-a: #e7ebf2;
+  --color-skeleton-b: #f3f5f9;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #dde2ea;
+  --color-stage: #e3e7ef;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -202,25 +224,47 @@
   --color-diff-add-fg: #14532d;
   --color-diff-del-bg: #fee2e2;
   --color-diff-del-fg: #7f1d1d;
+  /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+  --color-canvas: #f6f8fb;
+  --color-header: rgba(255, 255, 255, 0.93);
+  --color-action-deep: #1b58cf;
+  --color-success-deep: #03684b;
+  --color-shadow-soft: rgba(12, 19, 34, 0.07);
+  --color-glow: rgba(38, 112, 236, 0.38);
+  --color-sheen: rgba(255, 255, 255, 0.22);
+  --color-wash: rgba(38, 112, 236, 0.1);
+  --color-drop-line: #4f86ee;
+  --color-cat-organise-bg: #e8f1fe;
+  --color-cat-organise-ink: #1b4fb0;
+  --color-cat-to-pdf-bg: #f0ebfe;
+  --color-cat-to-pdf-ink: #5a2fc2;
+  --color-cat-from-pdf-bg: #def5f1;
+  --color-cat-from-pdf-ink: #0b665d;
+  --color-cat-edit-bg: #fdefdc;
+  --color-cat-edit-ink: #8f4406;
+  --color-cat-security-bg: #fde7ee;
+  --color-cat-security-ink: #a31845;
+  --color-cat-compress-bg: #e3f6ea;
+  --color-cat-compress-ink: #14602f;
 }
 .scheme-dark,
 :root[data-theme="dark"] {
   color-scheme: dark;
   /* Surfaces */
-  --color-surface: #0f172a;
-  --color-surface-2: #131c31;
-  --color-surface-3: #1e293b;
-  --color-raised: #1e293b;
-  --color-field: #0b1220;
+  --color-surface: #101829;
+  --color-surface-2: #141e33;
+  --color-surface-3: #1d2940;
+  --color-raised: #18223a;
+  --color-field: #0c1423;
   /* Text */
-  --color-ink: #f1f5f9;
-  --color-ink-2: #cbd5e1;
-  --color-ink-3: #94a3b8;
-  --color-placeholder: #8392a8;
+  --color-ink: #f1f4f9;
+  --color-ink-2: #c5cedc;
+  --color-ink-3: #95a2b8;
+  --color-placeholder: #8090a8;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #334155;
-  --color-line-soft: #2a3650;
-  --color-control: #64748b;
+  --color-line: #2b3852;
+  --color-line-soft: #212d45;
+  --color-control: #677791;
   --color-focus: #6aa6f6;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
   --color-action: #2670ec;
@@ -266,11 +310,11 @@
   --color-badge-act-fg: #b9d3fb;
   /* Overlays, shadows, loading placeholders */
   --color-scrim: rgba(0, 0, 0, 0.6);
-  --color-shadow: rgba(0, 0, 0, 0.55);
-  --color-skeleton-a: #1e293b;
-  --color-skeleton-b: #2a3650;
+  --color-shadow: rgba(0, 0, 0, 0.6);
+  --color-skeleton-a: #1d2940;
+  --color-skeleton-b: #28354f;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #1e293b;
+  --color-stage: #1a2438;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -291,26 +335,48 @@
   --color-diff-add-fg: #bbf7d0;
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
   --color-diff-del-fg: #fecaca;
+  /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+  --color-canvas: #090e19;
+  --color-header: rgba(16, 24, 41, 0.92);
+  --color-action-deep: #1b58cf;
+  --color-success-deep: #2bbd88;
+  --color-shadow-soft: rgba(0, 0, 0, 0.35);
+  --color-glow: rgba(77, 143, 240, 0.4);
+  --color-sheen: rgba(255, 255, 255, 0.14);
+  --color-wash: rgba(77, 143, 240, 0.14);
+  --color-drop-line: #6aa6f6;
+  --color-cat-organise-bg: rgba(77, 143, 240, 0.18);
+  --color-cat-organise-ink: #8ebcf9;
+  --color-cat-to-pdf-bg: rgba(150, 118, 247, 0.2);
+  --color-cat-to-pdf-ink: #c4b1fb;
+  --color-cat-from-pdf-bg: rgba(45, 190, 172, 0.17);
+  --color-cat-from-pdf-ink: #6fdccf;
+  --color-cat-edit-bg: rgba(240, 160, 60, 0.17);
+  --color-cat-edit-ink: #f7c27d;
+  --color-cat-security-bg: rgba(240, 90, 135, 0.18);
+  --color-cat-security-ink: #f9a8c0;
+  --color-cat-compress-bg: rgba(60, 190, 110, 0.17);
+  --color-cat-compress-ink: #86e0a6;
 }
 .scheme-dark { background: var(--color-surface); color: var(--color-ink); }
 @media (prefers-color-scheme: dark) {
   :root[data-theme="system"] {
     color-scheme: dark;
     /* Surfaces */
-    --color-surface: #0f172a;
-    --color-surface-2: #131c31;
-    --color-surface-3: #1e293b;
-    --color-raised: #1e293b;
-    --color-field: #0b1220;
+    --color-surface: #101829;
+    --color-surface-2: #141e33;
+    --color-surface-3: #1d2940;
+    --color-raised: #18223a;
+    --color-field: #0c1423;
     /* Text */
-    --color-ink: #f1f5f9;
-    --color-ink-2: #cbd5e1;
-    --color-ink-3: #94a3b8;
-    --color-placeholder: #8392a8;
+    --color-ink: #f1f4f9;
+    --color-ink-2: #c5cedc;
+    --color-ink-3: #95a2b8;
+    --color-placeholder: #8090a8;
     /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-    --color-line: #334155;
-    --color-line-soft: #2a3650;
-    --color-control: #64748b;
+    --color-line: #2b3852;
+    --color-line-soft: #212d45;
+    --color-control: #677791;
     --color-focus: #6aa6f6;
     /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
     --color-action: #2670ec;
@@ -356,11 +422,11 @@
     --color-badge-act-fg: #b9d3fb;
     /* Overlays, shadows, loading placeholders */
     --color-scrim: rgba(0, 0, 0, 0.6);
-    --color-shadow: rgba(0, 0, 0, 0.55);
-    --color-skeleton-a: #1e293b;
-    --color-skeleton-b: #2a3650;
+    --color-shadow: rgba(0, 0, 0, 0.6);
+    --color-skeleton-a: #1d2940;
+    --color-skeleton-b: #28354f;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #1e293b;
+  --color-stage: #1a2438;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -381,14 +447,46 @@
   --color-diff-add-fg: #bbf7d0;
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
   --color-diff-del-fg: #fecaca;
+    /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+    --color-canvas: #090e19;
+    --color-header: rgba(16, 24, 41, 0.92);
+    --color-action-deep: #1b58cf;
+    --color-success-deep: #2bbd88;
+    --color-shadow-soft: rgba(0, 0, 0, 0.35);
+    --color-glow: rgba(77, 143, 240, 0.4);
+    --color-sheen: rgba(255, 255, 255, 0.14);
+    --color-wash: rgba(77, 143, 240, 0.14);
+    --color-drop-line: #6aa6f6;
+    --color-cat-organise-bg: rgba(77, 143, 240, 0.18);
+    --color-cat-organise-ink: #8ebcf9;
+    --color-cat-to-pdf-bg: rgba(150, 118, 247, 0.2);
+    --color-cat-to-pdf-ink: #c4b1fb;
+    --color-cat-from-pdf-bg: rgba(45, 190, 172, 0.17);
+    --color-cat-from-pdf-ink: #6fdccf;
+    --color-cat-edit-bg: rgba(240, 160, 60, 0.17);
+    --color-cat-edit-ink: #f7c27d;
+    --color-cat-security-bg: rgba(240, 90, 135, 0.18);
+    --color-cat-security-ink: #f9a8c0;
+    --color-cat-compress-bg: rgba(60, 190, 110, 0.17);
+    --color-cat-compress-ink: #86e0a6;
   }
 }
 
 @layer base {
-  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
-  body { font-family: var(--font-sans); background: var(--color-surface); color: var(--color-ink); }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5.5rem; }
+  /* The page is a soft tint, so cards (white, or a step lighter in dark) sit on it. A faint wash of the brand colour
+     falls from the top of every page. */
+  body {
+    font-family: var(--font-sans); color: var(--color-ink); text-rendering: optimizeLegibility;
+    background-color: var(--color-canvas);
+    background-image: radial-gradient(64rem 26rem at 50% -8rem, var(--color-wash), transparent 70%);
+    background-repeat: no-repeat;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+  ::selection { background: var(--color-glow); }
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -398,35 +496,74 @@
    utilities on the elements; colour and shape live here.
    ===================================================================================== */
 @layer components {
+  /* ---- Type: the few sizes the pages are set in. Headings tighten as they grow. ---- */
+  .display { font-size: clamp(2.25rem, 1.35rem + 3.8vw, 3.5rem); line-height: 1.04; font-weight: 700; letter-spacing: -0.03em; }
+  .title { font-size: clamp(1.875rem, 1.45rem + 1.9vw, 2.75rem); line-height: 1.08; font-weight: 700; letter-spacing: -0.025em; }
+  .section-title { font-size: 1.5rem; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+  .lead { font-size: 1.125rem; line-height: 1.6; color: var(--color-ink-2); }
+  @media (min-width: 40rem) { .lead { font-size: 1.1875rem; } }
+  .eyebrow { font-size: 0.8125rem; line-height: 1.2; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-ink-3); }
+  .nums { font-variant-numeric: tabular-nums lining-nums; }
+
+  /* ---- Depth, in three steps: at rest, raised, floating. Each is two soft shadows, never one hard one. ---- */
+  .lift-1 { box-shadow: 0 1px 2px var(--color-shadow-soft); }
+  .lift-2 { box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 24px -14px var(--color-shadow); }
+  .lift-3 { box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow); }
+
+  /* ---- A group of tools carries a tint and an ink (tokens above). Put cat-<group> on a parent. ---- */
+  .cat-organise { --cat-bg: var(--color-cat-organise-bg); --cat-ink: var(--color-cat-organise-ink); }
+  .cat-to-pdf { --cat-bg: var(--color-cat-to-pdf-bg); --cat-ink: var(--color-cat-to-pdf-ink); }
+  .cat-from-pdf { --cat-bg: var(--color-cat-from-pdf-bg); --cat-ink: var(--color-cat-from-pdf-ink); }
+  .cat-edit { --cat-bg: var(--color-cat-edit-bg); --cat-ink: var(--color-cat-edit-ink); }
+  .cat-security { --cat-bg: var(--color-cat-security-bg); --cat-ink: var(--color-cat-security-ink); }
+  .cat-compress { --cat-bg: var(--color-cat-compress-bg); --cat-ink: var(--color-cat-compress-ink); }
+  .cat-ink { color: var(--cat-ink, var(--color-action-ink)); }
+
   /* ---- Buttons: one primary per state; the download is the only green one ---- */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
     min-height: 44px; padding: 0.625rem 1.25rem;
     border: 0; border-radius: 0.75rem;
     font-size: 1rem; line-height: 1.5rem; font-weight: 600; text-align: center; text-decoration: none;
-    cursor: pointer; transition: background-color 0.15s;
+    cursor: pointer; transition: background-color 0.15s, box-shadow 0.18s, transform 0.12s;
   }
+  .btn:active:not(:disabled) { transform: translateY(1px); }
   .btn-sm { min-height: 40px; padding: 0.5625rem 0.875rem; font-size: 0.875rem; line-height: 1.25rem; }
   .btn-lg { min-height: 56px; padding: 0.875rem 1.5rem; font-size: 1.125rem; line-height: 1.75rem; }
   .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
   .btn[aria-busy="true"] { cursor: progress; }
-  .btn-primary { background: var(--color-action); color: var(--color-on-action); }
-  .btn-primary:hover:not(:disabled) { background: var(--color-action-hover); }
-  .btn-success { background: var(--color-success); color: var(--color-on-success); }
-  .btn-success:hover:not(:disabled) { background: var(--color-success-hover); }
+  /* The filled buttons deepen towards the bottom and never get lighter than their own colour, so the text on them
+     keeps its contrast. A sheen along the top edge and a glow underneath give them weight. */
+  .btn-primary {
+    background-color: var(--color-action); background-image: linear-gradient(180deg, var(--color-action), var(--color-action-deep));
+    color: var(--color-on-action);
+    box-shadow: inset 0 1px 0 var(--color-sheen), 0 1px 2px var(--color-shadow-soft), 0 10px 20px -10px var(--color-glow);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-action-hover); background-image: linear-gradient(180deg, var(--color-action-hover), var(--color-action-deep));
+    box-shadow: inset 0 1px 0 var(--color-sheen), 0 2px 4px var(--color-shadow-soft), 0 14px 26px -10px var(--color-glow);
+    transform: translateY(-1px);
+  }
+  .btn-success {
+    background-color: var(--color-success); background-image: linear-gradient(180deg, var(--color-success), var(--color-success-deep));
+    color: var(--color-on-success);
+    box-shadow: inset 0 1px 0 var(--color-sheen), 0 1px 2px var(--color-shadow-soft), 0 10px 20px -12px var(--color-shadow);
+  }
+  .btn-success:hover:not(:disabled) { background-color: var(--color-success-hover); transform: translateY(-1px); }
+  .btn-primary:disabled, .btn-success:disabled, .btn-primary[aria-disabled="true"], .btn-success[aria-disabled="true"] { box-shadow: none; }
   .btn-danger { background: var(--color-danger); color: var(--color-on-danger); }
   .btn-danger:hover:not(:disabled) { background: var(--color-danger-hover); }
-  .btn-secondary { background: var(--color-surface); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-control); }
-  .btn-secondary:hover:not(:disabled) { background: var(--color-surface-2); }
+  .btn-secondary { background: var(--color-surface); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-control), 0 1px 2px var(--color-shadow-soft); }
+  .btn-secondary:hover:not(:disabled) { background: var(--color-surface-2); box-shadow: inset 0 0 0 1px var(--color-ink-3), 0 4px 10px -6px var(--color-shadow); }
   .btn-ghost { background: transparent; color: var(--color-ink-2); }
   .btn-ghost:hover:not(:disabled) { background: var(--color-surface-3); }
 
   .icon-btn {
     display: inline-flex; align-items: center; justify-content: center; flex: none;
     width: 44px; height: 44px; border: 0; border-radius: 0.75rem;
-    background: transparent; color: var(--color-ink-2); cursor: pointer;
+    background: transparent; color: var(--color-ink-2); cursor: pointer; transition: background-color 0.15s, color 0.15s;
   }
-  .icon-btn:hover:not(:disabled) { background: var(--color-surface-3); }
+  .icon-btn:hover:not(:disabled) { background: var(--color-surface-3); color: var(--color-ink); }
   .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .icon-btn-danger { color: var(--color-danger-text); }
   .icon-btn-danger:hover:not(:disabled) { background: var(--color-danger-soft); }
@@ -468,8 +605,9 @@
   .optcard:has(:disabled) { cursor: not-allowed; }
   .optcard-input { position: absolute; width: 1px; height: 1px; opacity: 0; }
   .optcard-box {
-    display: block; height: 100%; padding: 1rem; border-radius: 0.75rem;
+    display: block; height: 100%; padding: 1rem; border-radius: 0.875rem;
     border: 1px solid var(--color-control); background: var(--color-surface);
+    box-shadow: 0 1px 2px var(--color-shadow-soft); transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
   }
   .optcard:hover .optcard-input:not(:disabled) + .optcard-box { border-color: var(--color-ink-3); }
   .optcard-input:checked + .optcard-box {
@@ -486,7 +624,10 @@
     display: block; width: 100%; min-height: 44px; padding: 0.625rem 0.875rem;
     border: 1px solid var(--color-control); border-radius: 0.75rem;
     background: var(--color-field); color: var(--color-ink); font-size: 1rem;
+    box-shadow: 0 1px 2px var(--color-shadow-soft); transition: border-color 0.15s, box-shadow 0.15s;
   }
+  .ctl:hover:not(:disabled):not(:focus-visible) { border-color: var(--color-ink-3); }
+  .ctl:focus-visible { border-color: var(--color-action); box-shadow: 0 0 0 4px var(--color-action-soft); }
   .ctl::placeholder { color: var(--color-placeholder); }
   .ctl:disabled { opacity: 0.6; }
   .ctl[aria-invalid="true"] { border-color: var(--color-danger); }
@@ -497,7 +638,7 @@
   .check-input { width: 1.25rem; height: 1.25rem; flex: none; accent-color: var(--color-action); }
 
   /* ---- Surfaces ---- */
-  .card { border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface); }
+  .card { border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 24px -16px var(--color-shadow); }
   .badge {
     display: inline-flex; align-items: center; gap: 0.25rem; padding: 2px 10px; border-radius: 999px;
     background: var(--color-badge-bg); color: var(--color-badge-fg); font-size: 0.75rem; font-weight: 600;
@@ -518,7 +659,7 @@
   .alert-error { background: var(--color-danger-soft); border-color: var(--color-danger-line); color: var(--color-danger-ink); }
   .alert-success { background: var(--color-success-soft); border-color: var(--color-success-line); color: var(--color-success-ink); }
 
-  .disc { border: 1px solid var(--color-control); border-radius: 0.75rem; padding: 0 1rem; }
+  .disc { border: 1px solid var(--color-control); border-radius: 0.875rem; padding: 0 1rem; background: var(--color-surface); box-shadow: 0 1px 2px var(--color-shadow-soft); }
   .disc-summary {
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
     min-height: 44px; font-weight: 600; cursor: pointer; list-style: none;
@@ -540,8 +681,8 @@
   /* ---- Dialog (the browser's own <dialog>: it traps focus and closes on Escape) ---- */
   .dialog {
     width: calc(100% - 2rem); max-width: 27.5rem; margin: auto; padding: 0; overflow: hidden;
-    border: 1px solid var(--color-line-soft); border-radius: 1.25rem;
-    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 20px 50px var(--color-shadow);
+    border: 1px solid var(--color-line-soft); border-radius: 1.5rem;
+    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow);
   }
   .dialog::backdrop { background: var(--color-scrim); }
   .dialog-inner { padding: 1.5rem; }
@@ -564,7 +705,7 @@
     display: flex; align-items: flex-start; gap: 0.75rem; width: 100%;
     padding: 0.625rem 0.25rem 0.625rem 0.875rem; font-size: 0.875rem;
     border: 1px solid var(--color-control); border-radius: 0.875rem;
-    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 10px 30px var(--color-shadow);
+    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 2px 6px var(--color-shadow-soft), 0 18px 40px -18px var(--color-shadow);
   }
   .toast-error { background: var(--color-danger-soft); border-color: var(--color-danger-line); color: var(--color-danger-ink); }
   .toast-body { flex: 1; min-width: 0; padding-top: 0.125rem; }
@@ -576,11 +717,20 @@
   .skip-link:focus { background: var(--color-surface); color: var(--color-action-ink); }
 
   /* ---- Site chrome ---- */
-  .nav-link { padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--color-ink-2); }
-  .nav-link:hover { background: var(--color-surface-3); }
+  /* The header stays at the top. Its see-through, blurred backing is a layer of its own: a blur on the header itself
+     would make the header the frame for the menu's page-wide scrim, and the scrim would shrink to the header's size. */
+  .site-header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--color-line-soft); }
+  .site-header::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--color-header);
+    -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
+  }
+  /* The menu hangs from a header that no longer scrolls away, so it scrolls inside itself when it is taller than the screen. */
+  .site-menu { max-height: calc(100dvh - 3.75rem); overflow-y: auto; overscroll-behavior: contain; box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow); }
+  .nav-link { padding: 0.5rem 0.75rem; border-radius: 0.625rem; font-size: 0.875rem; font-weight: 600; color: var(--color-ink-2); transition: background-color 0.15s, color 0.15s; }
+  .nav-link:hover { background: var(--color-surface-3); color: var(--color-ink); }
   .nav-link[aria-current="page"] { color: var(--color-action-ink); }
-  .menu-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; color: var(--color-ink); }
-  .menu-link:hover { background: var(--color-surface-3); }
+  .menu-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.625rem; color: var(--color-ink); transition: background-color 0.15s; }
+  .menu-link:hover { background: var(--cat-bg, var(--color-surface-3)); }
   .foot-link { border-radius: 0.25rem; font-size: 0.875rem; color: var(--color-ink-2); }
   .foot-link:hover { color: var(--color-action-ink); text-decoration: underline; }
   .pill-link {
@@ -589,18 +739,22 @@
   }
   .pill-link:hover { background: var(--color-action-soft); color: var(--color-action-ink); }
   .tool-card {
-    display: flex; gap: 1rem; height: 100%; padding: 1.25rem;
+    display: flex; gap: 1rem; height: 100%; padding: 1.125rem 1.25rem;
     border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface);
-    box-shadow: 0 1px 2px var(--color-shadow); transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: 0 1px 2px var(--color-shadow-soft); transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
   }
-  .tool-card:hover { border-color: var(--color-action); box-shadow: 0 2px 8px var(--color-shadow); }
+  .tool-card:hover {
+    border-color: var(--cat-ink, var(--color-action)); transform: translateY(-2px);
+    box-shadow: 0 2px 4px var(--color-shadow-soft), 0 16px 30px -14px var(--color-shadow);
+  }
   .tool-card-icon {
     display: flex; flex: none; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
-    border-radius: 0.75rem; background: var(--color-action-soft); color: var(--color-action-ink);
+    border-radius: 0.875rem; background: var(--cat-bg, var(--color-action-soft)); color: var(--cat-ink, var(--color-action-ink));
   }
+  .tool-card-icon-lg { width: 3.25rem; height: 3.25rem; border-radius: 1rem; }
   .step-num {
     display: flex; flex: none; align-items: center; justify-content: center; width: 2rem; height: 2rem;
-    border-radius: 999px; background: var(--color-action-soft); color: var(--color-action-ink); font-weight: 700;
+    border-radius: 999px; background: var(--cat-bg, var(--color-action-soft)); color: var(--cat-ink, var(--color-action-ink)); font-weight: 700;
   }
 }
 
@@ -615,15 +769,15 @@
   .actionbar {
     position: sticky; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 0.75rem;
     margin: 0.5rem -1rem 0; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-    background: var(--color-surface); border-top: 1px solid var(--color-line-soft);
-    box-shadow: 0 -6px 12px -8px var(--color-shadow);
+    background: var(--color-canvas); border-top: 1px solid var(--color-line-soft);
+    box-shadow: 0 -8px 16px -10px var(--color-shadow);
   }
   .actionbar > .btn { width: 100%; }
   /* Inside the result panel the bar takes the panel's own colours, so it does not cut a strip of page colour across it.
      The result tint is see-through in dark mode, so it is laid over the page colour: a stuck bar must hide what scrolls under it. */
   .actionbar-panel {
     margin: 1.125rem -1.25rem 0; padding-left: 1.25rem; padding-right: 1.25rem;
-    background: linear-gradient(var(--color-result), var(--color-result)), var(--color-surface);
+    background: linear-gradient(var(--color-result), var(--color-result)), var(--color-canvas);
     border-top-color: var(--color-success-line);
   }
   @container app (min-width: 520px) {
@@ -642,17 +796,26 @@
     .filecard { flex-direction: row; align-items: center; justify-content: space-between; }
   }
 
+  /* The place every tool starts: a raised white panel with a wash of the brand tint and a dashed blue edge (3:1). */
   .dropzone {
-    text-align: center; border: 2px dashed var(--color-control); border-radius: 1rem;
-    background: var(--color-surface-2); transition: border-color 0.15s, background-color 0.15s;
+    text-align: center; border: 2px dashed var(--color-drop-line); border-radius: 1.25rem;
+    background-color: var(--color-surface); background-image: linear-gradient(180deg, var(--color-wash), transparent 80%);
+    box-shadow: 0 1px 2px var(--color-shadow-soft), 0 14px 30px -18px var(--color-shadow);
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.18s;
   }
-  .dropzone-over { border-color: var(--color-action); background: var(--color-action-soft); }
+  .dropzone:hover { border-color: var(--color-action); }
+  .dropzone-over { border-color: var(--color-action); background-color: var(--color-action-soft); box-shadow: 0 0 0 5px var(--color-action-soft), 0 14px 30px -18px var(--color-shadow); }
+  .dropzone-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 4rem; height: 4rem; border-radius: 1.25rem;
+    background: var(--color-surface); color: var(--cat-ink, var(--color-action-ink));
+    box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 22px -10px var(--color-shadow);
+  }
 
   /* Page thumbnails you select (the page itself is drawn on white paper, whatever the theme). */
   .thumb {
     position: relative; display: block; width: 100%; padding: 0.5rem; border: 0; border-radius: 0.75rem;
     background: var(--color-surface); text-align: center; cursor: pointer;
-    box-shadow: inset 0 0 0 1px var(--color-control);
+    box-shadow: inset 0 0 0 1px var(--color-control); transition: box-shadow 0.15s, background-color 0.15s;
   }
   .thumb:hover { box-shadow: inset 0 0 0 1px var(--color-ink-3); }
   .thumb[aria-checked="true"] { background: var(--color-action-soft); box-shadow: inset 0 0 0 2px var(--color-action); }
@@ -666,7 +829,7 @@
   .thumb-wait { color: var(--color-ink-3); }
 
   /* The finished-work panel */
-  .result { padding: 1.25rem; border: 1px solid var(--color-success-line); border-radius: 1rem; background: var(--color-result); }
+  .result { padding: 1.25rem; border: 1px solid var(--color-success-line); border-radius: 1.25rem; background: var(--color-result); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 14px 30px -18px var(--color-shadow); }
   .result:focus { outline: none; }
   .result-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
   .result-done { display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem; font-weight: 700; color: var(--color-success-ink); }
@@ -697,8 +860,8 @@
 
 @layer components {
   /* ---- The page stage (build set C): a page drawn big, with marks placed on it ---- */
-  .pagestage { padding: 1rem; overflow: auto; border-radius: 1rem; background: var(--color-stage); }
-  .pagestage-paper { position: relative; margin: 0 auto; background: var(--color-paper); color: var(--color-paper-ink); box-shadow: 0 2px 10px var(--color-shadow); container-type: inline-size; }
+  .pagestage { padding: 1rem; overflow: auto; border-radius: 1.25rem; background: var(--color-stage); box-shadow: inset 0 1px 3px var(--color-shadow-soft); }
+  .pagestage-paper { position: relative; margin: 0 auto; background: var(--color-paper); color: var(--color-paper-ink); box-shadow: 0 1px 3px var(--color-shadow-soft), 0 14px 30px -14px var(--color-shadow); container-type: inline-size; }
   .pagestage-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem; margin-top: 0.625rem; }
   .pagestage-nav { display: flex; align-items: center; gap: 0.125rem; font-size: 0.875rem; font-weight: 600; }
   .pagestage-tools { display: flex; align-items: center; gap: 2px; }

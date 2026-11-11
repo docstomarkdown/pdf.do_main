@@ -29,7 +29,8 @@ export function ToolPage({ tool, children, extra }: { tool: Tool; children: Reac
   ];
 
   return (
-    <div>
+    // cat-<group>: the tool's group lends its tint and ink to the icon tile, the drop zone's icon and the step numbers.
+    <div className={`cat-${tool.category}`}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <nav aria-label="Breadcrumb" className="mb-4">
@@ -47,8 +48,9 @@ export function ToolPage({ tool, children, extra }: { tool: Tool; children: Reac
         </ol>
       </nav>
 
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{tool.name}</h1>
-      <p className="mt-3 max-w-2xl text-lg text-ink-2">{tool.intro}</p>
+      <span aria-hidden="true" className="tool-card-icon tool-card-icon-lg mb-4"><Icon name={tool.icon} className="h-7 w-7" /></span>
+      <h1 className="title">{tool.name}</h1>
+      <p className="lead mt-3 max-w-2xl">{tool.intro}</p>
       <p className="mt-3 flex items-center gap-2 text-sm text-ink-2">
         <Icon name="shield" className="h-4 w-4 shrink-0 text-success" />
         <span>Processed in your browser. Nothing is uploaded. <TextLink href="/how-it-works">How it works</TextLink></span>
@@ -58,7 +60,7 @@ export function ToolPage({ tool, children, extra }: { tool: Tool; children: Reac
       {extra}
 
       <section aria-labelledby="how-to" className="mt-16">
-        <h2 id="how-to" className="text-2xl font-bold tracking-tight">How to use {tool.name}</h2>
+        <h2 id="how-to" className="section-title">How to use {tool.name}</h2>
         <ol className="mt-5 space-y-4">
           {tool.steps.map((s, i) => (
             <li key={s} className="flex gap-4">
@@ -70,8 +72,8 @@ export function ToolPage({ tool, children, extra }: { tool: Tool; children: Reac
       </section>
 
       <section aria-labelledby="faq" className="mt-14">
-        <h2 id="faq" className="text-2xl font-bold tracking-tight">Questions</h2>
-        <div className="mt-5 divide-y divide-line-soft rounded-2xl border border-line-soft">
+        <h2 id="faq" className="section-title">Questions</h2>
+        <div className="lift-1 mt-5 divide-y divide-line-soft rounded-2xl border border-line-soft bg-surface">
           {tool.faq.map((f) => (
             <details key={f.q} className="group px-5 py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded font-semibold [&::-webkit-details-marker]:hidden">
@@ -86,7 +88,7 @@ export function ToolPage({ tool, children, extra }: { tool: Tool; children: Reac
 
       {related.length > 0 && (
         <section aria-labelledby="related" className="mt-14">
-          <h2 id="related" className="text-2xl font-bold tracking-tight">More tools</h2>
+          <h2 id="related" className="section-title">More tools</h2>
           <ul className="mt-5 grid gap-4 sm:grid-cols-2">
             {related.map((t) => (<li key={t.slug}><ToolCard tool={t} /></li>))}
           </ul>
