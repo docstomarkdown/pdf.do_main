@@ -23,6 +23,7 @@ export function Footer() {
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-3">About</h2>
           <ul className="space-y-2">
             <li><Link href="/how-it-works" className="foot-link">How it works and your privacy</Link></li>
+            <li><Link href="/blog" className="foot-link">Blog</Link></li>
             <li><Link href="/licences" className="foot-link">Licences</Link></li>
           </ul>
         </nav>

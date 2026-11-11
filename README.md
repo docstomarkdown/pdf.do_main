@@ -4,7 +4,7 @@ PDF tools that run entirely in the browser. Work in progress.
 
 The live domain still serves the "coming soon" page, which is kept in
 `coming-soon/`. **Vercel deploys `main` to production**, so application work
-happens on the `app` branch and is merged only as a deliberate go-live step.
+happens on the `app` branch and is merged only on the owner's say-so. The app has been live on `main` since 2026-11-06, with noindex.
 Until then it says `noindex, nofollow` in a meta tag on every page and in an `X-Robots-Tag` response header (`vercel.json`, `public/_headers`).
 
 ## Run
@@ -57,6 +57,12 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Compare PDFs | pdf.js text, `diff` | page by page text diff; pictures and layout are not compared |
 
 Results can be handed to the next tool in memory ("Keep going with this file"), without a second upload.
+
+## Blog
+
+Posts are Markdown files in `content/blog/`; `content/README.md` says how to write one. Preview with `npm run dev` (drafts show
+there); `npm run build` checks every post and stops with a list of problems if one breaks a rule. Pages are `/blog`, `/blog/<slug>`
+and `/blog/tags/<tag>`. No RSS feed or sitemap yet.
 
 ## Design rules
 

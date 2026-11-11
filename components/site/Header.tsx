@@ -12,6 +12,7 @@ const QUICK = [
   { href: "/merge-pdf", label: "Merge" },
   { href: "/compress-pdf", label: "Compress" },
   { href: "/delete-pdf-pages", label: "Delete pages" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export function Header() {
