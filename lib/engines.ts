@@ -204,6 +204,9 @@ export async function signPdf(buffer: ArrayBuffer, sign: Signature, pages: numbe
   return callWorker<{ bytes: Bytes; pages: number; total: number; signed: number }>(PAGES, { op: "sign", buffer, sign, pages }, { transfer: [buffer, sign.image], signal });
 }
 
+/** A picture on chosen pages: the same placing as a signature, under the name Add image uses. `signed` counts the pages. */
+export const placePicture = signPdf;
+
 /** A copy written out again with a fresh index, from the objects that can be read. `mended` is true when qpdf could not read the original. */
 export async function repairPdf(buffer: ArrayBuffer, signal?: AbortSignal) {
   return callWorker<{ bytes: Bytes; pages: number; mended: boolean }>(SECURITY, { op: "repair", buffer }, { transfer: [buffer], signal });

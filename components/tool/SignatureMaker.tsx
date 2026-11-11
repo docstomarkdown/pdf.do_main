@@ -3,9 +3,13 @@
 import SignaturePad from "signature_pad";
 import { useEffect, useId, useRef, useState } from "react";
 import { FileDrop } from "./FileDrop";
+import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { TextField } from "@/components/ui/Field";
 import { Segmented } from "@/components/ui/Segmented";
+import { Slider } from "@/components/ui/Slider";
+import { removePaper } from "@/lib/clean-signature";
 
 export type MadeSignature = { file: File; jpeg: boolean };
 type Way = "draw" | "type" | "upload";
@@ -33,6 +37,8 @@ const toFile = (canvas: HTMLCanvasElement) => new Promise<File | null>((resolve)
 /**
  * Three ways to make a signature: draw it (signature_pad does the pen), type it, or upload a picture. `onChange` gets the
  * finished picture, or null while there is none. A drawn or typed signature is a transparent PNG trimmed to its ink.
+ * An uploaded photo has its paper taken out the same way (lib/clean-signature.ts), unless that is switched off or
+ * nothing darker than the paper is found: then the picture is used as it is, and the page says so.
  */
 export function SignatureMaker({ onChange }: { onChange: (signature: MadeSignature | null) => void }) {
   const id = useId();
@@ -41,6 +47,11 @@ export function SignatureMaker({ onChange }: { onChange: (signature: MadeSignatu
   const [empty, setEmpty] = useState(true);
   const canvas = useRef<HTMLCanvasElement>(null);
   const pad = useRef<SignaturePad | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [clean, setClean] = useState(true);
+  const [strength, setStrength] = useState(50);
+  const [note, setNote] = useState<"" | "cleaned" | "nothing">("");
+  const latest = useRef(0); // the newest request to clean a photo: an older one that finishes late is dropped
 
   useEffect(() => {
     if (way !== "draw" || !canvas.current) return;
@@ -78,14 +89,27 @@ export function SignatureMaker({ onChange }: { onChange: (signature: MadeSignatu
     onChange(file ? { file, jpeg: false } : null);
   }
 
-  async function uploaded(files: File[]) {
+  /** Hands on the photo, with its paper taken out when asked for and possible. */
+  async function apply(file: File, remove: boolean, amount: number) {
+    const turn = ++latest.current;
+    const asIs: MadeSignature = { file, jpeg: /jpe?g/i.test(file.type) || /\.jpe?g$/i.test(file.name) };
+    if (!remove) { setNote(""); onChange(asIs); return; }
+    const cleaned = await removePaper(file, amount);
+    if (turn !== latest.current) return;
+    setNote(cleaned ? "cleaned" : "nothing");
+    onChange(cleaned ? { file: cleaned, jpeg: false } : asIs);
+  }
+
+  function uploaded(files: File[]) {
     const file = files[0];
-    onChange({ file, jpeg: /jpe?g/i.test(file.type) || /\.jpe?g$/i.test(file.name) });
+    if (!file) return;
+    setPhoto(file);
+    void apply(file, clean, strength);
   }
 
   return (
     <div className="grid gap-4">
-      <Segmented<Way> legend="Make your signature" name={`${id}-way`} value={way} onChange={(w) => { onChange(null); setWay(w); setName(""); setEmpty(true); }}
+      <Segmented<Way> legend="Make your signature" name={`${id}-way`} value={way} onChange={(w) => { latest.current++; onChange(null); setWay(w); setName(""); setEmpty(true); setPhoto(null); setNote(""); }}
         options={[{ value: "draw", label: "Draw" }, { value: "type", label: "Type" }, { value: "upload", label: "Upload" }]} />
       {way === "draw" && (
         <div className="grid gap-2">
@@ -97,7 +121,19 @@ export function SignatureMaker({ onChange }: { onChange: (signature: MadeSignatu
         </div>
       )}
       {way === "type" && <TextField label="Your name" value={name} onChange={(e) => void typed(e.target.value)} maxLength={40} hint="It is drawn in an italic serif face." />}
-      {way === "upload" && <FileDrop label="Choose a picture of your signature" accept="images" onFiles={(f) => void uploaded(f)} />}
+      {way === "upload" && (
+        <div className="grid gap-3">
+          <FileDrop label={photo ? "Choose a different picture" : "Choose a picture of your signature"} accept="images" compact={!!photo} onFiles={uploaded} />
+          {photo && (
+            <>
+              <Checkbox checked={clean} onChange={(e) => { setClean(e.target.checked); void apply(photo, e.target.checked, strength); }}>Remove the paper behind it</Checkbox>
+              {clean && <Slider label="How much to remove" min={0} max={100} step={5} value={strength} onChange={(v) => { setStrength(v); void apply(photo, clean, v); }} format={(n) => `${n}%`} />}
+              {note === "cleaned" && <p className="hint" style={{ marginTop: 0 }}>The paper was taken out. If some of it is left, remove more. If the pen has faded, remove less.</p>}
+              {note === "nothing" && <Alert tone="warn">Nothing darker than the paper was found, so the picture is used as it is.</Alert>}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
