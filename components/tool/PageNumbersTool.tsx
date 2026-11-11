@@ -95,33 +95,39 @@ function Workspace({ file, from, onChoose }: { file: File; from?: string; onChoo
 
       {doc && !result && (
         <>
-          <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
-            {label && current && <span className="pn-mark" data-testid="number-mark" style={markStyle(position, margin, size, current.width, current.height)}>{label}</span>}
-          </PagePreview>
-          <p aria-live="polite" className="hint" style={{ marginTop: "-0.75rem" }}>
-            {label ? `Page ${previewPage} gets “${label}”.` : `Page ${previewPage} is not numbered.`}
-          </p>
+          {/* The page beside its options from 680 px, stacked below that (the approved mocks' page stage). */}
+          <div className="stage-split">
+            <div className="min-w-0">
+              <PagePreview doc={doc} page={previewPage} onPage={setPreviewPage}>
+                {label && current && <span className="pn-mark" data-testid="number-mark" style={markStyle(position, margin, size, current.width, current.height)}>{label}</span>}
+              </PagePreview>
+              <p aria-live="polite" className="hint">
+                {label ? `Page ${previewPage} gets “${label}”.` : `Page ${previewPage} is not numbered.`}
+              </p>
+            </div>
 
-          <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-            <AnchorGrid legend="Where on the page" value={position} onChange={(a) => { touch(); setPosition(a); }} disabled={job.busy} />
-            <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-              <SelectField label="Style" value={format} onChange={(e) => { touch(); setFormat(e.target.value as NumberFormat); }} disabled={job.busy}>
-                {NUMBER_FORMATS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
-              </SelectField>
-              <TextField label="Start at" inputMode="numeric" value={start} onChange={(e) => { touch(); setStart(e.target.value); }} error={startProblem} disabled={job.busy} />
-              <Slider label="Size" min={6} max={36} value={size} onChange={(v) => { touch(); setSize(v); }} format={(n) => `${n} pt`} />
-              <Slider label="Distance from the edge" min={10} max={72} value={margin} onChange={(v) => { touch(); setMargin(v); }} format={(n) => `${n} pt`} />
-              <RangeField
-                label="Pages to number"
-                value={pick.rangeText}
-                onChange={pick.onRange}
-                error={pick.rangeError}
-                disabled={job.busy}
-                placeholder="All pages"
-                hint="Leave empty for every page, or type page numbers and ranges."
-              />
-              <div className="self-end pb-1">
-                <Checkbox checked={skipFirst} onChange={(e) => { touch(); setSkipFirst(e.target.checked); }} disabled={job.busy}>Skip the first page (a cover)</Checkbox>
+            <div className="stage-opts">
+              <AnchorGrid legend="Where on the page" value={position} onChange={(a) => { touch(); setPosition(a); }} disabled={job.busy} />
+              <div className="stage-fields">
+                <SelectField label="Style" value={format} onChange={(e) => { touch(); setFormat(e.target.value as NumberFormat); }} disabled={job.busy}>
+                  {NUMBER_FORMATS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+                </SelectField>
+                <TextField label="Start at" inputMode="numeric" value={start} onChange={(e) => { touch(); setStart(e.target.value); }} error={startProblem} disabled={job.busy} />
+                <Slider label="Size" min={6} max={36} value={size} onChange={(v) => { touch(); setSize(v); }} format={(n) => `${n} pt`} />
+                <Slider label="Distance from the edge" min={10} max={72} value={margin} onChange={(v) => { touch(); setMargin(v); }} format={(n) => `${n} pt`} />
+                <RangeField
+                  label="Pages to number"
+                  value={pick.rangeText}
+                  onChange={pick.onRange}
+                  error={pick.rangeError}
+                  disabled={job.busy}
+                  placeholder="All pages"
+                  hint="Leave empty for every page, or type page numbers and ranges."
+                  className="stage-wide"
+                />
+                <div className="stage-wide">
+                  <Checkbox checked={skipFirst} onChange={(e) => { touch(); setSkipFirst(e.target.checked); }} disabled={job.busy}>Skip the first page (a cover)</Checkbox>
+                </div>
               </div>
             </div>
           </div>

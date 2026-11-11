@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { toolsByCategory } from "@/lib/tools";
@@ -37,12 +36,9 @@ export function Header() {
   return (
     <header className="relative z-30 border-b border-line-soft bg-surface">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3.5">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="rounded-lg text-xl font-bold tracking-tight">
-            pdf<span className="text-action">.do</span>
-          </Link>
-          <Badge tone="warn">Prototype</Badge>
-        </div>
+        <Link href="/" className="rounded-lg text-xl font-bold tracking-tight">
+          pdf<span className="text-action">.do</span>
+        </Link>
         <nav aria-label="Main" className="flex items-center gap-1">
           <ul className="hidden items-center gap-1 md:flex">
             {QUICK.map((q) => (

@@ -30,7 +30,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line-soft">
         <p className="mx-auto max-w-5xl px-4 py-4 text-sm text-ink-3">
-          pdf.do is a work in progress. Your files are processed in your browser and are not uploaded.
+          Your files are processed in your browser and are not uploaded.
         </p>
       </div>
     </footer>

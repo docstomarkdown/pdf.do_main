@@ -131,7 +131,13 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   with names from `lib/zip-names.ts`; `lib/use-object-urls.ts` makes and revokes the download links. The page stage is also there: `PagePreview` (one page drawn large, with turn and zoom),
   `PlacementOverlay` (a mark on the page, placed by percentages: drag, arrow keys, resize), `AnchorGrid` and `NudgePad` (the
   same placement by buttons), `PageGrid` (thumbnails you move, turn and delete with buttons) and `ThumbPaper` (the lazy
-  thumbnail). Anything placed on a page goes inside `PagePreview` and is positioned in percent, never pixels.
+  thumbnail). Anything placed on a page goes inside `PagePreview` and is positioned in percent, never pixels. A tool that
+  pairs a page with options wraps both in `.stage-split` (`app/globals.css`): the page on the left and the options on the
+  right from 680 px of container width, one column below that, as the approved mocks show. The options go in `.stage-opts`
+  (a container of its own) and paired fields in `.stage-fields`, which makes two columns only when the options column has
+  room; `.stage-wide` spans both. The one primary action stays in an `ActionBar` under the two columns. A tool with a third
+  part that must come first on a phone (Sign's signature box) adds `.stage-split-3` and the `.stage-make`, `.stage-page`
+  and `.stage-rest` areas. Watermark, Page numbers, Crop and Sign are built this way; a new placement tool follows them.
 - A tool's logic lives in three hooks: `useHandoff` (the file handed over by the previous tool), `useToolJob` (the life of
   one run: busy, status, progress, error, cancel, and the result's object URL, which it makes and revokes) and
   `useLeaveGuard` (the browser asks before closing while a job runs). Don't copy that scaffolding into a tool again.

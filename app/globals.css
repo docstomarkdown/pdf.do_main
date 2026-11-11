@@ -603,7 +603,13 @@
     box-shadow: 0 -6px 12px -8px var(--color-shadow);
   }
   .actionbar > .btn { width: 100%; }
-  .actionbar-panel { margin: 1.125rem -1.25rem 0; padding-left: 1.25rem; padding-right: 1.25rem; }
+  /* Inside the result panel the bar takes the panel's own colours, so it does not cut a strip of page colour across it.
+     The result tint is see-through in dark mode, so it is laid over the page colour: a stuck bar must hide what scrolls under it. */
+  .actionbar-panel {
+    margin: 1.125rem -1.25rem 0; padding-left: 1.25rem; padding-right: 1.25rem;
+    background: linear-gradient(var(--color-result), var(--color-result)), var(--color-surface);
+    border-top-color: var(--color-success-line);
+  }
   @container app (min-width: 520px) {
     .actionbar, .actionbar-panel {
       position: static; flex-direction: row; align-items: center; margin: 0.5rem 0 0; padding: 0;
@@ -680,6 +686,23 @@
   .pagestage-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem; margin-top: 0.625rem; }
   .pagestage-nav { display: flex; align-items: center; gap: 0.125rem; font-size: 0.875rem; font-weight: 600; }
   .pagestage-tools { display: flex; align-items: center; gap: 2px; }
+
+  /* A page stage beside its options, as the approved mocks show: one column on a narrow container, two from 680 px.
+     The options column is a container of its own, so its fields pair up only when that column has room for two.
+     The three-part form (Sign) keeps "make" first in the page's order, so a phone still reads make, page, options. */
+  .stage-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  .stage-opts { display: grid; gap: 1.25rem; min-width: 0; container-type: inline-size; container-name: opts; }
+  .stage-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .stage-wide { grid-column: 1 / -1; }
+  .stage-make { grid-area: make; min-width: 0; }
+  .stage-page { grid-area: page; min-width: 0; }
+  .stage-rest { grid-area: rest; min-width: 0; }
+  .stage-split-3 { grid-template-areas: "make" "page" "rest"; }
+  @container opts (min-width: 26rem) { .stage-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @container app (min-width: 680px) {
+    .stage-split { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+    .stage-split-3 { grid-template-areas: "page make" "page rest"; grid-template-rows: auto 1fr; }
+  }
 
   .mark {
     position: absolute; display: block; padding: 1cqw 2cqw; white-space: nowrap; user-select: none; touch-action: none; cursor: grab;
