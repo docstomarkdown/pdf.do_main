@@ -66,8 +66,8 @@ Results can be handed to the next tool in memory ("Keep going with this file"), 
 ## Blog
 
 Posts are Markdown files in `content/blog/`; `content/README.md` says how to write one. Preview with `npm run dev` (drafts show
-there); `npm run build` checks every post and stops with a list of problems if one breaks a rule. Pages are `/blog`, `/blog/<slug>`
-and `/blog/tags/<tag>`. No RSS feed or sitemap yet.
+there); `npm run build` checks every post and stops with a list of problems if one breaks a rule. Pages are `/blog` (the list), `/<slug>` for a post
+(a direct address, with nothing in front) and `/blog/tags/<tag>`. `/sitemap.xml` is written at build time and lists every tool, page and post. No RSS feed yet.
 
 ## Design rules
 

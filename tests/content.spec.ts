@@ -96,7 +96,8 @@ test("the body is checked: headings, raw HTML, pictures, links, length", async (
   expect(await bad("![](/engines/merge.worker.js)")).toMatch(/has no alt text/);
   expect(await bad("![Shows it](/no/such/picture.png)")).toMatch(/is not in the public folder/);
   expect(await bad("[x](/no-such-page)")).toMatch(/the link \/no-such-page does not lead to a page on this site/);
-  expect(await bad("[x](/blog/ghost)")).toMatch(/does not lead to a page on this site/);
+  expect(await bad("[x](/ghost)")).toMatch(/does not lead to a page on this site/);
+  expect(await bad("[x](/blog/ghost)")).toMatch(/does not lead to a page on this site/); // a post is at /its-file-name, not under /blog/
   expect(await bad("[x](/blog/tags/ghost)")).toMatch(/does not lead to a page on this site/);
   expect(await bad("[x](#nowhere)")).toMatch(/points at a heading that does not exist/);
   expect(await bad("[x](javascript:alert(1))")).toMatch(/must be a full https:\/\/ address or start with \//);
@@ -108,14 +109,14 @@ test("the body is checked: headings, raw HTML, pictures, links, length", async (
 
 test("links between posts and tags are accepted when the target exists, drafts do not count as targets", async () => {
   const files = {
-    "a.md": post({ ...good, tags: ["compress"], related: ["b"] }, `${BODY}\n\nSee [the other](/blog/b) and [the topic](/blog/tags/compress).`),
+    "a.md": post({ ...good, tags: ["compress"], related: ["b"] }, `${BODY}\n\nSee [the other](/b) and [the topic](/blog/tags/compress).`),
     "b.md": post({ ...good, title: "The other post, long enough" }, BODY),
   };
   expect(await load(files)).toHaveLength(2);
   const withDraftTarget = { ...files, "b.md": post({ ...good, title: "The other post, long enough", draft: true }, BODY) };
   const problems = (await problemsOf(withDraftTarget)).join("\n");
   expect(problems).toMatch(/related post "b" is not another published post/);
-  expect(problems).toMatch(/the link \/blog\/b does not lead to a page on this site/);
+  expect(problems).toMatch(/the link \/b does not lead to a page on this site/);
 });
 
 test("file names are the web address, so they must be tidy", async () => {
@@ -146,3 +147,13 @@ test("the real posts in content/blog pass every check", async () => {
   const posts = await loadPosts({ includeDrafts: true });
   expect(posts.every((p) => p.slug && p.title && p.description)).toBe(true);
 });
+
+test("a post's address is the top of the site, so a file named like a tool or a page is refused", async () => {
+  // The post would be published at /merge-pdf, which is the Merge PDF tool.
+  expect((await problemsOf({ "merge-pdf.md": post(good, BODY) })).join()).toMatch(/merge-pdf\.md: the address \/merge-pdf already belongs to a tool on this site/);
+  expect((await problemsOf({ "compress-pdf-to-1mb.md": post(good, BODY) })).join()).toMatch(/already belongs to a tool/);
+  expect((await problemsOf({ "how-it-works.md": post(good, BODY) })).join()).toMatch(/how-it-works\.md: the address \/how-it-works already belongs to a page on this site/);
+  expect((await problemsOf({ "blog.md": post(good, BODY) })).join()).toMatch(/already belongs to a page/);
+  expect(await problemsOf({ "how-to-merge-pdfs.md": post(good, BODY) })).toEqual([]);
+});
+

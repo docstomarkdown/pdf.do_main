@@ -147,11 +147,13 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
 - **The blog is Markdown in `content/blog/`** (guide: `content/README.md`), read and checked at build time by `lib/content.ts`
   (unified, remark and rehype; they run on the server during the build and never reach the browser, so they are not in the
   licence gate's list). A post that breaks a rule fails `npm run build` with every problem listed: front matter, headings, raw
-  HTML, pictures without alt text, links that lead nowhere, a tool that does not exist. Pages: `/blog`, `/blog/<slug>`,
-  `/blog/tags/<tag>`. Posts are English only and carry the site's `noindex` like every other page. `tests/content.spec.ts` tests
+  HTML, pictures without alt text, links that lead nowhere, a tool that does not exist. Pages: `/blog` (the list), `/<slug>` for a
+  post (a direct address, owner direction 2026-11-11: `app/[slug]/page.tsx` serves the compress-size pages and the posts, and a post
+  named like a tool or a page fails the build) and `/blog/tags/<tag>`. Posts are English only and carry the site's `noindex` like every other page. `tests/content.spec.ts` tests
   the rules without a browser; `tests/blog.spec.ts` tests the pages. The blog's text styling is `@tailwindcss/typography` with every
   colour mapped to a token in `globals.css`, in the utilities layer (the plugin's colours live there, so a rule in the components
-  layer would lose). Not built, because each needs a static route handler and this file says to ask first: an RSS feed and a sitemap.
+  layer would lose). `app/sitemap.ts` writes `/sitemap.xml` at build time (asked for by the owner, 2026-11-11): every tool, the pages about the site, the blog and its posts,
+  with addresses in full from `lib/site.ts`; `tests/sitemap.spec.ts` opens every one. Not built, because it needs a static route handler and this file says to ask first: an RSS feed.
 - `lib/handoff.ts` passes a result file to the next tool **in memory only** (no storage, lost on reload). `ResultPanel`
   uses it for "Keep going with this file". Don't persist files anywhere.
 - `app/[slug]/page.tsx` renders registry entries that have `presetBytes` (the compress-size pages). Static export needs

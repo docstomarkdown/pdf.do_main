@@ -63,6 +63,9 @@ export class ContentError extends Error {
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const PAGES = new Set(["/", "/blog", "/how-it-works", "/licences"]);
+// A post's file name is its address at the top of the site (/its-file-name), so it must not be one that a page, a folder
+// of the site or a tool already has. Tools are looked up in the registry; these are the rest.
+const TAKEN = new Set(["blog", "how-it-works", "licences", "gallery", "engines", "sitemap", "robots", "tags"]);
 
 const validDate = (value: string) => DATE.test(value) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 
@@ -196,6 +199,7 @@ export async function loadPosts(options: LoadOptions = {}): Promise<Post[]> {
     if (!SLUG.test(slug) || slug.length > 80) { problems.push(`${file}: the file name is the web address, so it must be lowercase words joined by hyphens (up to 80 characters)`); continue; }
     if (seen.has(slug)) problems.push(`${file}: duplicate address`);
     seen.add(slug);
+    if (TAKEN.has(slug) || getTool(slug)) { problems.push(`${file}: the address /${slug} already belongs to a ${getTool(slug) ? "tool" : "page"} on this site; give the post another file name`); continue; }
     const rendered = renderMarkdown(fs.readFileSync(path.join(dir, file), "utf8"), file, problems);
     const meta = readMeta(file, rendered.front, today, problems);
     if (meta) parsed.push({ slug, meta, rendered });
@@ -214,7 +218,7 @@ export async function loadPosts(options: LoadOptions = {}): Promise<Post[]> {
       if (!url.startsWith("/")) { problems.push(`${file}: the ${label} "${url}" must be a full https:// address or start with /`); continue; }
       const route = url.split(/[?#]/)[0].replace(/(.)\/$/, "$1");
       if (label === "picture") { if (!fs.existsSync(path.join(process.cwd(), "public", route))) problems.push(`${file}: the picture ${url} is not in the public folder`); continue; }
-      const post = route.startsWith("/blog/tags/") ? tags.has(route.slice(11)) : route.startsWith("/blog/") ? liveSlugs.has(route.slice(6)) : false;
+      const post = route.startsWith("/blog/tags/") ? tags.has(route.slice(11)) : liveSlugs.has(route.slice(1)); // a post is at /its-file-name
       if (!PAGES.has(route) && !getTool(route.slice(1)) && !post) problems.push(`${file}: the link ${url} does not lead to a page on this site`);
     }
   }

@@ -1,36 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/blog/JsonLd";
 import { PostCard } from "@/components/blog/PostCard";
 import { PostMeta } from "@/components/blog/PostMeta";
 import { ToolCard } from "@/components/site/ToolCard";
-import { getPosts } from "@/lib/content";
+import type { Post } from "@/lib/content";
 import { getTool } from "@/lib/tools";
 
-export const dynamicParams = false;
-
-export async function generateStaticParams() {
-  return (await getPosts()).map((p) => ({ slug: p.slug }));
-}
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = (await getPosts()).find((p) => p.slug === slug);
-  if (!post) return {};
-  return {
-    title: post.title,
-    description: post.description,
-    // The page stays out of search results like the rest of the site (robots comes from the root layout) until go-live.
-    openGraph: { type: "article", title: post.title, description: post.description, publishedTime: post.date, modifiedTime: post.updated, tags: post.tags },
-  };
-}
-
-export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const posts = await getPosts();
-  const post = posts.find((p) => p.slug === slug);
-  if (!post) notFound();
+/** One blog post, as its page shows it. `posts` is every published post, for the "More to read" links. */
+export function PostPage({ post, posts }: { post: Post; posts: Post[] }) {
   const tool = post.tool ? getTool(post.tool) : undefined;
   const related = post.related.map((r) => posts.find((p) => p.slug === r)).filter((p) => p !== undefined);
   const toc = post.headings.filter((h) => h.depth === 2);
