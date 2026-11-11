@@ -5,6 +5,7 @@ import { ToolPage } from "@/components/tool/ToolPage";
 import { CompressTool } from "@/components/tool/CompressTool";
 import { SizeLinks } from "@/components/tool/SizeLinks";
 import { getPosts } from "@/lib/content";
+import { pageMeta, toolMeta } from "@/lib/seo";
 import { getTool, presetPages } from "@/lib/tools";
 
 // Pages made from lists, at the top level of the site: the compress-size pages (from the tool registry) and the blog
@@ -21,15 +22,14 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const tool = getTool(slug);
-  if (tool) return { title: tool.name, description: tool.intro };
+  if (tool) return toolMeta(tool);
   const post = (await getPosts()).find((p) => p.slug === slug);
   if (!post) return {};
-  return {
-    title: post.title,
-    description: post.description,
-    // The page stays out of search results like the rest of the site (robots comes from the root layout) until go-live.
-    openGraph: { type: "article", title: post.title, description: post.description, publishedTime: post.date, modifiedTime: post.updated, tags: post.tags },
-  };
+  // The page stays out of search results like the rest of the site (robots comes from the root layout) until go-live.
+  return pageMeta({
+    path: `/${post.slug}`, title: post.title, description: post.description, image: post.image, imageAlt: post.imageAlt,
+    article: { published: post.date, modified: post.updated, tags: post.tags },
+  });
 }
 
 export default async function Page({ params }: Props) {

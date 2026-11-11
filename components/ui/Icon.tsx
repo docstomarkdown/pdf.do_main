@@ -82,6 +82,22 @@ const icons = {
 export type IconName = keyof typeof icons;
 export const ICON_NAMES = Object.keys(icons) as IconName[];
 
+type Shape = [tag: string, attributes: Record<string, string>];
+
+/**
+ * An icon's drawing as plain data (each shape's element name and attributes, on a 24 by 24 grid), for code that draws
+ * a picture when the site is built and cannot render a component: the link-preview pictures in app/og.
+ * The library keeps this data inside each icon component and hands it to its own renderer as the `icon` prop, so it is
+ * read from there. If the library ever changes that, this throws and the build stops, instead of a picture going out
+ * without its icon.
+ */
+export function iconShapes(name: IconName): Shape[] {
+  const glyph = icons[name] as unknown as { render?: (props: object, ref: null) => { props?: { icon?: { node?: Shape[] } } } };
+  const node = glyph.render?.({}, null)?.props?.icon?.node;
+  if (!Array.isArray(node) || node.length === 0) throw new Error(`components/ui/Icon.tsx: could not read the drawing of the "${name}" icon from lucide-react`);
+  return node;
+}
+
 /** Decorative by default: put the meaning in the surrounding text or the button's label. */
 export function Icon({ name, className = "h-5 w-5", ...rest }: { name: IconName; className?: string } & Omit<LucideProps, "ref" | "name">) {
   const Glyph = icons[name];

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { PDFDocument, PDFHexString, PDFName, PDFString } from "@cantoo/pdf-lib";
 import { unzipSync } from "fflate";
-import { audit, download, fixture, pageCount, pageText, watchErrors, watchOutbound } from "./helpers";
+import { audit, download, fixture, pageCount, pageText, quiet, watchErrors, watchOutbound, watchTraffic } from "./helpers";
 
 // Wave 2 tools. Every output is read back; every test asserts that the browser made no request outside its own
 // origin and logged no console error.
@@ -12,12 +12,18 @@ const noProblems = (outside: string[], errors: string[]) => {
   expect(errors, "console errors").toEqual([]);
 };
 
+// Count every page's requests from the start, so `go` knows what is still in flight when it leaves.
+test.beforeEach(({ page }) => { watchTraffic(page); });
+
 /**
  * Opens another page once the current one has stopped loading. A page that shows a link to another tool prefetches it, and
- * WebKit reports a prefetch cut short by the next navigation as a page error that no visitor would see.
+ * WebKit reports a prefetch cut short by the next navigation as a page error that no visitor would see. The load state
+ * alone is not enough: it is reached once, and a link that appears later (a message, the result, "More tools" scrolled
+ * into view) starts its prefetch after that. `quiet` waits for those too.
  */
 async function go(page: Page, path: string) {
   await page.waitForLoadState("networkidle");
+  await quiet(page);
   await page.goto(path);
 }
 
@@ -164,7 +170,7 @@ test("organise: move, turn and delete on the grid, undo, and read the new order 
   expect([0, 1, 2].map((i) => doc.getPage(i).getRotation().angle)).toEqual([0, 90, 0]);
 
   // Delete a page, then undo it.
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("radio", { name: "Page 1" }).check({ force: true });
   await page.getByRole("button", { name: "Delete page" }).click();
   await expect(page.getByTestId("organize-status")).toHaveText("2 of 3 pages will be kept");
@@ -190,7 +196,7 @@ test("split in half: each page cut left and right, a turned page cut as it is se
   expect(sides.getPage(1).getCropBox()).toEqual({ x: 300, y: 0, width: 300, height: 400 });
 
   // Top and bottom: the top half first.
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("radio", { name: "Top and bottom" }).check({ force: true });
   await expect(page.getByTestId("cut-line")).toHaveClass(/cutline-h/);
   await page.getByRole("button", { name: "Cut each page in two" }).click();
@@ -288,7 +294,7 @@ test("text to PDF: pages made from text, a file opened, accents kept, other scri
   await expect(page.getByText("not in the standard PDF fonts")).toHaveCount(0);
 
   // Other scripts come out as ?, and the page says how many.
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByLabel("Text", { exact: true }).fill("Hello 日本語 world");
   await page.getByRole("button", { name: "Make PDF" }).click();
   await expect(page.getByText("3 characters are not in the standard PDF fonts")).toBeVisible();
@@ -660,7 +666,7 @@ test("fill form: text, a tick box, a choice and a radio group are filled and rea
   expect(out.getDropdown("country").getSelected()).toEqual(["India"]);
   expect(out.getRadioGroup("plan").getSelected()).toBe("Pro");
 
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("checkbox", { name: /Make the entries permanent/ }).check();
   await page.getByRole("button", { name: "Save filled PDF" }).click();
   const flat = await PDFDocument.load(fs.readFileSync(await download(page, "Download filled PDF")));

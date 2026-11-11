@@ -44,8 +44,10 @@ preview server on 4174 or 4175 while the tests run.
 
 This is not the Next.js in your training data. Before using an API from memory, read the matching page under
 `node_modules/next/dist/docs/` (`01-app` is the App Router). Static export means: no middleware, no
-`redirects()`/`rewrites()`/`headers()` in `next.config.ts`, no route handlers, no server actions, no image
-optimisation. Don't add them; if one seems necessary, stop and ask.
+`redirects()`/`rewrites()`/`headers()` in `next.config.ts`, no route handlers that answer a visitor's request, no
+server actions, no image optimisation. Don't add them; if one seems necessary, stop and ask. The one kind of route that
+is fine is a `GET` marked `export const dynamic = "force-static"`: the build runs it once and writes its answer out as a
+plain file (`/sitemap.xml`, `/robots.txt`, the link-preview pictures under `/og/`, `/apple-touch-icon.png`).
 
 ## Architecture rules
 
@@ -155,7 +157,9 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   layer would lose). `app/sitemap.ts` writes `/sitemap.xml` at build time (asked for by the owner, 2026-11-11): every tool, the pages about the site, the blog and its posts,
   with addresses in full from `lib/site.ts`; `tests/sitemap.spec.ts` opens every one. Not built, because it needs a static route handler and this file says to ask first: an RSS feed.
 - `lib/handoff.ts` passes a result file to the next tool **in memory only** (no storage, lost on reload). `ResultPanel`
-  uses it for "Keep going with this file". Don't persist files anywhere.
+  uses it for "Keep going with this file". Don't persist files anywhere. A link to the same tool at another address (the
+  size links under Compress) takes the chosen file along the same way: the tool calls `useHeldFile` and the link is a
+  `CarryLink`. A result belongs to the options it was made with, so changing an option calls `job.reset()`.
 - `app/[slug]/page.tsx` renders registry entries that have `presetBytes` (the compress-size pages). Static export needs
   every path listed in `generateStaticParams` and `dynamicParams = false`.
 - The site shows only tools that exist. There is no "coming soon" listing.
@@ -199,11 +203,30 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   every page and each tool state with the device set to dark.
 - **Copy:** plain words, no hype, no claims the code does not back (see Honest messages). Sentence case.
 
+## Search engines and link previews
+
+- **Every page describes itself through `pageMeta()` in `lib/seo.ts`** (a tool page through `toolMeta(tool)`): its title
+  and description, its one true address (canonical), and the Open Graph and X card a pasted link is drawn from. Don't
+  write a bare `{ title, description }`: `tests/seo.spec.ts` reads every built page and fails on one that lacks any of
+  these. The site's name, address and one-line description are in `lib/site.ts`.
+- **Every page has a picture for link previews, and none is made by hand.** A page with its own picture uses it (a
+  post's `image` field, see `content/README.md`). Every other page gets one drawn from its title when the site is built,
+  by `app/og/[name]/route.tsx`: `/og/home.png`, `/og/<tool slug>.png`, `/og/<post>.png`. A new tool or post needs
+  nothing. A new page that is neither needs one line in `cards()` in that file, and the test says so if it is missing.
+  The pictures take their colours from `app/globals.css` (through `lib/tokens.ts`), the site's font and the tool's icon.
+- **Structured data says only what the page shows.** A tool page carries its breadcrumb, a free web application and its
+  questions (from the registry, the same ones shown on the page); a post is an article; the home page names the site.
+  Don't add ratings, reviews or counts the site does not have.
+- **Whether search engines may list the site is a separate switch**, still off: the `noindex` tag (`app/layout.tsx`)
+  and header (`vercel.json`, `public/_headers`), checked by `tests/noindex.spec.ts`. They come off together, at go-live,
+  on the owner's word. `robots.txt` allows crawling on purpose: a crawler must fetch a page to see its `noindex`. Topic
+  pages (`/blog/tags/...`) set their own `noindex` and keep it after go-live.
+
 ## Adding a tool
 
 1. Add an entry to `lib/tools.ts` (copy, steps, FAQ, related). Write the FAQ answers from what the tool actually does.
 2. Engine operation: add an `op` to an existing worker in `public/engines/` (pages, meta, images, text, analyze, privacy, security (qpdf), zip) or a new worker file, with a typed wrapper in `lib/engines.ts`. Probe an engine's real behaviour in a browser before relying on it: qpdf's exit codes and its recovery of damaged files did not match its documentation. Reject unsupported input (encrypted, too large) with a readable message.
-3. Page: `app/<slug>/page.tsx` as a server component using `ToolPage`, plus a client component in `components/tool/`. Start from `PdfTool` (the one-PDF shell: drop zone, hand-over, remount per file) and `usePageSelection` (thumbnails and typed ranges kept in step); a result of several files goes in `MultiResult`, pictures in `ImageGallery`, text in `TextOutput`.
+3. Page: `app/<slug>/page.tsx` as a server component using `ToolPage`, with `export const metadata = toolMeta(tool)`, plus a client component in `components/tool/`. Start from `PdfTool` (the one-PDF shell: drop zone, hand-over, remount per file) and `usePageSelection` (thumbnails and typed ranges kept in step); a result of several files goes in `MultiResult`, pictures in `ImageGallery`, text in `TextOutput`.
    Assemble it from the blocks: `FileDrop` or `FileCard` or `FileList`, the options, an `ActionBar` with the one primary
    action (replaced by `JobProgress` while it runs), `Alert` for errors, and `ResultPanel`. Run the work through
    `useToolJob` and take a handed-over file with `useHandoff`, as `CompressTool` does.

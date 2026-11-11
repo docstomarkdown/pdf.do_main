@@ -87,6 +87,30 @@ test("front matter mistakes are refused, in words", async () => {
   expect((await problemsOf({ "p.md": "---\ntitle: [unclosed\n---\nbody" })).join()).toMatch(/not valid YAML/);
 });
 
+test("a post may name its own picture for link previews: it must exist and be described, and without one nothing is asked", async () => {
+  const pub = fs.mkdtempSync(path.join(os.tmpdir(), "public-"));
+  fs.mkdirSync(path.join(pub, "blog"));
+  fs.writeFileSync(path.join(pub, "blog", "cover.png"), "not a real picture; only its presence is checked");
+  try {
+    const alt = "A bar showing what takes the space in a PDF";
+    const [own] = await load({ "p.md": post({ ...good, image: "/blog/cover.png", imageAlt: alt }, BODY) }, { publicDir: pub });
+    expect(own).toMatchObject({ image: "/blog/cover.png", imageAlt: alt });
+    const [none] = await load({ "p.md": post(good, BODY) }, { publicDir: pub });
+    expect(none.image).toBeUndefined(); // a picture is drawn from the title instead (app/og)
+
+    const bad = async (front: Record<string, unknown>) => (await problemsOf({ "p.md": post({ ...good, ...front }, BODY) }, { publicDir: pub })).join("\n");
+    expect(await bad({ image: "/blog/missing.png", imageAlt: alt })).toMatch(/the picture \/blog\/missing.png is not in the public folder/);
+    expect(await bad({ image: "/blog/cover.png" })).toMatch(/imageAlt is required with image/);
+    expect(await bad({ image: "/blog/cover.png", imageAlt: "Short" })).toMatch(/imageAlt is required with image/);
+    expect(await bad({ image: "https://example.org/a.png", imageAlt: alt })).toMatch(/image must be a picture in the public folder/);
+    expect(await bad({ image: "/blog/../cover.png", imageAlt: alt })).toMatch(/image must be a picture in the public folder/);
+    expect(await bad({ image: "/blog/cover.gif", imageAlt: alt })).toMatch(/image must be a picture in the public folder/);
+    expect(await bad({ imageAlt: alt })).toMatch(/imageAlt is set but image is not/);
+  } finally {
+    fs.rmSync(pub, { recursive: true, force: true });
+  }
+});
+
 test("the body is checked: headings, raw HTML, pictures, links, length", async () => {
   const bad = async (body: string) => (await problemsOf({ "p.md": post(good, `${words(170)}\n\n${body}`) })).join("\n");
   expect(await bad("# A body heading")).toMatch(/no # heading in the body/);

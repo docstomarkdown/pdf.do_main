@@ -73,7 +73,7 @@ test("split: every page, then ranges, with the files and the ZIP read back", asy
   await audit(page, "split result");
 
   // Ranges: each comma is one file, in the order typed.
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("radio", { name: /Ranges/ }).check({ force: true });
   const field = page.getByLabel("Pages for each file");
   await field.fill("3, 1-2");
@@ -126,8 +126,8 @@ test("rotate: pick a page and turn it, or turn every page, and read the rotation
   expect([0, 1, 2].map((i) => doc.getPage(i).getRotation().angle)).toEqual([0, 90, 0]);
   expect(await pageText(out, 2)).toContain("page 2 of 3"); // the content is untouched
 
-  // Start over, select nothing, and a turn applies to every page; turning left from 0 is 270.
-  await page.getByRole("button", { name: "Start over" }).click();
+  // Back to options, select nothing, and a turn applies to every page; turning left from 0 is 270.
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("button", { name: "Turn left" }).click();
   await page.getByRole("button", { name: "Save rotated PDF" }).click();
   const all = await PDFDocument.load(fs.readFileSync(await download(page, "Download rotated PDF")));
@@ -159,7 +159,7 @@ test("page numbers: the preview shows the number, the saved PDF carries it, and 
   for (const n of [1, 2, 3]) expect(await pageText(out, n)).toContain(`Page ${n} of 3`); // capital P: the added number, not the page's own text
 
   // Skip the cover: page 1 gets nothing, page 2 is "1 of 2".
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByLabel("Style").selectOption("page-n-of-m");
   await page.getByRole("checkbox", { name: /Skip the first page/ }).check();
   await expect(page.getByText("Page 1 is not numbered.")).toBeVisible();
@@ -209,7 +209,7 @@ test("metadata: read, edit, save, and clear", async ({ page, context, baseURL })
   expect(doc.getKeywords()).toBe("finance, 2025");
   expect(doc.getPageCount()).toBe(2);
 
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("button", { name: "Clear all fields" }).click();
   await expect(page.getByLabel("Title")).toHaveValue("");
   await page.getByRole("button", { name: "Save changes" }).click();
@@ -340,7 +340,7 @@ test("extract text: the words, page marks, a page range, and a scan that has non
   await expect(page.getByTestId("text-result")).toContainText("from 3 of 3 pages");
   await audit(page, "extract text, result");
 
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByLabel("Pages to read").fill("2");
   await page.getByRole("checkbox", { name: /Add a line before each page/ }).check();
   await page.getByRole("button", { name: "Extract text" }).click();

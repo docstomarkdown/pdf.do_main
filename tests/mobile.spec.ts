@@ -19,6 +19,9 @@ test("home and the menu on a phone", async ({ page }) => {
   await page.getByRole("button", { name: "All tools" }).tap();
   const panel = page.locator("#all-tools");
   await expect(panel.getByRole("link", { name: "Merge PDF" })).toBeVisible();
+  // The menu is all the navigation a phone has, so the search and the pages about the site are in it.
+  await expect(panel.getByRole("searchbox", { name: "Search all tools" })).toBeVisible();
+  for (const name of ["How it works and your privacy", "Blog", "Licences"]) await expect(panel.getByRole("link", { name })).toBeVisible();
   await page.screenshot({ path: "test-results/shots/menu-phone.png" });
   await panel.getByRole("link", { name: "Compress PDF" }).tap();
   await expect(page).toHaveURL(/\/compress-pdf$/);
@@ -29,7 +32,7 @@ test("the main controls are big enough to tap (at least 44 px)", async ({ page }
   const choose = page.getByRole("button", { name: "Choose PDF files" });
   await expect(choose).toBeVisible();
   expect((await choose.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-  expect((await page.getByRole("button", { name: "All tools" }).boundingBox())!.height).toBeGreaterThanOrEqual(36);
+  expect((await page.getByRole("button", { name: "All tools" }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
   await page.screenshot({ path: "test-results/shots/merge-phone.png", fullPage: true });
 
   await page.setInputFiles('input[type="file"]', [fixture("text-2p.pdf"), fixture("text-3p.pdf")]);
@@ -55,6 +58,86 @@ test("delete pages with a thumb: tap pages, the action bar stays in reach, downl
   await expect(page.getByTestId("pages-after")).toHaveText("2 pages");
   await page.screenshot({ path: "test-results/shots/delete-result-phone.png", fullPage: true });
   expect(await pageCount(await download(page, "Download PDF without those pages"))).toBe(2);
+});
+
+/**
+ * Everything on the page a thumb can tap that is under 44 px tall, as "what: height". A `.tap` link counts with the
+ * unseen margin around it. Left out: a link in running text, which is as tall as its line (and a post's own prose),
+ * and anything inside a list that is folded shut.
+ */
+const smallTargets = (page: Page) => page.evaluate(() => {
+  const small: string[] = [];
+  for (const el of document.querySelectorAll<HTMLElement>('a[href], button, summary, select, textarea, input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"])')) {
+    const box = el.getBoundingClientRect();
+    const style = getComputedStyle(el);
+    if (box.width <= 1 || box.height <= 1 || style.visibility === "hidden") continue; // not on screen (or only for screen readers)
+    if (el.closest(".blog-prose")) continue;
+    let folded = false;
+    for (let up = el.parentElement; up; up = up.parentElement) {
+      if (up instanceof HTMLDetailsElement && !up.open && !(el.tagName === "SUMMARY" && el.parentElement === up)) folded = true;
+    }
+    if (folded) continue;
+    const after = getComputedStyle(el, "::after");
+    const margin = after.content !== "none" && after.position === "absolute" ? parseFloat(after.height) || 0 : 0;
+    const inText = style.display === "inline" && margin === 0 && (el.parentElement?.textContent ?? "").trim().length > (el.textContent ?? "").trim().length + 12;
+    if (inText) continue;
+    const height = Math.max(box.height, margin);
+    if (height < 44) small.push(`${(el.getAttribute("aria-label") ?? el.textContent ?? el.tagName).trim().replace(/\s+/g, " ").slice(0, 40)}: ${Math.round(height)}`);
+  }
+  return small;
+});
+
+test("everything you tap on a phone is at least 44 px tall", async ({ page }) => {
+  const paths = ["/", "/compress-pdf", "/compress-pdf-to-200kb", "/txt-to-pdf", "/blog", "/how-it-works", "/licences"];
+  await page.goto("/blog");
+  const post = page.getByTestId("post-card").first();
+  if ((await post.count()) > 0) {
+    paths.push((await post.getByRole("heading", { level: 2 }).getByRole("link").getAttribute("href"))!);
+    const tag = post.locator("a.pill-link").first();
+    if ((await tag.count()) > 0) paths.push((await tag.getAttribute("href"))!);
+  }
+  for (const path of paths) {
+    await page.goto(path);
+    expect(await smallTargets(page), `small tap targets on ${path}`).toEqual([]);
+  }
+
+  // The menu's rows, which only exist while it is open.
+  await page.goto("/");
+  await page.getByRole("button", { name: "All tools" }).tap();
+  await expect(page.locator("#all-tools").getByRole("link", { name: "Merge PDF" })).toBeVisible();
+  expect(await smallTargets(page), "small tap targets in the open menu").toEqual([]);
+});
+
+test("a small link takes a tap just outside its letters", async ({ page }) => {
+  // The breadcrumb's "Home" is 20 px tall. The 44 px comes from an unseen margin, so tap in the margin, above the word.
+  await page.goto("/compress-pdf");
+  const home = page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Home" });
+  const box = (await home.boundingBox())!;
+  expect(box.height).toBeLessThan(44);
+  await page.touchscreen.tap(box.x + box.width / 2, box.y - 8);
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test("the footer on a phone: lists fold under their titles, About stays open, and a folded list opens to its links", async ({ page }) => {
+  await page.goto("/compress-pdf");
+  const footer = page.getByRole("contentinfo");
+  // With all eight lists open it was 2,237 px, half of this page. Folded, with About open, it is about 830 px.
+  expect((await footer.boundingBox())!.height, "footer height").toBeLessThan(1000);
+  const titles = footer.locator("summary");
+  await expect(titles).toHaveCount(8);
+  for (const title of await titles.all()) expect((await title.boundingBox())!.height, await title.innerText()).toBeGreaterThanOrEqual(44);
+
+  // The pages about the site are not in the header on a phone, so their list starts open.
+  for (const name of ["How it works and your privacy", "Blog", "Licences"]) await expect(footer.getByRole("link", { name })).toBeVisible();
+
+  const sign = footer.getByRole("link", { name: "Sign PDF" });
+  await expect(sign).toBeHidden();
+  await footer.getByRole("heading", { name: "Edit", exact: true }).tap();
+  await expect(sign).toBeVisible();
+  expect((await sign.boundingBox())!.height, "a link in an opened list").toBeGreaterThanOrEqual(44);
+  await page.screenshot({ path: "test-results/shots/footer-phone.png" });
+  await sign.tap();
+  await expect(page).toHaveURL(/\/sign-pdf$/);
 });
 
 test("the busiest wave 1 pages fit the phone with a file loaded", async ({ page }) => {

@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
 import { SplitTool } from "@/components/tool/SplitTool";
 import { ToolPage } from "@/components/tool/ToolPage";
+import { toolMeta } from "@/lib/seo";
 import { getTool } from "@/lib/tools";
 
 const tool = getTool("split-pdf")!;
-export const metadata: Metadata = { title: tool.name, description: tool.intro };
+export const metadata = toolMeta(tool);
 
 export default function Page() {
   return (<ToolPage tool={tool}><SplitTool /></ToolPage>);

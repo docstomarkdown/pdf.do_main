@@ -233,8 +233,14 @@ function ToolRunning() {
           downloadLabel="Download compressed PDF" onReset={() => setShown(false)}
           summary={<p className="text-lg">9.1 MB → <strong>643 KB</strong> <span className="font-semibold text-success-ink">(93% smaller)</span></p>}>
           <SizeComparison before={9_541_000} after={658_000} />
-          <p className="note">Structure and images optimised. Text stays selectable.</p>
+          <p className="note">Structure optimised, and images recompressed where that saves space. Text stays selectable.</p>
         </ResultPanel>
+      )}
+      {/* The other name for the quiet button: a tool whose reset also clears its files says "Start over". */}
+      {shown && (
+        <ResultPanel testId="gallery-result-clears" focusOnArrival={false} url="#" file={fake("merged.pdf", 400_000)} fromTool="Merge PDF" nextSlugs={[]}
+          downloadLabel="Download the merged file" startsOver onReset={() => setShown(false)}
+          summary={<p className="text-lg"><strong>12 pages</strong> · 391 KB</p>} />
       )}
       <Row><DownloadButton url="#" file={fake("merged.pdf", 400_000)}>Download merged PDF</DownloadButton></Row>
     </>

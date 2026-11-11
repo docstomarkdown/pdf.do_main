@@ -114,6 +114,7 @@ export function MergeTool() {
           nextSlugs={NEXT}
           downloadLabel="Download merged PDF"
           onReset={reset}
+          startsOver
           summary={<p className="text-lg"><strong>{job.result.pages} pages</strong> · {formatBytes(job.result.file.size)}</p>}
         />
       )}

@@ -22,7 +22,11 @@ test("the blog index lists the posts and the topics, and is accessible", async (
   await expect(cards.first().getByRole("heading", { level: 2 })).toBeVisible();
   await expect(cards.first().locator("time")).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
   await expect(cards.first()).toContainText("min read");
-  await expect(page.getByRole("navigation", { name: "Topics" }).getByRole("link").first()).toBeVisible();
+  // The list of topics narrows the list of posts, so it is shown only when there is more than one post to narrow.
+  const topics = page.getByRole("navigation", { name: "Topics" });
+  if ((await cards.count()) > 1) await expect(topics.getByRole("link").first()).toBeVisible();
+  else await expect(topics).toHaveCount(0);
+  await expect(cards.first().locator("time")).toHaveText(/^\d{1,2} [A-Z][a-z]+ \d{4}$/); // day first: "6 November 2026"
   await audit(page, "blog index");
   await expect(page.getByRole("banner").getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
   expect(outside).toEqual([]);
@@ -39,7 +43,8 @@ test("a post: heading, date, contents, structured data, tool card and links all 
   expect(await page.title()).toBe(`${title} · pdf.do`);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow"); // like the rest of the site, until go-live
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "article");
-  await expect(page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Blog" })).toBeVisible();
+  // The same breadcrumb as a tool page: Home, then Blog. The post's title is the heading under it, not a third crumb.
+  expect(await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link").allTextContents()).toEqual(["Home", "Blog"]);
   await expect(page.locator("article time").first()).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
 
   // Structured data parses and says what the page says.
@@ -94,12 +99,15 @@ test("a post in dark mode: the text, links and code follow the theme and stay re
 });
 
 test("a topic page lists the posts with that tag", async ({ page }) => {
+  // Reached from a post's own topics, which every post shows (the list above the posts waits for a second post).
   await page.goto("/blog");
-  const topic = page.getByRole("navigation", { name: "Topics" }).getByRole("link").first();
+  const topic = page.getByTestId("post-card").first().getByRole("list", { name: "Tags" }).getByRole("link").first();
   test.skip((await topic.count()) === 0, "no topics yet");
-  const name = (await topic.textContent())!.replace(/\s*\(\d+\)\s*$/, "").trim();
+  const label = (await topic.textContent())!.trim(); // words with a capital, not the tag as it is typed: "File size"
+  expect(label).toMatch(/^[A-Z0-9][^-]*$/);
   await topic.click();
-  await expect(page.getByRole("heading", { level: 1, name: `Posts about ${name}` })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: `Posts about ${label.toLowerCase()}` })).toBeVisible();
+  expect(await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("listitem").allTextContents()).toEqual(["Home", "/Blog", `/${label}`]);
   expect(await page.getByTestId("post-card").count()).toBeGreaterThan(0);
   await audit(page, "blog topic");
 });

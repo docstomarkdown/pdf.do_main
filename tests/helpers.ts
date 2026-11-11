@@ -18,6 +18,43 @@ export function watchOutbound(context: BrowserContext, origin: string): string[]
   return outside;
 }
 
+type Traffic = { pending: Set<object>; last: number };
+const traffic = new WeakMap<Page, Traffic>();
+
+/**
+ * Starts counting what a page has asked for and not yet received. Call it before the page's first load (a
+ * `beforeEach`), so nothing is in flight unseen; `quiet` calls it too, for a page that was never watched.
+ */
+export function watchTraffic(page: Page): Traffic {
+  const known = traffic.get(page);
+  if (known) return known;
+  const t: Traffic = { pending: new Set(), last: Date.now() };
+  traffic.set(page, t);
+  const touch = () => { t.last = Date.now(); };
+  page.on("request", (r) => { t.pending.add(r); touch(); });
+  page.on("requestfinished", (r) => { t.pending.delete(r); touch(); });
+  page.on("requestfailed", (r) => { t.pending.delete(r); touch(); });
+  // A new document owes nothing for the one before it: what that one still had in flight ended with it.
+  page.on("framenavigated", (f) => { if (f === page.mainFrame()) { t.pending.clear(); touch(); } });
+  return t;
+}
+
+/**
+ * Waits until the page has nothing in flight and has started nothing for a moment. `waitForLoadState("networkidle")`
+ * is reached once for each page load and says nothing about what began later: a link that appears or scrolls into
+ * view afterwards (a message with a link in it, the result panel, "More tools") is prefetched then, in two requests
+ * one after the other, and a navigation that cuts one short is reported by WebKit as a page error. The wait gives up
+ * after `limitMs` without failing: the test's own checks stay the judge of what happened.
+ */
+export async function quiet(page: Page, calmMs = 250, limitMs = 5000): Promise<void> {
+  const t = watchTraffic(page);
+  const deadline = Date.now() + limitMs;
+  while (Date.now() < deadline) {
+    if (t.pending.size === 0 && Date.now() - t.last >= calmMs) return;
+    await page.waitForTimeout(25);
+  }
+}
+
 /** Console errors and uncaught exceptions. These include Content-Security-Policy violations. */
 export function watchErrors(page: Page): string[] {
   const errors: string[] = [];

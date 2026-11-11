@@ -3,15 +3,20 @@
 // entry here, then build its page and component (see AGENTS.md, "Adding a tool").
 import type { IconName } from "@/components/ui/Icon";
 
-export type CategoryId = "organise" | "to-pdf" | "from-pdf" | "edit" | "security" | "compress";
+export type CategoryId = "organise" | "compress" | "to-pdf" | "from-pdf" | "edit" | "security";
 
+// The order here is the order of the groups on the home page, in the "All tools" menu and in the footer. Compress is
+// second: it was last until 2026-11-11, some 3,000 px down the home page, and was moved up at the owner's request after
+// a design review. Merging and compressing are the two jobs the header already links to first, and the only sign of
+// demand on record (the order Google's autocomplete offers them in) agrees. The other four keep the order they had:
+// demand has not been measured, so there is nothing to reorder them by.
 export const CATEGORIES: Record<CategoryId, { name: string; blurb: string; icon: IconName }> = {
   organise: { name: "Merge, split and organise", blurb: "Combine files, split them up, and choose which pages to keep.", icon: "merge" },
-  "to-pdf": { name: "Convert to PDF", blurb: "Make a PDF from pictures.", icon: "images" },
-  "from-pdf": { name: "Convert from PDF", blurb: "Turn pages into pictures, or pull out the text.", icon: "extract" },
-  edit: { name: "Edit", blurb: "Turn pages, number them and change the document details.", icon: "rotate" },
-  security: { name: "Security", blurb: "Add a password, take one off, or lift restrictions.", icon: "lock" },
   compress: { name: "Compress", blurb: "Make a PDF smaller, or hit an exact size.", icon: "compress" },
+  "to-pdf": { name: "Convert to PDF", blurb: "Make a PDF from pictures, scans or plain text.", icon: "images" },
+  "from-pdf": { name: "Convert from PDF", blurb: "Turn pages into pictures, or pull out the text.", icon: "extract" },
+  edit: { name: "Edit", blurb: "Sign, fill in and mark up a PDF, number, crop and turn its pages, or compare two files.", icon: "rotate" },
+  security: { name: "Security", blurb: "Add a password, take one off, or lift restrictions.", icon: "lock" },
 };
 
 export type Faq = { q: string; a: string };
@@ -43,7 +48,9 @@ const passwordFaq: Faq = {
   a: "Not directly. The tool says so if it meets one. If you know the password, use Remove PDF password first, then come back with the copy it saves.",
 };
 
-// Order follows what people type most (Google autocomplete, probed 2026-11-06), not size.
+// Order follows what people type most (Google autocomplete, probed 2026-11-06), not size. This is on purpose, and the
+// owner confirmed it on 2026-11-11 after a review called the links unsorted: the links to these pages (home, under
+// Compress, footer) keep this order. Only the tool's own list of targets is sorted by size.
 export const COMPRESS_SIZES = [
   { id: "1mb", label: "1 MB", bytes: 1024 * 1024 },
   { id: "2mb", label: "2 MB", bytes: 2 * 1024 * 1024 },
@@ -502,12 +509,13 @@ const base: Tool[] = [
 
   {
     slug: "pdf-size-analyzer",
-    name: "PDF size analyzer",
+    name: "PDF size analyser",
     short: "See what makes a PDF big: pictures, fonts, page content, and its biggest pictures.",
     intro: "Choose a PDF and see where its bytes go, as a bar and a list, with its biggest pictures named. Nothing is changed; it only reads.",
     category: "compress",
     icon: "pie",
-    keywords: ["why is my pdf so big", "pdf file size", "what is taking space", "pdf size breakdown", "large pdf"],
+    // The site spells it "analyser"; the other spelling is a keyword, so a search for either finds the tool.
+    keywords: ["pdf size analyzer", "why is my pdf so big", "pdf file size", "what is taking space", "pdf size breakdown", "large pdf"],
     steps: ["Choose your PDF.", "Read the bar and the list: pictures, fonts, page content and the rest.", "If pictures are most of the file, open Compress PDF."],
     faq: [
       privacyFaq("Measuring"),
@@ -872,10 +880,31 @@ export function toolsByCategory(): { id: CategoryId; name: string; blurb: string
   }));
 }
 
+/** The words of a text in lower case, split at anything that is not a letter or a digit: "e-sign" is "e" and "sign". */
+const wordsOf = (text: string): string[] => text.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+
+/**
+ * The tools that answer a search. A tool matches when, for every word typed, its name, keywords or one-line
+ * description has a word that starts with it. Matching the start of a word, not any part of it, is what keeps "word"
+ * from finding the four password tools. Best first: every word found in the name, then in the name or keywords, then
+ * only with the description's help. Within each, a tool comes before its compress-size pages, and otherwise the
+ * registry's order stands.
+ */
 export function searchTools(query: string): Tool[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return [];
-  return TOOLS.filter((t) => [t.name, t.short, ...t.keywords].some((s) => s.toLowerCase().includes(q)));
+  const typed = wordsOf(query);
+  if (typed.length === 0) return [];
+  const starts = (words: string[], w: string) => words.some((x) => x.startsWith(w));
+  return TOOLS.flatMap((tool, at) => {
+    const name = wordsOf(tool.name);
+    const keys = tool.keywords.flatMap(wordsOf);
+    const short = wordsOf(tool.short);
+    if (!typed.every((w) => starts(name, w) || starts(keys, w) || starts(short, w))) return [];
+    const rank = typed.every((w) => starts(name, w)) ? 0 : typed.every((w) => starts(name, w) || starts(keys, w)) ? 1 : 2;
+    return [{ tool, rank, sizePage: tool.parent ? 1 : 0, at }];
+  })
+    .sort((a, b) => a.rank - b.rank || a.sizePage - b.sizePage || a.at - b.at)
+    .map((found) => found.tool);
 }
 
+/** The compress-size pages, most-searched first (the order of COMPRESS_SIZES). Don't sort them by size. */
 export const presetPages = (): Tool[] => TOOLS.filter((t) => t.parent === "compress-pdf");

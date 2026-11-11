@@ -631,6 +631,18 @@
   .ctl::placeholder { color: var(--color-placeholder); }
   .ctl:disabled { opacity: 0.6; }
   .ctl[aria-invalid="true"] { border-color: var(--color-danger); }
+  /* A select draws its own arrow. Left with the browser's own look, Safari keeps the box at its native size whatever
+     the padding and min-height above say: 25 px tall, where every other field is 44. The arrow is two short strokes
+     drawn as gradients, so it takes its colour from a token in both themes. */
+  select.ctl {
+    -webkit-appearance: none; appearance: none; padding-right: 2.5rem;
+    background-image:
+      linear-gradient(to top right, transparent 42%, var(--color-ink-3) 42% 58%, transparent 58%),
+      linear-gradient(to top left, transparent 42%, var(--color-ink-3) 42% 58%, transparent 58%);
+    background-size: 0.375rem 0.375rem;
+    background-position: right 1.25rem center, right 0.875rem center;
+    background-repeat: no-repeat;
+  }
   .hint { margin-top: 0.375rem; font-size: 0.875rem; color: var(--color-ink-3); }
   .hint-error { color: var(--color-danger-text); }
   .slider { display: block; width: 100%; height: 44px; margin: 0; accent-color: var(--color-action); }
@@ -738,6 +750,21 @@
     background: var(--color-surface-3); color: var(--color-ink); font-size: 0.875rem; font-weight: 600;
   }
   .pill-link:hover { background: var(--color-action-soft); color: var(--color-action-ink); }
+
+  /* ---- Tap targets ----
+     On a phone, anything you tap is at least 44 px tall ("Phones first" in AGENTS.md). Three things are shorter than
+     that for a mouse and grow for a thumb: the small button, a row of the "All tools" menu and a pill link. */
+  @media (max-width: 39.99rem) {
+    .btn-sm { min-height: 44px; }
+    .menu-link { min-height: 44px; }
+    .pill-link { display: inline-flex; align-items: center; min-height: 44px; }
+  }
+  /* A link that stands alone in small text (a breadcrumb, the name in the header, "Back to the tools") keeps its size
+     and its place: an unseen margin around it takes the tap, 44 px tall in all. Use it only where nothing else you
+     can tap sits right above or below it, and never on a link in the middle of a paragraph. */
+  .tap { position: relative; }
+  .tap::after { content: ""; position: absolute; left: -0.5rem; right: -0.5rem; top: 50%; height: 44px; transform: translateY(-50%); }
+
   .tool-card {
     display: flex; gap: 1rem; height: 100%; padding: 1.125rem 1.25rem;
     border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface);
@@ -831,6 +858,8 @@
   /* The finished-work panel */
   .result { padding: 1.25rem; border: 1px solid var(--color-success-line); border-radius: 1.25rem; background: var(--color-result); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 14px 30px -18px var(--color-shadow); }
   .result:focus { outline: none; }
+  /* The tool's region takes focus only from a script (after "Back to options" or "Start over"), as the result panel does: no ring around the whole tool. */
+  .tool-region:focus { outline: none; }
   .result-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
   .result-done { display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem; font-weight: 700; color: var(--color-success-ink); }
   .result-summary { margin-top: 0.75rem; font-size: 1.125rem; }

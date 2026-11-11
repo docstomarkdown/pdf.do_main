@@ -1,37 +1,93 @@
 import Link from "next/link";
-import { presetPages, toolsByCategory } from "@/lib/tools";
+import { Icon } from "@/components/ui/Icon";
+import { ABOUT_PAGES, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
+import { presetPages, toolsByCategory, type CategoryId } from "@/lib/tools";
+
+// A list's title in the footer: sentence case in the text colour, like every other heading on the site. Small
+// capitals were dropped on 2026-11-11: with eight lists they read as fine print, and were the only capitals on the site.
+const heading = "text-sm font-semibold text-ink";
+
+type FootList = { label: string; links: { href: string; text: string }[]; twoUp?: boolean; openOnPhone?: boolean };
+
+/** The footer's eight lists: one for each group of tools, the compress sizes, and the pages about the site. */
+// The footer has its own order for the groups, and it is about fit, not importance (that order is CATEGORIES, which the
+// home page and the menu follow). Four lists make a row, and a row is as tall as its longest list: with the two longest
+// (Edit, and Merge, split and organise) in the same row the footer is 993 px tall at 1024 px wide; in the home page's
+// order they fall in different rows and it grows to 1,121 px. A group missing from this list is added at the end.
+const FOOT_ORDER: CategoryId[] = ["organise", "to-pdf", "from-pdf", "edit", "security", "compress"];
+
+function footLists(): FootList[] {
+  const sizes: FootList = { label: "Compress to a size", twoUp: true, links: presetPages().map((t) => ({ href: `/${t.slug}`, text: t.name.replace("Compress PDF to ", "") })) };
+  const groups = toolsByCategory();
+  const inOrder = [...FOOT_ORDER.flatMap((id) => groups.filter((g) => g.id === id)), ...groups.filter((g) => !FOOT_ORDER.includes(g.id))];
+  return [
+    // The sizes follow the Compress list, wherever the order puts it.
+    ...inOrder.flatMap((c): FootList[] => {
+      const list = { label: c.name, links: c.tools.map((t) => ({ href: `/${t.slug}`, text: t.name })) };
+      return c.id === "compress" ? [list, sizes] : [list];
+    }),
+    {
+      label: "About",
+      // Three links, and on a phone the header shows none of them: this list starts open there.
+      openOnPhone: true,
+      links: ABOUT_PAGES.map((p) => ({ href: p.href, text: p.name })),
+    },
+  ];
+}
 
 export function Footer() {
+  const lists = footLists();
   return (
-    <footer className="mt-16 border-t border-line-soft bg-surface-2">
-      <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
-        {toolsByCategory().map((c) => (
-          <nav key={c.id} aria-label={c.name}>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-3">{c.name}</h2>
-            <ul className="space-y-2">
-              {c.tools.map((t) => (<li key={t.slug}><Link href={`/${t.slug}`} className="foot-link">{t.name}</Link></li>))}
-            </ul>
-          </nav>
-        ))}
-        <nav aria-label="Compress to a size">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-3">Compress to a size</h2>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
-            {presetPages().map((t) => (<li key={t.slug}><Link href={`/${t.slug}`} className="foot-link">{t.name.replace("Compress PDF to ", "")}</Link></li>))}
-          </ul>
-        </nav>
-        <nav aria-label="About">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-3">About</h2>
-          <ul className="space-y-2">
-            <li><Link href="/how-it-works" className="foot-link">How it works and your privacy</Link></li>
-            <li><Link href="/blog" className="foot-link">Blog</Link></li>
-            <li><Link href="/licences" className="foot-link">Licences</Link></li>
-          </ul>
-        </nav>
+    <footer className="mt-16 border-t border-line-soft bg-surface">
+      <div className="mx-auto max-w-5xl px-4 pt-12 sm:pb-10">
+        <div className="max-w-md">
+          <Link href="/" className="tap rounded-lg text-xl font-bold tracking-tight">
+            pdf<span className="text-action">.do</span>
+          </Link>
+          <p className="mt-3 font-semibold">{SITE_TAGLINE}</p>
+          <p className="mt-1 text-sm leading-relaxed text-ink-2">
+            Merge, split, convert, edit and protect PDFs without uploading them. No account, no watermark.
+          </p>
+        </div>
+
+        {/* The lists are written twice and only one is ever shown. On a phone the eight lists, all open, were 2,200 px:
+            half of a tool page. There each list folds under its title (a native details element, closed until asked
+            for). From 640 px they stand open in columns, as before. One set of markup cannot do both: a closed details
+            cannot be shown open by CSS in every browser, and opening it by script would leave the footer wrong
+            wherever the script has not run. Every link stays in the page either way. */}
+        <div className="mt-8 divide-y divide-line-soft border-t border-line-soft sm:hidden">
+          {lists.map((l) => (
+            <nav key={l.label} aria-label={l.label}>
+              <details className="group" open={l.openOnPhone}>
+                <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-lg outline-offset-[-3px] [&::-webkit-details-marker]:hidden">
+                  <h2 className={heading}>{l.label}</h2>
+                  <Icon name="chevron-down" className="h-5 w-5 shrink-0 text-ink-3 transition-transform group-open:rotate-180" />
+                </summary>
+                <ul className={`pb-3 ${l.twoUp ? "grid grid-cols-2 gap-x-4" : ""}`.trim()}>
+                  {l.links.map((a) => (<li key={a.href}><Link href={a.href} className="foot-link flex min-h-11 items-center">{a.text}</Link></li>))}
+                </ul>
+              </details>
+            </nav>
+          ))}
+        </div>
+
+        <div className="mt-10 hidden gap-8 border-t border-line-soft pt-10 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+          {lists.map((l) => (
+            <nav key={l.label} aria-label={l.label}>
+              <h2 className={`mb-3 ${heading}`}>{l.label}</h2>
+              <ul className={l.twoUp ? "grid grid-cols-2 gap-x-4 gap-y-2" : "space-y-2"}>
+                {l.links.map((a) => (<li key={a.href}><Link href={a.href} className="foot-link">{a.text}</Link></li>))}
+              </ul>
+            </nav>
+          ))}
+        </div>
       </div>
       <div className="border-t border-line-soft">
-        <p className="mx-auto max-w-5xl px-4 py-4 text-sm text-ink-3">
-          Your files are processed in your browser and are not uploaded.
-        </p>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-4 text-sm text-ink-3">
+          {/* The year is the year the site was last built: a static site has no clock of its own. */}
+          <p>© {new Date().getFullYear()} {SITE_NAME}</p>
+          <p>Your files are processed in your browser and are not uploaded.</p>
+        </div>
       </div>
     </footer>
   );

@@ -45,7 +45,7 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Split PDF in half | pdf-lib (page boxes) | each page cut in two (left and right, or top and bottom) or the document in two files; follows turned pages; the cut half stays hidden in the file |
 | Crop PDF | pdf-lib (page boxes) | four sliders with a shaded preview, all pages or a typed range; the cut-off area is hidden, not deleted, and the page says so |
 | Split PDF by size, by bookmarks | pdf-lib; pdf.js outline | by size packs pages in order under a limit (binary search on trial saves); by bookmarks uses top-level bookmarks only |
-| PDF size analyzer | pdf-lib stream walk | pictures, fonts, page content, other data, and "the rest" (an upper bound, said on the page) |
+| PDF size analyser | pdf-lib stream walk | pictures, fonts, page content, other data, and "the rest" (an upper bound, said on the page) |
 | Text to PDF | pdf-lib standard fonts | Latin letters only; other characters become "?" and are counted; text files up to 5 MB |
 | Extract images | pdf.js operator list, canvas PNG | saved as PNG; pictures under 32 px are left out; a logo on every page is saved once per page |
 | Add watermark | pdf-lib | text only; drag on the preview or place with the grid; colour, size, strength and angle; follows turned pages |

@@ -282,7 +282,7 @@ test.describe("tool blocks", () => {
     expect(await bar()).toBe("sticky");
   });
 
-  test("result panel: takes focus, offers the download and the next tools, and starts over", async ({ page }) => {
+  test("result panel: takes focus, offers the download and the next tools, and goes back under the right name", async ({ page }) => {
     const area = running(page);
     await area.getByRole("button", { name: "Show the result panel" }).click();
     const result = page.getByTestId("gallery-result").first();
@@ -290,7 +290,10 @@ test.describe("tool blocks", () => {
     const download = result.getByRole("link", { name: "Download compressed PDF" });
     await expect(download).toHaveAttribute("download", "report-compressed.pdf");
     await expect(result.getByRole("button", { name: "Merge PDF" })).toBeVisible();
-    await result.getByRole("button", { name: "Start over" }).click();
+    // A tool that keeps its file calls the quiet button "Back to options"; one that clears its files, "Start over".
+    await expect(page.getByTestId("gallery-result-clears").getByRole("button", { name: "Start over" })).toBeVisible();
+    await expect(result.getByRole("button", { name: "Start over" })).toHaveCount(0);
+    await result.getByRole("button", { name: "Back to options" }).click();
     await expect(page.getByTestId("gallery-result")).toHaveCount(0);
   });
 

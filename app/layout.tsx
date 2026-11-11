@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { LiveRegion } from "@/components/ui/LiveRegion";
 import { NotifierHost } from "@/components/ui/Notifier";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 // Google Sans, served from our own origin: next/font downloads it at build time and the browser never contacts
 // Google. This is an approved exception to the no-third-party-font-host rule (owner decision 2026-11-06).
@@ -14,8 +15,21 @@ import { NotifierHost } from "@/components/ui/Notifier";
 const googleSans = Google_Sans({ subsets: ["latin"], variable: "--font-google-sans", display: "swap", adjustFontFallback: false });
 
 export const metadata: Metadata = {
-  title: { default: "pdf.do — PDF tools that run in your browser", template: "%s · pdf.do" },
-  description: "Merge, split, convert, edit and protect PDFs without uploading them. Processing happens in your browser.",
+  // Makes whole addresses out of the paths that pages give for their canonical link and their preview picture.
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${SITE_NAME} — ${SITE_TAGLINE}`, template: `%s · ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  // What a page that sets nothing of its own is shared with (the not-found page). Every real page sets its own
+  // through pageMeta() in lib/seo.ts, with its own address, title and picture.
+  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_GB", title: `${SITE_NAME} — ${SITE_TAGLINE}`, description: SITE_DESCRIPTION, images: [{ url: "/og/home.png", width: 1200, height: 630, alt: SITE_TAGLINE }] },
+  twitter: { card: "summary_large_image" },
+  // Both icons are named here: listing one stops Next from adding the other by itself. The browser-tab icon is the
+  // drawing in app/icon.svg; the home-screen icon is drawn from it when the site is built (app/apple-touch-icon.png).
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml", sizes: "any" }],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   // Prototype: not for indexing. Three layers say so, and all three go together at go-live: this tag, the X-Robots-Tag
   // header in vercel.json (Vercel) and public/_headers (Cloudflare Pages, Netlify). tests/noindex.spec.ts checks all three.
   robots: { index: false, follow: false, googleBot: { index: false, follow: false } },

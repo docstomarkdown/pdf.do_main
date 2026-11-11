@@ -10,7 +10,7 @@ A PDF that is too big to email or upload is usually big for one reason: pictures
 
 ## Find out what is taking the space
 
-Open [PDF size analyzer](/pdf-size-analyzer) and choose your file. It shows a bar and a list: pictures, fonts, page content, and the rest. It only reads the file, and nothing leaves your device.
+Open [PDF size analyser](/pdf-size-analyzer) and choose your file. It shows a bar and a list: pictures, fonts, page content, and the rest. It only reads the file, and nothing leaves your device.
 
 If pictures are most of the file, shrinking the pictures is where the gain is. If they are only a small share, there is less to win.
 

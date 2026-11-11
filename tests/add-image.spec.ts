@@ -141,7 +141,7 @@ test("add image: this page only, then chosen pages; a file that is not a picture
   expect(await firstPicture(one, 3)).toBeNull();
 
   // Chosen pages: 1 and 3.
-  await page.getByRole("button", { name: "Start over" }).click();
+  await page.getByRole("button", { name: "Back to options" }).click();
   await page.getByRole("radio", { name: "Chosen pages" }).check({ force: true });
   await page.getByLabel("Pages", { exact: true }).fill("1, 3");
   await expect(page.getByText("On 2 pages")).toBeVisible();

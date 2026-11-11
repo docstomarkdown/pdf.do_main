@@ -33,6 +33,8 @@ Start with a sentence that answers the question. Then use `##` headings.
 | `tags` | Optional. Up to five, lowercase words joined by hyphens. Each tag gets a page at `/blog/tags/<tag>`. |
 | `tool` | Optional. The slug of a tool in `lib/tools.ts`. The post ends with a card that opens that tool. |
 | `related` | Optional. Slugs of other published posts, shown at the end. |
+| `image` | Optional. The post's own picture for link previews (what shows when the address is pasted into a chat or a social post), as a path under `public/`: `/blog/name.png`. Best at 1200 by 630 pixels. **Leave it out and a picture is drawn from the title when the site is built**, so no post is shared without one. |
+| `imageAlt` | Required with `image`. What the picture shows, in 10 to 160 characters. |
 | `draft` | Optional. `true` keeps the post out of the live site. |
 
 ## What the build checks

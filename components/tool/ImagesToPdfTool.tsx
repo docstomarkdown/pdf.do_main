@@ -122,6 +122,7 @@ export function ImagesToPdfTool({ variant = "images" }: { variant?: "images" | "
           nextSlugs={["merge-pdf", "compress-pdf", "rotate-pdf", "page-numbers"]}
           downloadLabel="Download PDF"
           onReset={() => { job.reset(); setItems([]); }}
+          startsOver
           summary={<p className="text-lg"><strong data-testid="images-pages">{result.pages} {result.pages === 1 ? "page" : "pages"}</strong> · {formatBytes(result.file.size)}</p>}
         />
       )}

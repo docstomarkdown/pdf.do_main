@@ -1,18 +1,26 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
+import { TextLink } from "@/components/ui/TextLink";
 import { ToolSearch } from "@/components/site/ToolSearch";
 import { ToolCard } from "@/components/site/ToolCard";
+import { JsonLd } from "@/components/blog/JsonLd";
+import { pageMeta } from "@/lib/seo";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { presetPages, toolsByCategory } from "@/lib/tools";
+
+export const metadata = pageMeta({ path: "/", title: SITE_TAGLINE, description: SITE_DESCRIPTION, wholeTitle: `${SITE_NAME} — ${SITE_TAGLINE}` });
 
 const promises = [
   { icon: "shield" as const, title: "Stays on your device", text: "Your files are processed in your browser tab and are not uploaded." },
   { icon: "check" as const, title: "No sign-up, no watermark", text: "Open a tool, use it, download the result." },
-  { icon: "lock" as const, title: "Check it yourself", text: "The how-it-works page shows how to confirm that nothing is sent." },
+  // The promise that sends you to a page links to it.
+  { icon: "lock" as const, title: "Check it yourself", text: <>The <TextLink href="/how-it-works" className="tap">how-it-works page</TextLink> shows how to confirm that nothing is sent.</> },
 ];
 
 export default function Home() {
   return (
     <div>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: SITE_URL, description: SITE_DESCRIPTION, inLanguage: "en" }} />
       <section className="mx-auto max-w-3xl text-center">
         <h1 className="display">PDF tools that run in your browser</h1>
         <p className="lead mx-auto mt-5 max-w-2xl">

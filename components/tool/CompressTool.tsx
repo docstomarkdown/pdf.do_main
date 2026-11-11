@@ -16,7 +16,7 @@ import { qpdfCompress } from "@/lib/engines";
 import { formatBytes, stem } from "@/lib/format";
 import { rasterCompress } from "@/lib/raster-compress";
 import { COMPRESS_SIZES } from "@/lib/tools";
-import { useHandoff } from "@/lib/use-handoff";
+import { useHandoff, useHeldFile } from "@/lib/use-handoff";
 import { useLeaveGuard } from "@/lib/use-leave-guard";
 import { useToolJob } from "@/lib/use-tool-job";
 
@@ -33,8 +33,13 @@ export function CompressTool({ presetBytes }: { presetBytes?: number }) {
   const [target, setTarget] = useState(presetBytes ?? 200 * 1024);
   const job = useToolJob<Result>();
   useLeaveGuard(job.busy);
+  // A link to another compress-size page takes the chosen file along instead of dropping it (SizeLinks).
+  useHeldFile(file, "Compress PDF");
 
   const choose = (f: File) => { job.reset(); setFile(f); };
+  // A result belongs to the options it was made with: changing one clears it, and the Compress button comes back.
+  const chooseMode = (m: Mode) => { job.reset(); setMode(m); };
+  const chooseTarget = (bytes: number) => { job.reset(); setTarget(bytes); };
 
   function run() {
     if (!file) return;
@@ -43,12 +48,14 @@ export function CompressTool({ presetBytes }: { presetBytes?: number }) {
       setStatus("Optimising structure and images…");
       const q = await qpdfCompress(original.slice(0), true, signal);
       let bytes = q.bytes;
-      let note = "Structure and images optimised. Text stays selectable.";
+      // The engine recompresses a picture only when that makes it smaller, and does not report which ones it did, so
+      // the note says that much and no more: "images optimised" was untrue of a file with no pictures in it.
+      let note = "Structure optimised, and images recompressed where that saves space. Text stays selectable.";
       let flattened = false;
 
       if (mode === "target") {
         if (bytes.length <= target) {
-          note = "Target reached by optimising structure and images. Text stays selectable.";
+          note = "Target reached by optimising alone: no page was turned into an image. Text stays selectable.";
         } else {
           const r = await rasterCompress(original.slice(0), target, { onStatus: setStatus, signal });
           bytes = r.bytes;
@@ -84,7 +91,7 @@ export function CompressTool({ presetBytes }: { presetBytes?: number }) {
             legend="How should it be compressed?"
             name="mode"
             value={mode}
-            onChange={setMode}
+            onChange={chooseMode}
             disabled={job.busy}
             options={[
               { value: "smart", label: "Smart", description: "Smaller file, and text stays selectable." },
@@ -92,7 +99,7 @@ export function CompressTool({ presetBytes }: { presetBytes?: number }) {
             ]}
           />
           {mode === "target" && (
-            <SelectField label="Make it at most" value={target} onChange={(e) => setTarget(Number(e.target.value))} disabled={job.busy} className="max-w-xs">
+            <SelectField label="Make it at most" value={target} onChange={(e) => chooseTarget(Number(e.target.value))} disabled={job.busy} className="max-w-xs">
               {TARGETS.map((t) => (<option key={t.bytes} value={t.bytes}>{t.label}</option>))}
             </SelectField>
           )}
