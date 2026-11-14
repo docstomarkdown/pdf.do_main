@@ -14,26 +14,26 @@
 @theme static {
   /* Surfaces */
   --color-surface: #ffffff;
-  --color-surface-2: #f8fafc;
-  --color-surface-3: #f1f5f9;
+  --color-surface-2: #f3f3f0;
+  --color-surface-3: #ecebe7;
   --color-raised: #ffffff;
   --color-field: #ffffff;
   /* Text */
-  --color-ink: #0f172a;
-  --color-ink-2: #334155;
-  --color-ink-3: #475569;
-  --color-placeholder: #64748b;
+  --color-ink: #2d2a26;
+  --color-ink-2: #4a453f;
+  --color-ink-3: #635d55;
+  --color-placeholder: #6b655c;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #cbd5e1;
-  --color-line-soft: #e2e8f0;
-  --color-control: #7b8aa0;
-  --color-focus: #2772ed;
+  --color-line: #dddbd5;
+  --color-line-soft: #e7e6e1;
+  --color-control: #8a8276;
+  --color-focus: #155e75;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-  --color-action: #2670ec;
-  --color-action-hover: #1d5fd6;
+  --color-action: #155e75;
+  --color-action-hover: #0f4c5f;
   --color-on-action: #ffffff;
-  --color-action-soft: #eaf2fe;
-  --color-action-ink: #1b4fb0;
+  --color-action-soft: #e4f0f3;
+  --color-action-ink: #0f5266;
   /* Success (Download, finished work) */
   --color-success: #047857;
   --color-success-hover: #065f46;
@@ -68,15 +68,15 @@
   --color-badge-bad-fg: #7f1d1d;
   --color-badge-info-bg: #e0f2fe;
   --color-badge-info-fg: #082f49;
-  --color-badge-act-bg: #dbe8fd;
-  --color-badge-act-fg: #1b4fb0;
+  --color-badge-act-bg: #cfe6ec;
+  --color-badge-act-fg: #0f5266;
   /* Overlays, shadows, loading placeholders */
-  --color-scrim: rgba(15, 23, 42, 0.45);
-  --color-shadow: rgba(15, 23, 42, 0.18);
-  --color-skeleton-a: #e2e8f0;
-  --color-skeleton-b: #f1f5f9;
+  --color-scrim: rgba(28, 25, 20, 0.45);
+  --color-shadow: rgba(28, 25, 20, 0.16);
+  --color-skeleton-a: #ecebe7;
+  --color-skeleton-b: #f3f3f0;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #dde2ea;
+  --color-stage: #e6e4de;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -97,11 +97,38 @@
   --color-diff-add-fg: #14532d;
   --color-diff-del-bg: #fee2e2;
   --color-diff-del-fg: #7f1d1d;
+  /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+  --color-canvas: #f9f9f7;
+  --color-header: rgba(249, 249, 247, 0.86);
+  /* The minimal look of 2026-11-13: a highlighter mark behind a few words, and a lettered badge for where a document came from */
+  --color-mark: #fff1b8;
+  --color-src-gpt: #2d2a26;
+  --color-src-claude: #b4532a;
+  --color-src-gemini: #5b4bc4;
+  --color-src-word: #2d63c8;
+  --color-src-pdf: #c0392b;
+  --color-src-md: #635d55;
+  --color-on-src: #ffffff;
+  --color-action-deep: #0e4a5c;
+  --color-success-deep: #03684b;
+  --color-shadow-soft: rgba(28, 25, 20, 0.07);
+  --color-glow: rgba(21, 94, 117, 0.35);
+  --color-sheen: rgba(255, 255, 255, 0.22);
+  --color-wash: rgba(21, 94, 117, 0.08);
+  --color-drop-line: #22809a;
+  /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+     the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+     group's hue in its .cat-* class. */
+  --color-cat-tint: oklch(0.955 0.03 0);
+  --color-cat-ink: oklch(0.42 0.085 0);
+  /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+  --color-logo: #155e75;
 }
 
-/* The font comes from next/font (app/layout.tsx) as --font-google-sans; the system stack is the fallback. */
+/* The font comes from next/font/local (app/layout.tsx) as --font-google-sans (Latin, with a size-matched fallback) and
+   --font-google-sans-symbols (arrows and the like, fetched only when used); the system stack is the last fallback. */
 @theme inline {
-  --font-sans: var(--font-google-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-google-sans), var(--font-google-sans-symbols), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Themes. The light values above are the default. Dark values are written out under each scope that can ask for
@@ -119,26 +146,26 @@
   color-scheme: light; background: var(--color-surface); color: var(--color-ink);
   /* Surfaces */
   --color-surface: #ffffff;
-  --color-surface-2: #f8fafc;
-  --color-surface-3: #f1f5f9;
+  --color-surface-2: #f3f3f0;
+  --color-surface-3: #ecebe7;
   --color-raised: #ffffff;
   --color-field: #ffffff;
   /* Text */
-  --color-ink: #0f172a;
-  --color-ink-2: #334155;
-  --color-ink-3: #475569;
-  --color-placeholder: #64748b;
+  --color-ink: #2d2a26;
+  --color-ink-2: #4a453f;
+  --color-ink-3: #635d55;
+  --color-placeholder: #6b655c;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #cbd5e1;
-  --color-line-soft: #e2e8f0;
-  --color-control: #7b8aa0;
-  --color-focus: #2772ed;
+  --color-line: #dddbd5;
+  --color-line-soft: #e7e6e1;
+  --color-control: #8a8276;
+  --color-focus: #155e75;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-  --color-action: #2670ec;
-  --color-action-hover: #1d5fd6;
+  --color-action: #155e75;
+  --color-action-hover: #0f4c5f;
   --color-on-action: #ffffff;
-  --color-action-soft: #eaf2fe;
-  --color-action-ink: #1b4fb0;
+  --color-action-soft: #e4f0f3;
+  --color-action-ink: #0f5266;
   /* Success (Download, finished work) */
   --color-success: #047857;
   --color-success-hover: #065f46;
@@ -173,15 +200,15 @@
   --color-badge-bad-fg: #7f1d1d;
   --color-badge-info-bg: #e0f2fe;
   --color-badge-info-fg: #082f49;
-  --color-badge-act-bg: #dbe8fd;
-  --color-badge-act-fg: #1b4fb0;
+  --color-badge-act-bg: #cfe6ec;
+  --color-badge-act-fg: #0f5266;
   /* Overlays, shadows, loading placeholders */
-  --color-scrim: rgba(15, 23, 42, 0.45);
-  --color-shadow: rgba(15, 23, 42, 0.18);
-  --color-skeleton-a: #e2e8f0;
-  --color-skeleton-b: #f1f5f9;
+  --color-scrim: rgba(28, 25, 20, 0.45);
+  --color-shadow: rgba(28, 25, 20, 0.16);
+  --color-skeleton-a: #ecebe7;
+  --color-skeleton-b: #f3f3f0;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #dde2ea;
+  --color-stage: #e6e4de;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -202,32 +229,58 @@
   --color-diff-add-fg: #14532d;
   --color-diff-del-bg: #fee2e2;
   --color-diff-del-fg: #7f1d1d;
+  /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+  --color-canvas: #f9f9f7;
+  --color-header: rgba(249, 249, 247, 0.86);
+  /* The minimal look of 2026-11-13: a highlighter mark behind a few words, and a lettered badge for where a document came from */
+  --color-mark: #fff1b8;
+  --color-src-gpt: #2d2a26;
+  --color-src-claude: #b4532a;
+  --color-src-gemini: #5b4bc4;
+  --color-src-word: #2d63c8;
+  --color-src-pdf: #c0392b;
+  --color-src-md: #635d55;
+  --color-on-src: #ffffff;
+  --color-action-deep: #0e4a5c;
+  --color-success-deep: #03684b;
+  --color-shadow-soft: rgba(28, 25, 20, 0.07);
+  --color-glow: rgba(21, 94, 117, 0.35);
+  --color-sheen: rgba(255, 255, 255, 0.22);
+  --color-wash: rgba(21, 94, 117, 0.08);
+  --color-drop-line: #22809a;
+  /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+     the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+     group's hue in its .cat-* class. */
+  --color-cat-tint: oklch(0.955 0.03 0);
+  --color-cat-ink: oklch(0.42 0.085 0);
+  /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+  --color-logo: #155e75;
 }
 .scheme-dark,
 :root[data-theme="dark"] {
   color-scheme: dark;
   /* Surfaces */
-  --color-surface: #0f172a;
-  --color-surface-2: #131c31;
-  --color-surface-3: #1e293b;
-  --color-raised: #1e293b;
-  --color-field: #0b1220;
+  --color-surface: #1b1a19;
+  --color-surface-2: #211f1d;
+  --color-surface-3: #2a2826;
+  --color-raised: #252321;
+  --color-field: #161615;
   /* Text */
-  --color-ink: #f1f5f9;
-  --color-ink-2: #cbd5e1;
-  --color-ink-3: #94a3b8;
-  --color-placeholder: #8392a8;
+  --color-ink: #dcd8d0;
+  --color-ink-2: #c8c2b8;
+  --color-ink-3: #a39c91;
+  --color-placeholder: #9a9388;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #334155;
-  --color-line-soft: #2a3650;
-  --color-control: #64748b;
-  --color-focus: #6aa6f6;
+  --color-line: #34312d;
+  --color-line-soft: #2a2826;
+  --color-control: #7d776d;
+  --color-focus: #5fb3c7;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-  --color-action: #2670ec;
-  --color-action-hover: #1d5fd6;
+  --color-action: #1f7a92;
+  --color-action-hover: #22809a;
   --color-on-action: #ffffff;
-  --color-action-soft: rgba(77, 143, 240, 0.18);
-  --color-action-ink: #8ebcf9;
+  --color-action-soft: #263235;
+  --color-action-ink: #7cc4d6;
   /* Success (Download, finished work) */
   --color-success: #34d399;
   --color-success-hover: #6ee7b7;
@@ -262,15 +315,15 @@
   --color-badge-bad-fg: #fecaca;
   --color-badge-info-bg: rgba(56, 189, 248, 0.16);
   --color-badge-info-fg: #bae6fd;
-  --color-badge-act-bg: rgba(77, 143, 240, 0.2);
-  --color-badge-act-fg: #b9d3fb;
+  --color-badge-act-bg: rgba(95, 179, 199, 0.18);
+  --color-badge-act-fg: #a9d9e5;
   /* Overlays, shadows, loading placeholders */
   --color-scrim: rgba(0, 0, 0, 0.6);
-  --color-shadow: rgba(0, 0, 0, 0.55);
-  --color-skeleton-a: #1e293b;
-  --color-skeleton-b: #2a3650;
+  --color-shadow: rgba(0, 0, 0, 0.6);
+  --color-skeleton-a: #2a2826;
+  --color-skeleton-b: #34312d;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #1e293b;
+  --color-stage: #211f1d;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -291,33 +344,59 @@
   --color-diff-add-fg: #bbf7d0;
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
   --color-diff-del-fg: #fecaca;
+  /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+  --color-canvas: #121211;
+  --color-header: rgba(18, 18, 17, 0.86);
+  /* The minimal look of 2026-11-13 */
+  --color-mark: #5a4a10;
+  --color-src-gpt: #4a453f;
+  --color-src-claude: #b4532a;
+  --color-src-gemini: #5b4bc4;
+  --color-src-word: #2d63c8;
+  --color-src-pdf: #c0392b;
+  --color-src-md: #635d55;
+  --color-on-src: #ffffff;
+  --color-action-deep: #1a6a80;
+  --color-success-deep: #2bbd88;
+  --color-shadow-soft: rgba(0, 0, 0, 0.35);
+  --color-glow: rgba(95, 179, 199, 0.35);
+  --color-sheen: rgba(255, 255, 255, 0.14);
+  --color-wash: rgba(95, 179, 199, 0.12);
+  --color-drop-line: #5fb3c7;
+  /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+     the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+     group's hue in its .cat-* class. */
+  --color-cat-tint: oklch(0.72 0.1 0 / 0.18);
+  --color-cat-ink: oklch(0.84 0.09 0);
+  /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+  --color-logo: #5fb3c7;
 }
 .scheme-dark { background: var(--color-surface); color: var(--color-ink); }
 @media (prefers-color-scheme: dark) {
   :root[data-theme="system"] {
     color-scheme: dark;
     /* Surfaces */
-    --color-surface: #0f172a;
-    --color-surface-2: #131c31;
-    --color-surface-3: #1e293b;
-    --color-raised: #1e293b;
-    --color-field: #0b1220;
+    --color-surface: #1b1a19;
+    --color-surface-2: #211f1d;
+    --color-surface-3: #2a2826;
+    --color-raised: #252321;
+    --color-field: #161615;
     /* Text */
-    --color-ink: #f1f5f9;
-    --color-ink-2: #cbd5e1;
-    --color-ink-3: #94a3b8;
-    --color-placeholder: #8392a8;
+    --color-ink: #dcd8d0;
+    --color-ink-2: #c8c2b8;
+    --color-ink-3: #a39c91;
+    --color-placeholder: #9a9388;
     /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-    --color-line: #334155;
-    --color-line-soft: #2a3650;
-    --color-control: #64748b;
-    --color-focus: #6aa6f6;
+    --color-line: #34312d;
+    --color-line-soft: #2a2826;
+    --color-control: #7d776d;
+    --color-focus: #5fb3c7;
     /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-    --color-action: #2670ec;
-    --color-action-hover: #1d5fd6;
+    --color-action: #1f7a92;
+    --color-action-hover: #22809a;
     --color-on-action: #ffffff;
-    --color-action-soft: rgba(77, 143, 240, 0.18);
-    --color-action-ink: #8ebcf9;
+    --color-action-soft: #263235;
+    --color-action-ink: #7cc4d6;
     /* Success (Download, finished work) */
     --color-success: #34d399;
     --color-success-hover: #6ee7b7;
@@ -352,15 +431,15 @@
     --color-badge-bad-fg: #fecaca;
     --color-badge-info-bg: rgba(56, 189, 248, 0.16);
     --color-badge-info-fg: #bae6fd;
-    --color-badge-act-bg: rgba(77, 143, 240, 0.2);
-    --color-badge-act-fg: #b9d3fb;
+    --color-badge-act-bg: rgba(95, 179, 199, 0.18);
+    --color-badge-act-fg: #a9d9e5;
     /* Overlays, shadows, loading placeholders */
     --color-scrim: rgba(0, 0, 0, 0.6);
-    --color-shadow: rgba(0, 0, 0, 0.55);
-    --color-skeleton-a: #1e293b;
-    --color-skeleton-b: #2a3650;
+    --color-shadow: rgba(0, 0, 0, 0.6);
+    --color-skeleton-a: #2a2826;
+    --color-skeleton-b: #34312d;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #1e293b;
+  --color-stage: #211f1d;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -381,14 +460,48 @@
   --color-diff-add-fg: #bbf7d0;
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
   --color-diff-del-fg: #fecaca;
+    /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
+    --color-canvas: #121211;
+    --color-header: rgba(18, 18, 17, 0.86);
+    /* The minimal look of 2026-11-13 */
+    --color-mark: #5a4a10;
+    --color-src-gpt: #4a453f;
+    --color-src-claude: #b4532a;
+    --color-src-gemini: #5b4bc4;
+    --color-src-word: #2d63c8;
+    --color-src-pdf: #c0392b;
+    --color-src-md: #635d55;
+    --color-on-src: #ffffff;
+    --color-action-deep: #1a6a80;
+    --color-success-deep: #2bbd88;
+    --color-shadow-soft: rgba(0, 0, 0, 0.35);
+    --color-glow: rgba(95, 179, 199, 0.35);
+    --color-sheen: rgba(255, 255, 255, 0.14);
+    --color-wash: rgba(95, 179, 199, 0.12);
+    --color-drop-line: #5fb3c7;
+    /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+       the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+       group's hue in its .cat-* class. */
+    --color-cat-tint: oklch(0.72 0.1 0 / 0.18);
+    --color-cat-ink: oklch(0.84 0.09 0);
+    /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+    --color-logo: #5fb3c7;
   }
 }
 
 @layer base {
-  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
-  body { font-family: var(--font-sans); background: var(--color-surface); color: var(--color-ink); }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5.5rem; }
+  /* The page is a soft tint, so cards (white, or a step lighter in dark) sit on it. A faint wash of the brand colour
+     falls from the top of every page. */
+  body {
+    font-family: var(--font-sans); color: var(--color-ink); text-rendering: optimizeLegibility;
+    background-color: var(--color-canvas);
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+  ::selection { background: var(--color-glow); }
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 3px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -398,35 +511,82 @@
    utilities on the elements; colour and shape live here.
    ===================================================================================== */
 @layer components {
+  /* ---- Type: the few sizes the pages are set in. Headings tighten as they grow. ---- */
+  .display { font-size: clamp(2.5rem, 1.4rem + 4.6vw, 4.125rem); line-height: 1.03; font-weight: 700; letter-spacing: -0.035em; }
+  .title { font-size: clamp(2.125rem, 1.5rem + 2.6vw, 3.5rem); line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; }
+  .section-title { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); line-height: 1.15; font-weight: 700; letter-spacing: -0.03em; }
+  .lead { font-size: 1.125rem; line-height: 1.6; color: var(--color-ink-2); }
+  @media (min-width: 40rem) { .lead { font-size: 1.1875rem; } }
+  .eyebrow { font-size: 0.8125rem; line-height: 1.2; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-ink-3); }
+  .nums { font-variant-numeric: tabular-nums lining-nums; }
+
+  /* ---- Depth, in three steps: at rest, raised, floating. Each is two soft shadows, never one hard one. ---- */
+  .lift-1 { box-shadow: 0 1px 2px var(--color-shadow-soft); }
+  .lift-2 { box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 24px -14px var(--color-shadow); }
+  .lift-3 { box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow); }
+
+  /* ---- A group of tools: put cat-<group> on a parent and what is inside reads --cat-bg (the tint) and --cat-ink. ----
+     Both are the two recipe colours (--color-cat-tint, --color-cat-ink, one value per theme, above) with the group's hue
+     poured in, so the groups always match each other and the brand. Tune the whole set in the two tokens; tune a group by
+     its hue (an OKLCH hue angle: 215 petrol, 295 plum, 170 sea green, 70 ochre, 15 rose, 140 green). lib/tokens.ts reads
+     these hues for the link-preview pictures, so a new group needs its hue here and nowhere else. */
+  .cat-organise { --cat-hue: 215; }
+  .cat-to-pdf { --cat-hue: 295; }
+  .cat-from-pdf { --cat-hue: 170; }
+  .cat-edit { --cat-hue: 70; }
+  .cat-security { --cat-hue: 15; }
+  .cat-compress { --cat-hue: 140; }
+  :is(.cat-organise, .cat-to-pdf, .cat-from-pdf, .cat-edit, .cat-security, .cat-compress) {
+    --cat-bg: oklch(from var(--color-cat-tint) l c var(--cat-hue) / alpha);
+    --cat-ink: oklch(from var(--color-cat-ink) l c var(--cat-hue));
+  }
+  .cat-ink { color: var(--cat-ink, var(--color-action-ink)); }
+
   /* ---- Buttons: one primary per state; the download is the only green one ---- */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
     min-height: 44px; padding: 0.625rem 1.25rem;
     border: 0; border-radius: 0.75rem;
     font-size: 1rem; line-height: 1.5rem; font-weight: 600; text-align: center; text-decoration: none;
-    cursor: pointer; transition: background-color 0.15s;
+    cursor: pointer; transition: background-color 0.15s, box-shadow 0.18s, transform 0.12s;
   }
+  .btn:active:not(:disabled) { transform: translateY(1px); }
   .btn-sm { min-height: 40px; padding: 0.5625rem 0.875rem; font-size: 0.875rem; line-height: 1.25rem; }
   .btn-lg { min-height: 56px; padding: 0.875rem 1.5rem; font-size: 1.125rem; line-height: 1.75rem; }
   .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
   .btn[aria-busy="true"] { cursor: progress; }
-  .btn-primary { background: var(--color-action); color: var(--color-on-action); }
-  .btn-primary:hover:not(:disabled) { background: var(--color-action-hover); }
-  .btn-success { background: var(--color-success); color: var(--color-on-success); }
-  .btn-success:hover:not(:disabled) { background: var(--color-success-hover); }
+  /* The filled buttons deepen towards the bottom and never get lighter than their own colour, so the text on them
+     keeps its contrast. A sheen along the top edge and a glow underneath give them weight. */
+  .btn-primary {
+    background-color: var(--color-action); background-image: linear-gradient(180deg, var(--color-action), var(--color-action-deep));
+    color: var(--color-on-action);
+    box-shadow: inset 0 1px 0 var(--color-sheen), 0 1px 2px var(--color-shadow-soft), 0 10px 20px -10px var(--color-glow);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-action-hover); background-image: linear-gradient(180deg, var(--color-action-hover), var(--color-action-deep));
+    box-shadow: inset 0 1px 0 var(--color-sheen), 0 2px 4px var(--color-shadow-soft), 0 14px 26px -10px var(--color-glow);
+    transform: translateY(-1px);
+  }
+  .btn-success {
+    background-color: var(--color-success); background-image: linear-gradient(180deg, var(--color-success), var(--color-success-deep));
+    color: var(--color-on-success);
+    box-shadow: inset 0 1px 0 var(--color-sheen), 0 1px 2px var(--color-shadow-soft), 0 10px 20px -12px var(--color-shadow);
+  }
+  .btn-success:hover:not(:disabled) { background-color: var(--color-success-hover); transform: translateY(-1px); }
+  .btn-primary:disabled, .btn-success:disabled, .btn-primary[aria-disabled="true"], .btn-success[aria-disabled="true"] { box-shadow: none; }
   .btn-danger { background: var(--color-danger); color: var(--color-on-danger); }
   .btn-danger:hover:not(:disabled) { background: var(--color-danger-hover); }
-  .btn-secondary { background: var(--color-surface); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-control); }
-  .btn-secondary:hover:not(:disabled) { background: var(--color-surface-2); }
+  .btn-secondary { background: var(--color-surface); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-control), 0 1px 2px var(--color-shadow-soft); }
+  .btn-secondary:hover:not(:disabled) { background: var(--color-surface-2); box-shadow: inset 0 0 0 1px var(--color-ink-3), 0 4px 10px -6px var(--color-shadow); }
   .btn-ghost { background: transparent; color: var(--color-ink-2); }
   .btn-ghost:hover:not(:disabled) { background: var(--color-surface-3); }
 
   .icon-btn {
     display: inline-flex; align-items: center; justify-content: center; flex: none;
     width: 44px; height: 44px; border: 0; border-radius: 0.75rem;
-    background: transparent; color: var(--color-ink-2); cursor: pointer;
+    background: transparent; color: var(--color-ink-2); cursor: pointer; transition: background-color 0.15s, color 0.15s;
   }
-  .icon-btn:hover:not(:disabled) { background: var(--color-surface-3); }
+  .icon-btn:hover:not(:disabled) { background: var(--color-surface-3); color: var(--color-ink); }
   .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .icon-btn-danger { color: var(--color-danger-text); }
   .icon-btn-danger:hover:not(:disabled) { background: var(--color-danger-soft); }
@@ -468,8 +628,9 @@
   .optcard:has(:disabled) { cursor: not-allowed; }
   .optcard-input { position: absolute; width: 1px; height: 1px; opacity: 0; }
   .optcard-box {
-    display: block; height: 100%; padding: 1rem; border-radius: 0.75rem;
+    display: block; height: 100%; padding: 1rem; border-radius: 0.875rem;
     border: 1px solid var(--color-control); background: var(--color-surface);
+    box-shadow: 0 1px 2px var(--color-shadow-soft); transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
   }
   .optcard:hover .optcard-input:not(:disabled) + .optcard-box { border-color: var(--color-ink-3); }
   .optcard-input:checked + .optcard-box {
@@ -486,10 +647,25 @@
     display: block; width: 100%; min-height: 44px; padding: 0.625rem 0.875rem;
     border: 1px solid var(--color-control); border-radius: 0.75rem;
     background: var(--color-field); color: var(--color-ink); font-size: 1rem;
+    box-shadow: 0 1px 2px var(--color-shadow-soft); transition: border-color 0.15s, box-shadow 0.15s;
   }
+  .ctl:hover:not(:disabled):not(:focus-visible) { border-color: var(--color-ink-3); }
+  .ctl:focus-visible { border-color: var(--color-action); box-shadow: 0 0 0 4px var(--color-action-soft); }
   .ctl::placeholder { color: var(--color-placeholder); }
   .ctl:disabled { opacity: 0.6; }
   .ctl[aria-invalid="true"] { border-color: var(--color-danger); }
+  /* A select draws its own arrow. Left with the browser's own look, Safari keeps the box at its native size whatever
+     the padding and min-height above say: 25 px tall, where every other field is 44. The arrow is two short strokes
+     drawn as gradients, so it takes its colour from a token in both themes. */
+  select.ctl {
+    -webkit-appearance: none; appearance: none; padding-right: 2.5rem;
+    background-image:
+      linear-gradient(to top right, transparent 42%, var(--color-ink-3) 42% 58%, transparent 58%),
+      linear-gradient(to top left, transparent 42%, var(--color-ink-3) 42% 58%, transparent 58%);
+    background-size: 0.375rem 0.375rem;
+    background-position: right 1.25rem center, right 0.875rem center;
+    background-repeat: no-repeat;
+  }
   .hint { margin-top: 0.375rem; font-size: 0.875rem; color: var(--color-ink-3); }
   .hint-error { color: var(--color-danger-text); }
   .slider { display: block; width: 100%; height: 44px; margin: 0; accent-color: var(--color-action); }
@@ -497,7 +673,7 @@
   .check-input { width: 1.25rem; height: 1.25rem; flex: none; accent-color: var(--color-action); }
 
   /* ---- Surfaces ---- */
-  .card { border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface); }
+  .card { border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 24px -16px var(--color-shadow); }
   .badge {
     display: inline-flex; align-items: center; gap: 0.25rem; padding: 2px 10px; border-radius: 999px;
     background: var(--color-badge-bg); color: var(--color-badge-fg); font-size: 0.75rem; font-weight: 600;
@@ -518,7 +694,7 @@
   .alert-error { background: var(--color-danger-soft); border-color: var(--color-danger-line); color: var(--color-danger-ink); }
   .alert-success { background: var(--color-success-soft); border-color: var(--color-success-line); color: var(--color-success-ink); }
 
-  .disc { border: 1px solid var(--color-control); border-radius: 0.75rem; padding: 0 1rem; }
+  .disc { border: 1px solid var(--color-control); border-radius: 0.875rem; padding: 0 1rem; background: var(--color-surface); box-shadow: 0 1px 2px var(--color-shadow-soft); }
   .disc-summary {
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
     min-height: 44px; font-weight: 600; cursor: pointer; list-style: none;
@@ -540,8 +716,8 @@
   /* ---- Dialog (the browser's own <dialog>: it traps focus and closes on Escape) ---- */
   .dialog {
     width: calc(100% - 2rem); max-width: 27.5rem; margin: auto; padding: 0; overflow: hidden;
-    border: 1px solid var(--color-line-soft); border-radius: 1.25rem;
-    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 20px 50px var(--color-shadow);
+    border: 1px solid var(--color-line-soft); border-radius: 1.5rem;
+    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow);
   }
   .dialog::backdrop { background: var(--color-scrim); }
   .dialog-inner { padding: 1.5rem; }
@@ -564,7 +740,7 @@
     display: flex; align-items: flex-start; gap: 0.75rem; width: 100%;
     padding: 0.625rem 0.25rem 0.625rem 0.875rem; font-size: 0.875rem;
     border: 1px solid var(--color-control); border-radius: 0.875rem;
-    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 10px 30px var(--color-shadow);
+    background: var(--color-raised); color: var(--color-ink); box-shadow: 0 2px 6px var(--color-shadow-soft), 0 18px 40px -18px var(--color-shadow);
   }
   .toast-error { background: var(--color-danger-soft); border-color: var(--color-danger-line); color: var(--color-danger-ink); }
   .toast-body { flex: 1; min-width: 0; padding-top: 0.125rem; }
@@ -576,11 +752,20 @@
   .skip-link:focus { background: var(--color-surface); color: var(--color-action-ink); }
 
   /* ---- Site chrome ---- */
-  .nav-link { padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--color-ink-2); }
-  .nav-link:hover { background: var(--color-surface-3); }
+  /* The header stays at the top. Its see-through, blurred backing is a layer of its own: a blur on the header itself
+     would make the header the frame for the menu's page-wide scrim, and the scrim would shrink to the header's size. */
+  .site-header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--color-line-soft); }
+  .site-header::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--color-header);
+    -webkit-backdrop-filter: saturate(1.6) blur(14px); backdrop-filter: saturate(1.6) blur(14px);
+  }
+  /* The menu hangs from a header that no longer scrolls away, so it scrolls inside itself when it is taller than the screen. */
+  .site-menu { max-height: calc(100dvh - 3.75rem); overflow-y: auto; overscroll-behavior: contain; box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow); }
+  .nav-link { padding: 0.5rem 0.75rem; border-radius: 0.625rem; font-size: 0.875rem; font-weight: 600; color: var(--color-ink-2); transition: background-color 0.15s, color 0.15s; }
+  .nav-link:hover { background: var(--color-surface-3); color: var(--color-ink); }
   .nav-link[aria-current="page"] { color: var(--color-action-ink); }
-  .menu-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; color: var(--color-ink); }
-  .menu-link:hover { background: var(--color-surface-3); }
+  .menu-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.625rem; color: var(--color-ink); transition: background-color 0.15s; }
+  .menu-link:hover { background: var(--cat-bg, var(--color-surface-3)); }
   .foot-link { border-radius: 0.25rem; font-size: 0.875rem; color: var(--color-ink-2); }
   .foot-link:hover { color: var(--color-action-ink); text-decoration: underline; }
   .pill-link {
@@ -588,20 +773,62 @@
     background: var(--color-surface-3); color: var(--color-ink); font-size: 0.875rem; font-weight: 600;
   }
   .pill-link:hover { background: var(--color-action-soft); color: var(--color-action-ink); }
-  .tool-card {
-    display: flex; gap: 1rem; height: 100%; padding: 1.25rem;
-    border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface);
-    box-shadow: 0 1px 2px var(--color-shadow); transition: border-color 0.15s, box-shadow 0.15s;
+
+  /* ---- Tap targets ----
+     On a phone, anything you tap is at least 44 px tall ("Phones first" in AGENTS.md). Three things are shorter than
+     that for a mouse and grow for a thumb: the small button, a row of the "All tools" menu and a pill link. */
+  @media (max-width: 39.99rem) {
+    .btn-sm { min-height: 44px; }
+    .menu-link { min-height: 44px; }
+    .pill-link { display: inline-flex; align-items: center; min-height: 44px; }
   }
-  .tool-card:hover { border-color: var(--color-action); box-shadow: 0 2px 8px var(--color-shadow); }
+  /* A link that stands alone in small text (a breadcrumb, the name in the header, "Back to the tools") keeps its size
+     and its place: an unseen margin around it takes the tap, 44 px tall in all. Use it only where nothing else you
+     can tap sits right above or below it, and never on a link in the middle of a paragraph. */
+  .tap { position: relative; }
+  .tap::after { content: ""; position: absolute; left: -0.5rem; right: -0.5rem; top: 50%; height: 44px; transform: translateY(-50%); }
+
+  .tool-card {
+    display: flex; gap: 1rem; height: 100%; padding: 1.125rem 1.25rem;
+    border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface);
+    transition: border-color 0.18s, transform 0.18s;
+  }
+  .tool-card:hover { border-color: var(--color-ink-3); transform: translateY(-1px); }
   .tool-card-icon {
     display: flex; flex: none; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
-    border-radius: 0.75rem; background: var(--color-action-soft); color: var(--color-action-ink);
+    border-radius: 0.875rem; background: var(--cat-bg, var(--color-action-soft)); color: var(--cat-ink, var(--color-action-ink));
   }
+  .tool-card-icon-lg { width: 3.25rem; height: 3.25rem; border-radius: 1rem; }
   .step-num {
     display: flex; flex: none; align-items: center; justify-content: center; width: 2rem; height: 2rem;
-    border-radius: 999px; background: var(--color-action-soft); color: var(--color-action-ink); font-weight: 700;
+    border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--color-ink); color: var(--color-ink); font-size: 0.875rem; font-weight: 700;
   }
+
+  /* ---- The minimal look (2026-11-13): the home page and the tool page frame ---- */
+  .kicker { font-size: 0.875rem; font-weight: 600; color: var(--color-action-ink); }
+  .mark-hl { background: linear-gradient(transparent 62%, var(--color-mark) 62%, var(--color-mark) 92%, transparent 92%); padding: 0 0.06em; }
+  mark.mark-hl { color: inherit; border-radius: 2px; background: var(--color-mark); padding: 0 1px; }
+  .chip-link {
+    display: inline-flex; align-items: center; min-height: 2.25rem; padding: 0.25rem 0.875rem; border-radius: 999px;
+    border: 1px solid var(--color-line-soft); color: var(--color-ink-2); font-size: 0.875rem; transition: border-color 0.12s, color 0.12s;
+  }
+  .chip-link:hover { border-color: var(--color-ink-3); color: var(--color-ink); }
+  @media (max-width: 39.99rem) { .chip-link { min-height: 44px; } }
+  .tick-dot { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1.125rem; height: 1.125rem; border-radius: 999px; background: var(--color-action-soft); color: var(--color-action); }
+  .ok-ink { color: var(--color-success); }
+  .doodle { color: var(--color-ink-3); }
+  .soft { background: var(--color-surface-2); }
+  .src-badge {
+    display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1.375rem; height: 1.375rem;
+    border-radius: 0.375rem; font-size: 0.625rem; font-weight: 700; color: var(--color-on-src);
+  }
+  .src-badge-sm { width: 1rem; height: 1rem; border-radius: 0.25rem; font-size: 0.5rem; }
+  .src-gpt { background: var(--color-src-gpt); } .src-claude { background: var(--color-src-claude); } .src-gemini { background: var(--color-src-gemini); }
+  .src-word { background: var(--color-src-word); } .src-pdf { background: var(--color-src-pdf); } .src-md { background: var(--color-src-md); }
+  .hit { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-action), 0 0 0 3px var(--color-action-soft); }
+  .row-on { background: var(--color-action-soft); }
+  .dot-chrome { width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--color-line); }
+  .scatter-item { transform: rotate(var(--tilt, 0deg)); }
 }
 
 /* =====================================================================================
@@ -615,16 +842,16 @@
   .actionbar {
     position: sticky; bottom: 0; z-index: 5; display: flex; flex-direction: column; gap: 0.75rem;
     margin: 0.5rem -1rem 0; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-    background: var(--color-surface); border-top: 1px solid var(--color-line-soft);
-    box-shadow: 0 -6px 12px -8px var(--color-shadow);
+    background: var(--color-canvas); border-top: 1px solid var(--color-line-soft);
+    box-shadow: 0 -8px 16px -10px var(--color-shadow);
   }
   .actionbar > .btn { width: 100%; }
   /* Inside the result panel the bar takes the panel's own colours, so it does not cut a strip of page colour across it.
      The result tint is see-through in dark mode, so it is laid over the page colour: a stuck bar must hide what scrolls under it. */
   .actionbar-panel {
     margin: 1.125rem -1.25rem 0; padding-left: 1.25rem; padding-right: 1.25rem;
-    background: linear-gradient(var(--color-result), var(--color-result)), var(--color-surface);
-    border-top-color: var(--color-success-line);
+    background: var(--color-surface);
+    border-top-color: var(--color-line-soft);
   }
   @container app (min-width: 520px) {
     .actionbar, .actionbar-panel {
@@ -642,17 +869,25 @@
     .filecard { flex-direction: row; align-items: center; justify-content: space-between; }
   }
 
+  /* The place every tool starts: a raised white panel with a wash of the brand tint and a dashed petrol edge (3:1). */
   .dropzone {
-    text-align: center; border: 2px dashed var(--color-control); border-radius: 1rem;
-    background: var(--color-surface-2); transition: border-color 0.15s, background-color 0.15s;
+    text-align: center; border: 2px dashed var(--color-drop-line); border-radius: 1.25rem;
+    background-color: var(--color-surface-2);
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.18s;
   }
-  .dropzone-over { border-color: var(--color-action); background: var(--color-action-soft); }
+  .dropzone:hover { border-color: var(--color-action); }
+  .dropzone-over { border-color: var(--color-action); background-color: var(--color-action-soft); box-shadow: 0 0 0 5px var(--color-action-soft), 0 14px 30px -18px var(--color-shadow); }
+  .dropzone-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 4rem; height: 4rem; border-radius: 1.25rem;
+    background: var(--color-surface); color: var(--cat-ink, var(--color-action-ink));
+    box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 22px -10px var(--color-shadow);
+  }
 
   /* Page thumbnails you select (the page itself is drawn on white paper, whatever the theme). */
   .thumb {
     position: relative; display: block; width: 100%; padding: 0.5rem; border: 0; border-radius: 0.75rem;
     background: var(--color-surface); text-align: center; cursor: pointer;
-    box-shadow: inset 0 0 0 1px var(--color-control);
+    box-shadow: inset 0 0 0 1px var(--color-control); transition: box-shadow 0.15s, background-color 0.15s;
   }
   .thumb:hover { box-shadow: inset 0 0 0 1px var(--color-ink-3); }
   .thumb[aria-checked="true"] { background: var(--color-action-soft); box-shadow: inset 0 0 0 2px var(--color-action); }
@@ -666,13 +901,19 @@
   .thumb-wait { color: var(--color-ink-3); }
 
   /* The finished-work panel */
-  .result { padding: 1.25rem; border: 1px solid var(--color-success-line); border-radius: 1rem; background: var(--color-result); }
+  /* The minimal look (2026-11-13): a white card like the rest of the page, with "Done" as a small green pill. */
+  .result { padding: 1.25rem; border: 1px solid var(--color-line-soft); border-radius: 1.25rem; background: var(--color-surface); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 12px 40px -12px var(--color-shadow); }
+  /* A little more room inside once the column is wide; on a phone every pixel goes to the content (two picture tiles to a row). */
+  @container app (min-width: 520px) { .result { padding: 1.5rem; } }
   .result:focus { outline: none; }
+  /* The tool's region takes focus only from a script (after "Back to options" or "Start over"), as the result panel does: no ring around the whole tool. */
+  .tool-region:focus { outline: none; }
   .result-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-  .result-done { display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem; font-weight: 700; color: var(--color-success-ink); }
-  .result-summary { margin-top: 0.75rem; font-size: 1.125rem; }
-  .result-keep { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-success-line); }
-  .result-keep-title { margin-bottom: 0.6rem; font-size: 0.875rem; font-weight: 600; }
+  .result-done { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem 0.25rem 0.5rem; border-radius: 999px; background: var(--color-success-soft); font-size: 0.875rem; font-weight: 700; color: var(--color-success-ink); }
+  .result-done svg { width: 1rem; height: 1rem; }
+  .result-summary { margin-top: 0.875rem; font-size: 1.125rem; }
+  .result-keep { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-line-soft); }
+  .result-keep-title { margin-bottom: 0.6rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-ink-3); }
   .note { margin-top: 0.875rem; font-size: 0.875rem; }
   .note-warn {
     padding: 0.625rem 0.75rem; border: 1px solid var(--color-warn-line); border-radius: 0.75rem;
@@ -697,8 +938,8 @@
 
 @layer components {
   /* ---- The page stage (build set C): a page drawn big, with marks placed on it ---- */
-  .pagestage { padding: 1rem; overflow: auto; border-radius: 1rem; background: var(--color-stage); }
-  .pagestage-paper { position: relative; margin: 0 auto; background: var(--color-paper); color: var(--color-paper-ink); box-shadow: 0 2px 10px var(--color-shadow); container-type: inline-size; }
+  .pagestage { padding: 1rem; overflow: auto; border-radius: 1.25rem; background: var(--color-stage); box-shadow: inset 0 1px 3px var(--color-shadow-soft); }
+  .pagestage-paper { position: relative; margin: 0 auto; background: var(--color-paper); color: var(--color-paper-ink); box-shadow: 0 1px 3px var(--color-shadow-soft), 0 14px 30px -14px var(--color-shadow); container-type: inline-size; }
   .pagestage-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem; margin-top: 0.625rem; }
   .pagestage-nav { display: flex; align-items: center; gap: 0.125rem; font-size: 0.875rem; font-weight: 600; }
   .pagestage-tools { display: flex; align-items: center; gap: 2px; }
@@ -707,7 +948,18 @@
      The options column is a container of its own, so its fields pair up only when that column has room for two.
      The three-part form (Sign) keeps "make" first in the page's order, so a phone still reads make, page, options. */
   .stage-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
-  .stage-opts { display: grid; gap: 1.25rem; min-width: 0; container-type: inline-size; container-name: opts; }
+  /* The options sit in a card of their own beside the page or the files (the minimal look, 2026-11-13). */
+  .stage-opts {
+    display: grid; gap: 1.25rem; min-width: 0; container-type: inline-size; container-name: opts;
+    padding: 1.25rem; border: 1px solid var(--color-line-soft); border-radius: 1.25rem; background: var(--color-surface);
+  }
+  /* The files a tool will use: a soft tray of white rows, one card each. */
+  .file-tray { display: grid; gap: 0.625rem; padding: 0.75rem; border-radius: 1.25rem; background: var(--color-surface-2); }
+  .file-row { border: 1px solid var(--color-line-soft); border-radius: 0.875rem; background: var(--color-surface); }
+  /* "Add more": the whole width, with a dashed edge (3:1 like any control) that says files go here. */
+  .btn-dashed { width: 100%; background: transparent; box-shadow: none; border: 1.5px dashed var(--color-control); color: var(--color-ink-2); }
+  .btn-dashed:hover:not(:disabled) { border-color: var(--color-action); color: var(--color-action-ink); background: var(--color-action-soft); }
+  .summary-line { display: flex; justify-content: space-between; gap: 1rem; padding-top: 0.875rem; border-top: 1px solid var(--color-line-soft); font-size: 0.9375rem; color: var(--color-ink-2); }
   .stage-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
   .stage-wide { grid-column: 1 / -1; }
   .stage-make { grid-area: make; min-width: 0; }

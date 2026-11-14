@@ -28,18 +28,20 @@ test("both themes resolve: the dark panel is dark, the light panel is light, and
   const bg = (scheme: Scheme) => panel(page, "Buttons and choices", scheme).evaluate((el) => getComputedStyle(el).backgroundColor);
   const primary = (scheme: Scheme) => panel(page, "Buttons and choices", scheme).locator(".btn-primary").first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(await bg("light")).toBe("rgb(255, 255, 255)");
-  expect(await bg("dark")).toBe("rgb(15, 23, 42)");
+  expect(await bg("dark")).toBe("rgb(16, 24, 41)"); // the card colour of the 2026-11-11 palette
   expect(await primary("light")).toBe("rgb(38, 112, 236)");
   expect(await primary("dark")).toBe("rgb(38, 112, 236)");
 });
 
+// Since 2026-11-13 the font is loaded with next/font/local (app/layout.tsx), which names its face after the variable:
+// "googleSans", not "Google Sans". The faces are still declared, loaded and the body's first choice.
 test("Google Sans is the page font and is served from our own origin", async ({ page }) => {
   const info = await page.evaluate(async () => {
     await document.fonts.ready;
-    const faces = [...document.fonts].filter((f) => /Google Sans/.test(f.family));
+    const faces = [...document.fonts].filter((f) => /^"?googleSans"?$/.test(f.family));
     return { family: getComputedStyle(document.body).fontFamily, loaded: faces.filter((f) => f.status === "loaded").length, declared: faces.length };
   });
-  expect(info.family).toMatch(/Google Sans/);
+  expect(info.family).toMatch(/^"?googleSans"?,/);
   expect(info.declared).toBeGreaterThan(0);
   expect(info.loaded).toBeGreaterThan(0);
 });
@@ -220,7 +222,7 @@ test.describe("notifier", () => {
     await page.getByRole("button", { name: "Status toast" }).click();
     const toast = page.locator(".toast").filter({ hasText: "3 files added" });
     await expect(toast).toBeVisible();
-    expect(await toast.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(30, 41, 59)");
+    expect(await toast.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(24, 34, 58)");
   });
 });
 
@@ -282,7 +284,7 @@ test.describe("tool blocks", () => {
     expect(await bar()).toBe("sticky");
   });
 
-  test("result panel: takes focus, offers the download and the next tools, and starts over", async ({ page }) => {
+  test("result panel: takes focus, offers the download and the next tools, and goes back under the right name", async ({ page }) => {
     const area = running(page);
     await area.getByRole("button", { name: "Show the result panel" }).click();
     const result = page.getByTestId("gallery-result").first();
@@ -290,7 +292,10 @@ test.describe("tool blocks", () => {
     const download = result.getByRole("link", { name: "Download compressed PDF" });
     await expect(download).toHaveAttribute("download", "report-compressed.pdf");
     await expect(result.getByRole("button", { name: "Merge PDF" })).toBeVisible();
-    await result.getByRole("button", { name: "Start over" }).click();
+    // A tool that keeps its file calls the quiet button "Back to options"; one that clears its files, "Start over".
+    await expect(page.getByTestId("gallery-result-clears").getByRole("button", { name: "Start over" })).toBeVisible();
+    await expect(result.getByRole("button", { name: "Start over" })).toHaveCount(0);
+    await result.getByRole("button", { name: "Back to options" }).click();
     await expect(page.getByTestId("gallery-result")).toHaveCount(0);
   });
 

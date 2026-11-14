@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
   turbopack: { root: __dirname },
+  // The platform preview (lib/site.ts): written into the browser code at build time, so client components see it too.
+  env: { PLATFORM_PREVIEW: process.env.PLATFORM_PREVIEW === "1" ? "1" : "" },
   pageExtensions: withGallery ? ["tsx", "ts", "jsx", "js", "gallery.tsx"] : ["tsx", "ts", "jsx", "js"],
 };
 

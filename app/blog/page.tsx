@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { PostCard } from "@/components/blog/PostCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { allTags, getPosts } from "@/lib/content";
+import { allTags, getPosts, tagLabel } from "@/lib/content";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
+  path: "/blog",
   title: "Blog",
   description: "Short guides on working with PDFs: making them smaller, taking them apart, and keeping what is in them private.",
-};
+});
 
 export default async function Blog() {
   const posts = await getPosts();
@@ -17,10 +19,12 @@ export default async function Blog() {
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Blog</h1>
       <p className="mt-3 text-lg text-ink-2">Short guides on working with PDFs: making them smaller, taking them apart, and keeping what is in them private.</p>
 
-      {tags.length > 0 && (
+      {/* Topics narrow a list, so they wait until there is a list to narrow: with one post they were two chips that
+          each led back to the same post. Every post still shows its own topics. */}
+      {posts.length > 1 && tags.length > 0 && (
         <nav aria-label="Topics" className="mt-6">
           <ul className="flex flex-wrap gap-2">
-            {tags.map((t) => (<li key={t.tag}><Link href={`/blog/tags/${t.tag}`} className="pill-link">{t.tag} <span className="text-ink-3">({t.count})</span></Link></li>))}
+            {tags.map((t) => (<li key={t.tag}><Link href={`/blog/tags/${t.tag}`} className="pill-link">{tagLabel(t.tag)} <span className="text-ink-3">({t.count})</span></Link></li>))}
           </ul>
         </nav>
       )}

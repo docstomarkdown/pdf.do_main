@@ -23,6 +23,10 @@ npm run test:gallery                   # builds with GALLERY=1, serves on :4175,
 The component gallery (`/gallery`) shows every UI block in light and dark side by side. It exists in `npm run dev` and in a
 `GALLERY=1` build, and is left out of the live build.
 
+The platform preview works the same way. The home page's sections about keeping documents and AI chats, and the "Keep it"
+card under a result, show only in `npm run dev` or in a build made with `PLATFORM_PREVIEW=1` (`lib/site.ts`). The live build
+shows the tools alone, since accounts do not exist yet.
+
 ## Tools
 
 | Tool | Engine | Notes |
@@ -45,7 +49,7 @@ The component gallery (`/gallery`) shows every UI block in light and dark side b
 | Split PDF in half | pdf-lib (page boxes) | each page cut in two (left and right, or top and bottom) or the document in two files; follows turned pages; the cut half stays hidden in the file |
 | Crop PDF | pdf-lib (page boxes) | four sliders with a shaded preview, all pages or a typed range; the cut-off area is hidden, not deleted, and the page says so |
 | Split PDF by size, by bookmarks | pdf-lib; pdf.js outline | by size packs pages in order under a limit (binary search on trial saves); by bookmarks uses top-level bookmarks only |
-| PDF size analyzer | pdf-lib stream walk | pictures, fonts, page content, other data, and "the rest" (an upper bound, said on the page) |
+| PDF size analyser | pdf-lib stream walk | pictures, fonts, page content, other data, and "the rest" (an upper bound, said on the page) |
 | Text to PDF | pdf-lib standard fonts | Latin letters only; other characters become "?" and are counted; text files up to 5 MB |
 | Extract images | pdf.js operator list, canvas PNG | saved as PNG; pictures under 32 px are left out; a logo on every page is saved once per page |
 | Add watermark | pdf-lib | text only; drag on the preview or place with the grid; colour, size, strength and angle; follows turned pages |
@@ -66,8 +70,8 @@ Results can be handed to the next tool in memory ("Keep going with this file"), 
 ## Blog
 
 Posts are Markdown files in `content/blog/`; `content/README.md` says how to write one. Preview with `npm run dev` (drafts show
-there); `npm run build` checks every post and stops with a list of problems if one breaks a rule. Pages are `/blog`, `/blog/<slug>`
-and `/blog/tags/<tag>`. No RSS feed or sitemap yet.
+there); `npm run build` checks every post and stops with a list of problems if one breaks a rule. Pages are `/blog` (the list), `/<slug>` for a post
+(a direct address, with nothing in front) and `/blog/tags/<tag>`. `/sitemap.xml` is written at build time and lists every tool, page and post. No RSS feed yet.
 
 ## Design rules
 

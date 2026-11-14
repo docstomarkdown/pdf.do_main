@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { TextLink } from "@/components/ui/TextLink";
 import { shippedLicences } from "@/lib/licences";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
+  path: "/licences",
   title: "Licences",
   description: "The open-source software and the font pdf.do is built with, and the licence each one is used under.",
-};
+});
 
 const h2 = "mt-10 text-2xl font-bold tracking-tight";
 const p = "mt-3 leading-relaxed";
@@ -161,7 +163,7 @@ export default function Licences() {
         ))}
       </div>
 
-      <p className="mt-10"><TextLink href="/">Back to the tools</TextLink></p>
+      <p className="mt-10"><TextLink href="/" className="tap">Back to the tools</TextLink></p>
     </article>
   );
 }

@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { DownloadButton } from "@/components/ui/DownloadButton";
 import { Icon } from "@/components/ui/Icon";
 import { setHandoff } from "@/lib/handoff";
+import { PLATFORM_PREVIEW } from "@/lib/site";
+import { Callout } from "@/components/site/Callout";
 import { getTool } from "@/lib/tools";
 
 /**
@@ -22,12 +24,18 @@ type OneFile = { url: string; file: File; downloadLabel: string };
 type NoFile = { url?: undefined; file?: undefined; downloadLabel?: undefined };
 
 export function ResultPanel({
-  url, file, fromTool, nextSlugs, downloadLabel, summary, onReset, testId, focusOnArrival = true, children,
+  url, file, fromTool, nextSlugs, downloadLabel, summary, onReset, startsOver = false, testId, focusOnArrival = true, children,
 }: {
   fromTool: string;
   nextSlugs: string[];
   summary: ReactNode;
   onReset: () => void;
+  /**
+   * What the quiet button in the header is called, which depends on what `onReset` does. In most tools the file stays and
+   * the options come back: "Back to options". Where it also clears the files the tool was given (Merge, Images to PDF),
+   * pass this and the button says "Start over". The label has to be true of the tool it is in.
+   */
+  startsOver?: boolean;
   testId: string;
   /** Move focus to the panel and scroll it into view when it appears. On for every tool; the gallery turns it off so a specimen does not move the page. */
   focusOnArrival?: boolean;
@@ -43,11 +51,21 @@ export function ResultPanel({
     panel.current?.scrollIntoView({ block: "nearest" });
   }, [focusOnArrival]);
 
+  // Going back takes this panel away, and the button that was pressed with it. Focus then goes to the tool around the
+  // panel (the region `ToolPage` marks), not to nowhere: the next Tab is the tool's first control, and a screen reader
+  // says which tool it is in. The page does not move.
+  const leave = () => {
+    const tool = panel.current?.closest<HTMLElement>("[data-tool-region]");
+    onReset();
+    tool?.focus({ preventScroll: true });
+  };
+
   return (
+    <>
     <div ref={panel} tabIndex={-1} data-testid={testId} className="result">
       <div className="result-head">
         <p className="result-done"><Icon name="check" className="h-6 w-6" /> Done</p>
-        <Button variant="ghost" size="sm" onClick={onReset}>Start over</Button>
+        <Button variant="ghost" size="sm" onClick={leave}>{startsOver ? "Start over" : "Back to options"}</Button>
       </div>
       <div className="result-summary">{summary}</div>
       {children && <div className="mt-4">{children}</div>}
@@ -77,5 +95,13 @@ export function ResultPanel({
         </div>
       )}
     </div>
+    {/* Preview only (lib/site.ts): the moment an account helps, offered beside the result and never in its way. There
+        are no accounts yet, so the live build leaves it out. */}
+    {PLATFORM_PREVIEW && file && (
+      <Callout className="mt-4" icon="bookmark" title="Keep it in pdf.do"
+        text="Save this file to your context, beside the chats and documents it belongs with, so any AI you use can find it. Free."
+        action={<Button variant="secondary">Keep this file</Button>} />
+    )}
+    </>
   );
 }

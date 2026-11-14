@@ -3,7 +3,7 @@ import { audit, chooseOption, fixture } from "./helpers";
 
 // The site follows the device's light or dark setting (decisions/0007). These run every kind of page, and each tool
 // in each state, with the device set to dark: the colours must really be dark, and still pass WCAG A/AA contrast.
-const PAGES = ["/", "/merge-pdf", "/compress-pdf", "/compress-pdf-to-1mb", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/bates-numbering", "/add-image", "/add-text", "/make-pdf-fillable", "/annotate-pdf", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/how-it-works", "/licences", "/blog", "/no-such-page"];
+const PAGES = ["/", "/merge-pdf", "/compress-pdf", "/compress-pdf-to-1mb", "/delete-pdf-pages", "/extract-pdf-pages", "/split-pdf", "/rotate-pdf", "/page-numbers", "/bates-numbering", "/add-image", "/add-text", "/make-pdf-fillable", "/annotate-pdf", "/edit-pdf-metadata", "/images-to-pdf", "/pdf-to-jpg", "/pdf-to-png", "/extract-text", "/encrypt-pdf", "/remove-password", "/unlock-pdf", "/organize-pages", "/split-pdf-in-half", "/crop-pdf", "/pdf-size-analyzer", "/txt-to-pdf", "/extract-images", "/split-pdf-by-size", "/add-watermark", "/sign-pdf", "/split-pdf-by-bookmarks", "/repair-pdf", "/scan-to-pdf", "/heic-to-pdf", "/pdf-to-markdown", "/fill-pdf-form", "/privacy-scanner", "/compare-pdfs", "/tools", "/how-it-works", "/licences", "/blog", "/no-such-page"];
 
 test.describe("dark mode", () => {
   test.use({ colorScheme: "dark" });
@@ -15,7 +15,7 @@ test.describe("dark mode", () => {
       text: getComputedStyle(document.body).color,
       scheme: getComputedStyle(document.documentElement).colorScheme,
     }));
-    expect(style).toEqual({ surface: "rgb(15, 23, 42)", text: "rgb(241, 245, 249)", scheme: "dark" });
+    expect(style).toEqual({ surface: "rgb(18, 18, 17)", text: "rgb(220, 216, 208)", scheme: "dark" }); // warm charcoal and its ink (petrol look, 2026-11-14)
   });
 
   for (const path of PAGES) {
@@ -80,6 +80,6 @@ test.describe("light mode", () => {
       text: getComputedStyle(document.body).color,
       scheme: getComputedStyle(document.documentElement).colorScheme,
     }));
-    expect(style).toEqual({ surface: "rgb(255, 255, 255)", text: "rgb(15, 23, 42)", scheme: "light" });
+    expect(style).toEqual({ surface: "rgb(249, 249, 247)", text: "rgb(45, 42, 38)", scheme: "light" }); // paper grey and its ink (petrol look, 2026-11-14)
   });
 });

@@ -19,6 +19,12 @@ import { BreakdownBar, FactList, ReportList } from "@/components/tool/ReportList
 import { ResultPanel } from "@/components/tool/ResultPanel";
 import { SelectionToolbar } from "@/components/tool/SelectionToolbar";
 import { TextOutput } from "@/components/tool/TextOutput";
+import { Callout } from "@/components/site/Callout";
+import { DocRow, DocSearch, Hit } from "@/components/site/DocRow";
+import { FactRow, Feature, SectionHead } from "@/components/site/Section";
+import { ToolChips } from "@/components/site/ToolGroups";
+import { SourceBadge } from "@/components/ui/SourceBadge";
+import { TickList } from "@/components/ui/TickList";
 import { ActionBar } from "@/components/ui/ActionBar";
 import { Alert } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
@@ -67,6 +73,28 @@ function Specimen({ title, note, children }: { title: string; note?: string; chi
         ))}
       </div>
     </section>
+  );
+}
+
+/** The parts pages are built from (the minimal look of 2026-11-13): headings, text beside a picture, facts, a callout. */
+function PageParts() {
+  const id = useId();
+  return (
+    <>
+      <SectionHead id={`g-head-${id}`} kicker="Find it again" title="Find anything, months or years later" lead="One or two sentences under the heading." />
+      <SectionHead center id={`g-head-c-${id}`} title="Centred, with no label" />
+      <TickList items={["Opens at the exact message or page", "Group files into collections"]} />
+      <Row>{(["gpt", "claude", "gemini", "word", "pdf", "md"] as const).map((s) => <SourceBadge key={s} source={s} />)}{(["gpt", "pdf"] as const).map((s) => <SourceBadge key={`${s}-s`} source={s} small />)}</Row>
+      <Card className="p-3.5">
+        <DocSearch>annual discount</DocSearch>
+        <DocRow selected source="claude" name="Pricing the Pro plan" meta="Claude · 14 Mar 2025" match={<>…dropping the <Hit>annual discount</Hit>…</>} />
+        <DocRow source="pdf" name="Board update.pdf" meta="PDF · page 3" />
+      </Card>
+      <FactRow facts={[{ icon: "shield", title: "Runs on your device", text: "Nothing is uploaded." }, { icon: "check", title: "No sign-up", text: "Open a tool and use it." }, { icon: "lock", title: "Check it yourself", text: "The how-it-works page shows how." }]} />
+      <Callout icon="bookmark" title="Keep it in pdf.do" text="Save this file next to your documents. Free." action={<Button variant="secondary">Keep this file</Button>} />
+      <ToolChips slugs={["merge-pdf", "compress-pdf", "sign-pdf"]} label="Popular tools" />
+      <Feature id={`g-feature-${id}`} kicker="Bring it in" title="Text beside a picture" lead="Two columns when there is room." ticks={["One", "Two"]} picture={<Card className="p-6 text-ink-3">The picture</Card>} />
+    </>
   );
 }
 
@@ -233,8 +261,14 @@ function ToolRunning() {
           downloadLabel="Download compressed PDF" onReset={() => setShown(false)}
           summary={<p className="text-lg">9.1 MB → <strong>643 KB</strong> <span className="font-semibold text-success-ink">(93% smaller)</span></p>}>
           <SizeComparison before={9_541_000} after={658_000} />
-          <p className="note">Structure and images optimised. Text stays selectable.</p>
+          <p className="note">Structure optimised, and images recompressed where that saves space. Text stays selectable.</p>
         </ResultPanel>
+      )}
+      {/* The other name for the quiet button: a tool whose reset also clears its files says "Start over". */}
+      {shown && (
+        <ResultPanel testId="gallery-result-clears" focusOnArrival={false} url="#" file={fake("merged.pdf", 400_000)} fromTool="Merge PDF" nextSlugs={[]}
+          downloadLabel="Download the merged file" startsOver onReset={() => setShown(false)}
+          summary={<p className="text-lg"><strong>12 pages</strong> · 391 KB</p>} />
       )}
       <Row><DownloadButton url="#" file={fake("merged.pdf", 400_000)}>Download merged PDF</DownloadButton></Row>
     </>
@@ -541,6 +575,7 @@ export function Gallery() {
       <Specimen title="Spinner and progress" note="A spinner means working with no known end; a ring or bar means the fraction is known."><Spinners /></Specimen>
       <Specimen title="Fields"><Fields /></Specimen>
       <Specimen title="Surfaces and messages"><Surfaces /></Specimen>
+      <Specimen title="Page parts" note="What the home page and tool pages are built from: a section heading, ticks, source badges, document rows, facts, a callout, tool chips, text beside a picture."><PageParts /></Specimen>
       <Specimen title="Dialog" note="The browser's own dialog element: focus is trapped, Escape closes, and a phone gets a sheet."><DialogDemo /></Specimen>
       <Specimen title="Tool blocks: files and pages" note="The file card, the reorderable list, the range field and the selection tools."><ToolFiles /></Specimen>
       <Specimen title="Tool blocks: running and result" note="Progress in the place of the button, the action bar, and the finished-work panel."><ToolRunning /></Specimen>

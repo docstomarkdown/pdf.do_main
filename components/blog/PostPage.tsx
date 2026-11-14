@@ -1,36 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/blog/JsonLd";
 import { PostCard } from "@/components/blog/PostCard";
 import { PostMeta } from "@/components/blog/PostMeta";
+import { Breadcrumb } from "@/components/site/Breadcrumb";
 import { ToolCard } from "@/components/site/ToolCard";
-import { getPosts } from "@/lib/content";
+import type { Post } from "@/lib/content";
+import { sharePicture } from "@/lib/seo";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { getTool } from "@/lib/tools";
 
-export const dynamicParams = false;
-
-export async function generateStaticParams() {
-  return (await getPosts()).map((p) => ({ slug: p.slug }));
-}
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = (await getPosts()).find((p) => p.slug === slug);
-  if (!post) return {};
-  return {
-    title: post.title,
-    description: post.description,
-    // The page stays out of search results like the rest of the site (robots comes from the root layout) until go-live.
-    openGraph: { type: "article", title: post.title, description: post.description, publishedTime: post.date, modifiedTime: post.updated, tags: post.tags },
-  };
-}
-
-export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const posts = await getPosts();
-  const post = posts.find((p) => p.slug === slug);
-  if (!post) notFound();
+/** One blog post, as its page shows it. `posts` is every published post, for the "More to read" links. */
+export function PostPage({ post, posts }: { post: Post; posts: Post[] }) {
   const tool = post.tool ? getTool(post.tool) : undefined;
   const related = post.related.map((r) => posts.find((p) => p.slug === r)).filter((p) => p !== undefined);
   const toc = post.headings.filter((h) => h.depth === 2);
@@ -44,11 +24,16 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
         description: post.description,
         datePublished: post.date,
         dateModified: post.updated ?? post.date,
-        author: { "@type": "Organization", name: "pdf.do" },
-        publisher: { "@type": "Organization", name: "pdf.do" },
+        url: `${SITE_URL}/${post.slug}`,
+        mainEntityOfPage: `${SITE_URL}/${post.slug}`,
+        image: `${SITE_URL}${sharePicture(`/${post.slug}`, post.image)}`,
+        inLanguage: "en",
+        author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
         keywords: post.tags.join(", "),
       }} />
-      <nav aria-label="Breadcrumb" className="text-sm text-ink-3"><Link href="/blog" className="link">Blog</Link> <span aria-hidden="true">/</span> <span>{post.title}</span></nav>
+      {/* The same breadcrumb as a tool page. The post's own title is left out of it: it is the heading right below. */}
+      <Breadcrumb trail={[{ name: "Home", href: "/" }, { name: "Blog", href: "/blog" }]} />
       <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{post.title}</h1>
       <p className="mt-3 text-lg text-ink-2">{post.description}</p>
       <div className="mt-4"><PostMeta post={post} showUpdated /></div>
@@ -56,8 +41,9 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
       {toc.length >= 3 && (
         <nav aria-label="On this page" className="mt-8 rounded-2xl border border-line-soft bg-surface-2 p-5" data-testid="toc">
           <p className="mb-2 text-sm font-semibold">On this page</p>
-          <ol className="grid gap-1.5">
-            {toc.map((h) => (<li key={h.id}><a href={`#${h.id}`} className="link">{h.text}</a></li>))}
+          {/* On a phone each line of the list is a row 44 px tall, so a thumb lands on the one it means. */}
+          <ol className="grid gap-1.5 max-sm:gap-0">
+            {toc.map((h) => (<li key={h.id}><a href={`#${h.id}`} className="link max-sm:flex max-sm:min-h-11 max-sm:items-center">{h.text}</a></li>))}
           </ol>
         </nav>
       )}
@@ -79,7 +65,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
         </section>
       )}
 
-      <p className="mt-12"><Link href="/blog" className="link">All posts</Link></p>
+      <p className="mt-12"><Link href="/blog" className="link tap">All posts</Link></p>
     </article>
   );
 }

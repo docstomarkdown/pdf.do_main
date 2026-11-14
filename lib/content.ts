@@ -35,6 +35,10 @@ export type Post = {
   /** The slug of the tool this post leads to, shown as a call to action at the end. */
   tool?: string;
   related: string[];
+  /** The post's own picture for link previews, as a path under public/ ("/blog/name.png"). Without one, a picture is drawn from the title (app/og). */
+  image?: string;
+  /** What the picture shows, for people who cannot see it. Required with `image`. */
+  imageAlt?: string;
   draft: boolean;
   html: string;
   headings: Heading[];
@@ -49,6 +53,8 @@ export type LoadOptions = {
   includeDrafts?: boolean;
   /** Today, as YYYY-MM-DD, for the rule that a post cannot be dated in the future. */
   today?: string;
+  /** Where the site's pictures are: the folder a path like /blog/name.png is looked up in. */
+  publicDir?: string;
 };
 
 export const BLOG_DIR = path.join(process.cwd(), "content", "blog");
@@ -62,17 +68,20 @@ export class ContentError extends Error {
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const PAGES = new Set(["/", "/blog", "/how-it-works", "/licences"]);
+const PAGES = new Set(["/", "/blog", "/tools", "/how-it-works", "/licences"]);
+// A post's file name is its address at the top of the site (/its-file-name), so it must not be one that a page, a folder
+// of the site or a tool already has. Tools are looked up in the registry; these are the rest.
+const TAKEN = new Set(["blog", "tools", "how-it-works", "licences", "gallery", "engines", "sitemap", "robots", "tags", "og", "home"]);
 
 const validDate = (value: string) => DATE.test(value) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 
-type Meta = Pick<Post, "title" | "description" | "date" | "updated" | "tags" | "tool" | "related" | "draft">;
+type Meta = Pick<Post, "title" | "description" | "date" | "updated" | "tags" | "tool" | "related" | "image" | "imageAlt" | "draft">;
 
-function readMeta(file: string, raw: unknown, today: string, problems: string[]): Meta | null {
+function readMeta(file: string, raw: unknown, today: string, publicDir: string, problems: string[]): Meta | null {
   const bad = (message: string) => problems.push(`${file}: ${message}`);
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) { bad("the front matter must be a list of fields between two lines of ---"); return null; }
   const data = raw as Record<string, unknown>;
-  const known = new Set(["title", "description", "date", "updated", "tags", "tool", "related", "draft"]);
+  const known = new Set(["title", "description", "date", "updated", "tags", "tool", "related", "image", "imageAlt", "draft"]);
   for (const key of Object.keys(data)) if (!known.has(key)) bad(`unknown field "${key}" (allowed: ${[...known].join(", ")})`);
 
   const text = (key: string, min: number, max: number): string => {
@@ -104,12 +113,22 @@ function readMeta(file: string, raw: unknown, today: string, problems: string[])
   if (tool !== undefined && (typeof tool !== "string" || !getTool(tool))) bad(`tool "${String(tool)}" is not a tool on this site (see lib/tools.ts)`);
   const draft = data.draft;
   if (draft !== undefined && typeof draft !== "boolean") bad("draft must be true or false");
+  // A post's own picture for link previews. It is optional: without one, a picture is drawn from the title.
+  const image = data.image;
+  const imageAlt = data.imageAlt;
+  if (image !== undefined) {
+    if (typeof image !== "string" || !/^\/[\w./-]+\.(png|jpe?g|webp)$/.test(image) || image.includes("..")) bad('image must be a picture in the public folder, written like /blog/name.png (png, jpg or webp)');
+    else if (!fs.existsSync(path.join(publicDir, image))) bad(`the picture ${image} is not in the public folder`);
+    if (typeof imageAlt !== "string" || imageAlt.trim().length < 10 || imageAlt.length > 160) bad("imageAlt is required with image: say what the picture shows, in 10 to 160 characters");
+  } else if (imageAlt !== undefined) bad("imageAlt is set but image is not");
 
   return {
     title, description, date, updated: updated || undefined,
     tags: Array.isArray(tags) ? (tags as string[]) : [],
     tool: typeof tool === "string" ? tool : undefined,
     related: Array.isArray(related) ? (related as string[]) : [],
+    image: typeof image === "string" ? image : undefined,
+    imageAlt: typeof imageAlt === "string" ? imageAlt.trim() : undefined,
     draft: draft === true,
   };
 }
@@ -185,6 +204,7 @@ function renderMarkdown(source: string, file: string, problems: string[]) {
 export async function loadPosts(options: LoadOptions = {}): Promise<Post[]> {
   const dir = options.dir ?? BLOG_DIR;
   const today = options.today ?? new Date().toISOString().slice(0, 10);
+  const publicDir = options.publicDir ?? path.join(process.cwd(), "public");
   const problems: string[] = [];
   const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("_") && !f.startsWith(".")).sort() : [];
 
@@ -196,8 +216,9 @@ export async function loadPosts(options: LoadOptions = {}): Promise<Post[]> {
     if (!SLUG.test(slug) || slug.length > 80) { problems.push(`${file}: the file name is the web address, so it must be lowercase words joined by hyphens (up to 80 characters)`); continue; }
     if (seen.has(slug)) problems.push(`${file}: duplicate address`);
     seen.add(slug);
+    if (TAKEN.has(slug) || getTool(slug)) { problems.push(`${file}: the address /${slug} already belongs to a ${getTool(slug) ? "tool" : "page"} on this site; give the post another file name`); continue; }
     const rendered = renderMarkdown(fs.readFileSync(path.join(dir, file), "utf8"), file, problems);
-    const meta = readMeta(file, rendered.front, today, problems);
+    const meta = readMeta(file, rendered.front, today, publicDir, problems);
     if (meta) parsed.push({ slug, meta, rendered });
   }
 
@@ -213,8 +234,8 @@ export async function loadPosts(options: LoadOptions = {}): Promise<Post[]> {
       if (/^(https?:)?\/\//.test(url) || /^(mailto|tel):/.test(url)) { if (url.startsWith("//")) problems.push(`${file}: write the full address, starting https://, for ${url}`); continue; }
       if (!url.startsWith("/")) { problems.push(`${file}: the ${label} "${url}" must be a full https:// address or start with /`); continue; }
       const route = url.split(/[?#]/)[0].replace(/(.)\/$/, "$1");
-      if (label === "picture") { if (!fs.existsSync(path.join(process.cwd(), "public", route))) problems.push(`${file}: the picture ${url} is not in the public folder`); continue; }
-      const post = route.startsWith("/blog/tags/") ? tags.has(route.slice(11)) : route.startsWith("/blog/") ? liveSlugs.has(route.slice(6)) : false;
+      if (label === "picture") { if (!fs.existsSync(path.join(publicDir, route))) problems.push(`${file}: the picture ${url} is not in the public folder`); continue; }
+      const post = route.startsWith("/blog/tags/") ? tags.has(route.slice(11)) : liveSlugs.has(route.slice(1)); // a post is at /its-file-name
       if (!PAGES.has(route) && !getTool(route.slice(1)) && !post) problems.push(`${file}: the link ${url} does not lead to a page on this site`);
     }
   }
@@ -239,4 +260,10 @@ export const allTags = (posts: Post[]): { tag: string; count: number }[] =>
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 
-export const formatDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+// Day first ("6 November 2026"): the site is written in British English, and this was its one American date.
+export const formatDate = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+
+/** A tag as words: "file-size" is "file size". Tags are written as lowercase words joined by hyphens (content/README.md). */
+export const tagName = (tag: string) => tag.replace(/-/g, " ");
+/** The same with a capital, for a chip that stands alone: "File size". */
+export const tagLabel = (tag: string) => tagName(tag).replace(/^./, (c) => c.toUpperCase());

@@ -1,7 +1,8 @@
 # Writing for the blog
 
 Posts are Markdown files in `content/blog/`. The file name is the web address: `content/blog/make-a-pdf-smaller.md` is
-published at `/blog/make-a-pdf-smaller`. Use lowercase words joined by hyphens.
+published at `/make-a-pdf-smaller`, at the top of the site with nothing in front. Use lowercase words joined by hyphens.
+A post cannot take a name a tool or a page already has (`merge-pdf`, `how-it-works`): the build stops and says so.
 
 Drafts and a preview: run `npm run dev` and open `/blog`. Posts marked `draft: true` show there, and are left out of the live
 build. Every other post must pass the checks below, or `npm run build` stops and lists what to fix.
@@ -32,6 +33,8 @@ Start with a sentence that answers the question. Then use `##` headings.
 | `tags` | Optional. Up to five, lowercase words joined by hyphens. Each tag gets a page at `/blog/tags/<tag>`. |
 | `tool` | Optional. The slug of a tool in `lib/tools.ts`. The post ends with a card that opens that tool. |
 | `related` | Optional. Slugs of other published posts, shown at the end. |
+| `image` | Optional. The post's own picture for link previews (what shows when the address is pasted into a chat or a social post), as a path under `public/`: `/blog/name.png`. Best at 1200 by 630 pixels. **Leave it out and a picture is drawn from the title when the site is built**, so no post is shared without one. |
+| `imageAlt` | Required with `image`. What the picture shows, in 10 to 160 characters. |
 | `draft` | Optional. `true` keeps the post out of the live site. |
 
 ## What the build checks

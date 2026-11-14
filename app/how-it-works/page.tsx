@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { TextLink } from "@/components/ui/TextLink";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
+  path: "/how-it-works",
   title: "How it works and your privacy",
   description: "What happens to your files on pdf.do, how to check it yourself, and what the tools cannot do yet.",
-};
+});
 
 const h2 = "mt-10 text-2xl font-bold tracking-tight";
 const p = "mt-3 leading-relaxed";
@@ -49,7 +51,7 @@ export default function HowItWorks() {
         Nothing with a copyleft licence is included in what your browser downloads. <TextLink href="/licences">The licences are listed here</TextLink>.
       </p>
 
-      <p className="mt-10"><TextLink href="/">Back to the tools</TextLink></p>
+      <p className="mt-10"><TextLink href="/" className="tap">Back to the tools</TextLink></p>
     </article>
   );
 }

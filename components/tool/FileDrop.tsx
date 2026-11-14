@@ -18,7 +18,7 @@ const nouns: Record<Accept, { one: string; many: string }> = {
 
 /** The one place files come in. `compact` shrinks it to a single button once a file is chosen. */
 export function FileDrop({
-  onFiles, multiple = false, label, compact = false, accept = "pdf", disabled = false, capture = false,
+  onFiles, multiple = false, label, compact = false, accept = "pdf", disabled = false, capture = false, wide = false,
 }: {
   onFiles: (files: File[]) => void;
   multiple?: boolean;
@@ -28,6 +28,8 @@ export function FileDrop({
   disabled?: boolean;
   /** On a phone, open the camera instead of the photo library. Other devices ignore it and show the file chooser. */
   capture?: boolean;
+  /** With `compact`: a full-width button with a dashed edge, for "Add more" under a list of files. */
+  wide?: boolean;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
@@ -60,7 +62,7 @@ export function FileDrop({
     return (
       <div onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); take(e.dataTransfer.files); }}>
         {hidden}
-        <Button variant="secondary" icon="upload" disabled={disabled} onClick={() => input.current?.click()}>{label}</Button>
+        <Button variant="secondary" icon={wide ? "plus" : "upload"} className={wide ? "btn-dashed" : ""} disabled={disabled} onClick={() => input.current?.click()}>{label}</Button>
         {notice && <Alert tone="error" className="mt-3">{notice}</Alert>}
       </div>
     );
@@ -73,7 +75,7 @@ export function FileDrop({
       className={`dropzone px-6 py-12 sm:py-16 ${over ? "dropzone-over" : ""}`.trim()}
     >
       {hidden}
-      <Icon name="upload" className="mx-auto h-10 w-10 text-action-ink" />
+      <span className="dropzone-icon"><Icon name="upload" className="h-7 w-7" /></span>
       <div className="mt-4">
         <Button size="lg" onClick={() => input.current?.click()}>{label}</Button>
       </div>

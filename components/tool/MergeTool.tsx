@@ -85,8 +85,22 @@ export function MergeTool() {
       ) : (
         <>
           {from && <Alert tone="info">Carried over from {from}. Add the other files you want to combine with it.</Alert>}
-          <FileList items={items} onMove={move} onRemove={remove} />
-          <FileDrop multiple compact label="Add more PDFs" onFiles={add} />
+          {/* The files in a tray on the left, what they will make in a card on the right (one column on a narrow screen). */}
+          <div className="stage-split">
+            <div className="file-tray">
+              <FileList items={items} onMove={move} onRemove={remove} />
+              <FileDrop multiple compact wide label="Add more PDFs" disabled={job.busy} onFiles={add} />
+            </div>
+            <aside className="stage-opts" aria-label="What the merge will make">
+              <p className="font-semibold">The merged file</p>
+              <dl className="grid gap-2 text-[0.9375rem]">
+                <div className="flex justify-between gap-4"><dt className="text-ink-2">Files</dt><dd className="nums font-semibold">{items.length}</dd></div>
+                <div className="flex justify-between gap-4"><dt className="text-ink-2">Pages</dt><dd className="nums font-semibold">{pending.length > 0 ? "Reading…" : usable.reduce((n, i) => n + (i.pages ?? 0), 0)}</dd></div>
+                <div className="summary-line"><dt>The files together</dt><dd className="nums font-semibold text-ink">{formatBytes(items.reduce((n, i) => n + i.file.size, 0))}</dd></div>
+              </dl>
+              <p className="text-sm text-ink-3">The files are joined from the top down. Use the arrows to change the order.</p>
+            </aside>
+          </div>
         </>
       )}
 
@@ -114,6 +128,7 @@ export function MergeTool() {
           nextSlugs={NEXT}
           downloadLabel="Download merged PDF"
           onReset={reset}
+          startsOver
           summary={<p className="text-lg"><strong>{job.result.pages} pages</strong> · {formatBytes(job.result.file.size)}</p>}
         />
       )}
