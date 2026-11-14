@@ -2,11 +2,12 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { createElement } from "react";
+import { Logo } from "@/components/site/Logo";
 import { iconShapes, type IconName } from "@/components/ui/Icon";
 import { getPosts } from "@/lib/content";
 import { SHARE_SIZE } from "@/lib/seo";
 import { SITE_TAGLINE, SITE_URL } from "@/lib/site";
-import { token } from "@/lib/tokens";
+import { categoryColours, token } from "@/lib/tokens";
 import { CATEGORIES, TOOLS, getTool, type CategoryId } from "@/lib/tools";
 
 // The pictures that link previews show (Open Graph and X cards), one for every page that has none of its own:
@@ -82,14 +83,17 @@ function Glyph({ name, size, color }: { name: IconName; size: number; color: str
 const titleSize = (title: string) => (title.length <= 18 ? 96 : title.length <= 30 ? 80 : title.length <= 46 ? 64 : 54);
 
 function Picture({ card }: { card: Card }) {
-  const tint = card.group ? token(`cat-${card.group}-bg`) : token("action-soft");
-  const ink = card.group ? token(`cat-${card.group}-ink`) : token("action-ink");
+  const tint = card.group ? categoryColours(card.group).tint : token("action-soft");
+  const ink = card.group ? categoryColours(card.group).ink : token("action-ink");
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", padding: 44, backgroundColor: token("canvas"), backgroundImage: `linear-gradient(180deg, ${token("wash")}, ${token("canvas")} 55%)`, fontFamily: "Google Sans", color: token("ink") }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "48px 56px", borderRadius: 36, border: `2px solid ${token("line-soft")}`, backgroundColor: token("surface"), boxShadow: `0 24px 60px -30px ${token("shadow")}` }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", fontSize: 40, fontWeight: 700, letterSpacing: "-0.02em" }}>
-            <span>pdf</span><span style={{ color: token("action") }}>.do</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 40, fontWeight: 700, letterSpacing: "-0.02em" }}>
+            <Logo size={52} color={token("logo")} />
+            <div style={{ display: "flex" }}>
+              <span>pdf</span><span style={{ color: token("logo") }}>.do</span>
+            </div>
           </div>
           {card.label && (
             <div style={{ display: "flex", padding: "10px 24px", borderRadius: 999, backgroundColor: tint, color: ink, fontSize: 24, fontWeight: 500 }}>{card.label}</div>
@@ -108,8 +112,8 @@ function Picture({ card }: { card: Card }) {
             {card.groups && (
               <div style={{ display: "flex", gap: 18, marginTop: 34 }}>
                 {(Object.keys(CATEGORIES) as CategoryId[]).map((id) => (
-                  <div key={id} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 76, height: 76, borderRadius: 20, backgroundColor: token(`cat-${id}-bg`) }}>
-                    <Glyph name={CATEGORIES[id].icon} size={38} color={token(`cat-${id}-ink`)} />
+                  <div key={id} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 76, height: 76, borderRadius: 20, backgroundColor: categoryColours(id).tint }}>
+                    <Glyph name={CATEGORIES[id].icon} size={38} color={categoryColours(id).ink} />
                   </div>
                 ))}
               </div>

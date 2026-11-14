@@ -124,7 +124,7 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   narrow container, inline on a wide one); `JobProgress` replaces it while a job runs; `DownloadButton`, `SizeComparison`,
   `EmptyState` and `ErrorBoundary` finish the set. `components/gallery/` is the dev-only gallery: add every new or changed
   block to it in all its states. Blocks lay themselves out from their container's width (`.app-region` on `<main>`).
-  `components/site/` is the chrome (`Header`, `Footer`, `ToolSearch`, `ToolCard`). `components/tool/` is what tools are
+  `components/site/` is the chrome (`Header`, `Footer`, `ToolSearch`, `ToolCard`, `Logo`). **The logo** (the owner, 2026-11-13: a page with its folded corner, three dots and a small tail, as a thin line) is drawn once, in `lib/logo.ts`; `Logo` shows it in the text colour (`text-logo`: petrol, lighter in dark mode; the brand colour moved from blue to petrol on 2026-11-14) in the header, the footer and the link-preview pictures, and `app/icon.svg` is its browser-tab cut, a heavier line so it holds at 16 px (`tests/logo.spec.ts` keeps the two the same drawing). It never sits in a tile or a block of colour. `components/tool/` is what tools are
   built from (`ToolPage`, `FileDrop`, `FileCard`, `FileList`, `RangeField`, `SelectionToolbar`, `ResultPanel`, `PagePicker`,
   and the tools themselves). The result blocks are there too. A tool that makes several files puts `MultiResult` (rows, each
   with its own download, and `DownloadAll`, the ZIP) inside `ResultPanel`, which then needs no single file; pictures use
@@ -178,7 +178,7 @@ had not shrunk. Now it says what actually occurred and points to Target size. Ke
   cards, fields and panels sit on it in `surface`. Headings use `.display` (home), `.title` (a page) and `.section-title`;
   an opening paragraph uses `.lead`; numbers that line up use `.nums`. Depth has three steps: `.lift-1` at rest, `.lift-2`
   raised, `.lift-3` floating. Each group of tools has its own colour: put `cat-<group id>` on a wrapper and what is inside
-  reads `--cat-bg` and `--cat-ink` (`.tool-card-icon`, `.cat-ink`). Every tool has its own icon in `lib/tools.ts`; don't
+  reads `--cat-bg` and `--cat-ink` (`.tool-card-icon`, `.cat-ink`). A group is one hue (`.cat-<id> { --cat-hue }`, an OKLCH angle); the tint and ink are two tokens, `--color-cat-tint` and `--color-cat-ink`, with the hue poured in. Retune every group in those two tokens, one group by its hue; a new group needs only its hue. Every tool has its own icon in `lib/tools.ts`; don't
   share one between two tools. The header stays at the top of the screen, so anything that scrolls to an element must
   leave room for it (`scroll-padding-top` on `html` does this for links). The approved mocks still show the earlier
   colours: take structure, states and copy from the mocks, and colour, type and depth from `globals.css`.

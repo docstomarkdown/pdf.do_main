@@ -258,7 +258,8 @@ test("the groups of tools: Compress comes second, on the home page and in the me
   await page.goto("/");
   // The order is CATEGORIES in lib/tools.ts. The footer has its own, chosen so its columns pack (see Footer.tsx).
   const inOrder = ["Merge, split and organise", "Compress", "Convert to PDF", "Convert from PDF", "Edit", "Security"];
-  expect(await page.locator("main section h2").allTextContents()).toEqual(inOrder);
+  // The groups' own headings (each group section is labelled cat-<id>), not every heading on the page.
+  expect(await page.locator('main section[aria-labelledby^="cat-"] h2').allTextContents()).toEqual(inOrder);
   await page.getByRole("button", { name: "All tools" }).click();
   expect(await page.locator("#all-tools h2").allTextContents()).toEqual([...inOrder, "About"]);
 });

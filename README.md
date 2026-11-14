@@ -23,6 +23,10 @@ npm run test:gallery                   # builds with GALLERY=1, serves on :4175,
 The component gallery (`/gallery`) shows every UI block in light and dark side by side. It exists in `npm run dev` and in a
 `GALLERY=1` build, and is left out of the live build.
 
+The platform preview works the same way. The home page's sections about keeping documents and AI chats, and the "Keep it"
+card under a result, show only in `npm run dev` or in a build made with `PLATFORM_PREVIEW=1` (`lib/site.ts`). The live build
+shows the tools alone, since accounts do not exist yet.
+
 ## Tools
 
 | Tool | Engine | Notes |

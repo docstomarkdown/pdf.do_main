@@ -90,7 +90,7 @@ export function ImagesToPdfTool({ variant = "images" }: { variant?: "images" | "
           />
           <div className="flex flex-wrap gap-2">
             {variant === "scan" && <FileDrop compact label="Take another photo" accept="images" capture disabled={job.busy} onFiles={add} />}
-            <FileDrop compact label={variant === "scan" ? "Add images" : "Add more images"} accept="images" multiple disabled={job.busy} onFiles={add} />
+            <FileDrop compact wide={variant !== "scan"} label={variant === "scan" ? "Add images" : "Add more images"} accept="images" multiple disabled={job.busy} onFiles={add} />
           </div>
           <PageSetup value={setup} onChange={(v) => { job.reset(); setSetup(v); }} disabled={job.busy} />
 

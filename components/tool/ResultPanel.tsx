@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/Button";
 import { DownloadButton } from "@/components/ui/DownloadButton";
 import { Icon } from "@/components/ui/Icon";
 import { setHandoff } from "@/lib/handoff";
+import { PLATFORM_PREVIEW } from "@/lib/site";
+import { Callout } from "@/components/site/Callout";
 import { getTool } from "@/lib/tools";
 
 /**
@@ -59,6 +61,7 @@ export function ResultPanel({
   };
 
   return (
+    <>
     <div ref={panel} tabIndex={-1} data-testid={testId} className="result">
       <div className="result-head">
         <p className="result-done"><Icon name="check" className="h-6 w-6" /> Done</p>
@@ -92,5 +95,13 @@ export function ResultPanel({
         </div>
       )}
     </div>
+    {/* Preview only (lib/site.ts): the moment an account helps, offered beside the result and never in its way. There
+        are no accounts yet, so the live build leaves it out. */}
+    {PLATFORM_PREVIEW && file && (
+      <Callout className="mt-4" icon="bookmark" title="Keep it in pdf.do"
+        text="Save this file to your context, beside the chats and documents it belongs with, so any AI you use can find it. Free."
+        action={<Button variant="secondary">Keep this file</Button>} />
+    )}
+    </>
   );
 }

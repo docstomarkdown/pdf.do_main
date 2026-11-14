@@ -14,26 +14,26 @@
 @theme static {
   /* Surfaces */
   --color-surface: #ffffff;
-  --color-surface-2: #f3f5f9;
-  --color-surface-3: #e9edf4;
+  --color-surface-2: #f3f3f0;
+  --color-surface-3: #ecebe7;
   --color-raised: #ffffff;
   --color-field: #ffffff;
   /* Text */
-  --color-ink: #0c1322;
-  --color-ink-2: #2f3a4f;
-  --color-ink-3: #4f5b73;
-  --color-placeholder: #6a768c;
+  --color-ink: #2d2a26;
+  --color-ink-2: #4a453f;
+  --color-ink-3: #635d55;
+  --color-placeholder: #6b655c;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #d5dbe6;
-  --color-line-soft: #e7ebf2;
-  --color-control: #74829a;
-  --color-focus: #2772ed;
+  --color-line: #dddbd5;
+  --color-line-soft: #e7e6e1;
+  --color-control: #8a8276;
+  --color-focus: #155e75;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-  --color-action: #2670ec;
-  --color-action-hover: #1d5fd6;
+  --color-action: #155e75;
+  --color-action-hover: #0f4c5f;
   --color-on-action: #ffffff;
-  --color-action-soft: #e9f1fe;
-  --color-action-ink: #1b4fb0;
+  --color-action-soft: #e4f0f3;
+  --color-action-ink: #0f5266;
   /* Success (Download, finished work) */
   --color-success: #047857;
   --color-success-hover: #065f46;
@@ -68,15 +68,15 @@
   --color-badge-bad-fg: #7f1d1d;
   --color-badge-info-bg: #e0f2fe;
   --color-badge-info-fg: #082f49;
-  --color-badge-act-bg: #dbe8fd;
-  --color-badge-act-fg: #1b4fb0;
+  --color-badge-act-bg: #cfe6ec;
+  --color-badge-act-fg: #0f5266;
   /* Overlays, shadows, loading placeholders */
-  --color-scrim: rgba(15, 23, 42, 0.45);
-  --color-shadow: rgba(12, 19, 34, 0.16);
-  --color-skeleton-a: #e7ebf2;
-  --color-skeleton-b: #f3f5f9;
+  --color-scrim: rgba(28, 25, 20, 0.45);
+  --color-shadow: rgba(28, 25, 20, 0.16);
+  --color-skeleton-a: #ecebe7;
+  --color-skeleton-b: #f3f3f0;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #e3e7ef;
+  --color-stage: #e6e4de;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -98,32 +98,37 @@
   --color-diff-del-bg: #fee2e2;
   --color-diff-del-fg: #7f1d1d;
   /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
-  --color-canvas: #f6f8fb;
-  --color-header: rgba(255, 255, 255, 0.93);
-  --color-action-deep: #1b58cf;
+  --color-canvas: #f9f9f7;
+  --color-header: rgba(249, 249, 247, 0.86);
+  /* The minimal look of 2026-11-13: a highlighter mark behind a few words, and a lettered badge for where a document came from */
+  --color-mark: #fff1b8;
+  --color-src-gpt: #2d2a26;
+  --color-src-claude: #b4532a;
+  --color-src-gemini: #5b4bc4;
+  --color-src-word: #2d63c8;
+  --color-src-pdf: #c0392b;
+  --color-src-md: #635d55;
+  --color-on-src: #ffffff;
+  --color-action-deep: #0e4a5c;
   --color-success-deep: #03684b;
-  --color-shadow-soft: rgba(12, 19, 34, 0.07);
-  --color-glow: rgba(38, 112, 236, 0.38);
+  --color-shadow-soft: rgba(28, 25, 20, 0.07);
+  --color-glow: rgba(21, 94, 117, 0.35);
   --color-sheen: rgba(255, 255, 255, 0.22);
-  --color-wash: rgba(38, 112, 236, 0.1);
-  --color-drop-line: #4f86ee;
-  --color-cat-organise-bg: #e8f1fe;
-  --color-cat-organise-ink: #1b4fb0;
-  --color-cat-to-pdf-bg: #f0ebfe;
-  --color-cat-to-pdf-ink: #5a2fc2;
-  --color-cat-from-pdf-bg: #def5f1;
-  --color-cat-from-pdf-ink: #0b665d;
-  --color-cat-edit-bg: #fdefdc;
-  --color-cat-edit-ink: #8f4406;
-  --color-cat-security-bg: #fde7ee;
-  --color-cat-security-ink: #a31845;
-  --color-cat-compress-bg: #e3f6ea;
-  --color-cat-compress-ink: #14602f;
+  --color-wash: rgba(21, 94, 117, 0.08);
+  --color-drop-line: #22809a;
+  /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+     the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+     group's hue in its .cat-* class. */
+  --color-cat-tint: oklch(0.955 0.03 0);
+  --color-cat-ink: oklch(0.42 0.085 0);
+  /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+  --color-logo: #155e75;
 }
 
-/* The font comes from next/font (app/layout.tsx) as --font-google-sans; the system stack is the fallback. */
+/* The font comes from next/font/local (app/layout.tsx) as --font-google-sans (Latin, with a size-matched fallback) and
+   --font-google-sans-symbols (arrows and the like, fetched only when used); the system stack is the last fallback. */
 @theme inline {
-  --font-sans: var(--font-google-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-google-sans), var(--font-google-sans-symbols), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Themes. The light values above are the default. Dark values are written out under each scope that can ask for
@@ -141,26 +146,26 @@
   color-scheme: light; background: var(--color-surface); color: var(--color-ink);
   /* Surfaces */
   --color-surface: #ffffff;
-  --color-surface-2: #f3f5f9;
-  --color-surface-3: #e9edf4;
+  --color-surface-2: #f3f3f0;
+  --color-surface-3: #ecebe7;
   --color-raised: #ffffff;
   --color-field: #ffffff;
   /* Text */
-  --color-ink: #0c1322;
-  --color-ink-2: #2f3a4f;
-  --color-ink-3: #4f5b73;
-  --color-placeholder: #6a768c;
+  --color-ink: #2d2a26;
+  --color-ink-2: #4a453f;
+  --color-ink-3: #635d55;
+  --color-placeholder: #6b655c;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #d5dbe6;
-  --color-line-soft: #e7ebf2;
-  --color-control: #74829a;
-  --color-focus: #2772ed;
+  --color-line: #dddbd5;
+  --color-line-soft: #e7e6e1;
+  --color-control: #8a8276;
+  --color-focus: #155e75;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-  --color-action: #2670ec;
-  --color-action-hover: #1d5fd6;
+  --color-action: #155e75;
+  --color-action-hover: #0f4c5f;
   --color-on-action: #ffffff;
-  --color-action-soft: #e9f1fe;
-  --color-action-ink: #1b4fb0;
+  --color-action-soft: #e4f0f3;
+  --color-action-ink: #0f5266;
   /* Success (Download, finished work) */
   --color-success: #047857;
   --color-success-hover: #065f46;
@@ -195,15 +200,15 @@
   --color-badge-bad-fg: #7f1d1d;
   --color-badge-info-bg: #e0f2fe;
   --color-badge-info-fg: #082f49;
-  --color-badge-act-bg: #dbe8fd;
-  --color-badge-act-fg: #1b4fb0;
+  --color-badge-act-bg: #cfe6ec;
+  --color-badge-act-fg: #0f5266;
   /* Overlays, shadows, loading placeholders */
-  --color-scrim: rgba(15, 23, 42, 0.45);
-  --color-shadow: rgba(12, 19, 34, 0.16);
-  --color-skeleton-a: #e7ebf2;
-  --color-skeleton-b: #f3f5f9;
+  --color-scrim: rgba(28, 25, 20, 0.45);
+  --color-shadow: rgba(28, 25, 20, 0.16);
+  --color-skeleton-a: #ecebe7;
+  --color-skeleton-b: #f3f3f0;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #e3e7ef;
+  --color-stage: #e6e4de;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -225,53 +230,57 @@
   --color-diff-del-bg: #fee2e2;
   --color-diff-del-fg: #7f1d1d;
   /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
-  --color-canvas: #f6f8fb;
-  --color-header: rgba(255, 255, 255, 0.93);
-  --color-action-deep: #1b58cf;
+  --color-canvas: #f9f9f7;
+  --color-header: rgba(249, 249, 247, 0.86);
+  /* The minimal look of 2026-11-13: a highlighter mark behind a few words, and a lettered badge for where a document came from */
+  --color-mark: #fff1b8;
+  --color-src-gpt: #2d2a26;
+  --color-src-claude: #b4532a;
+  --color-src-gemini: #5b4bc4;
+  --color-src-word: #2d63c8;
+  --color-src-pdf: #c0392b;
+  --color-src-md: #635d55;
+  --color-on-src: #ffffff;
+  --color-action-deep: #0e4a5c;
   --color-success-deep: #03684b;
-  --color-shadow-soft: rgba(12, 19, 34, 0.07);
-  --color-glow: rgba(38, 112, 236, 0.38);
+  --color-shadow-soft: rgba(28, 25, 20, 0.07);
+  --color-glow: rgba(21, 94, 117, 0.35);
   --color-sheen: rgba(255, 255, 255, 0.22);
-  --color-wash: rgba(38, 112, 236, 0.1);
-  --color-drop-line: #4f86ee;
-  --color-cat-organise-bg: #e8f1fe;
-  --color-cat-organise-ink: #1b4fb0;
-  --color-cat-to-pdf-bg: #f0ebfe;
-  --color-cat-to-pdf-ink: #5a2fc2;
-  --color-cat-from-pdf-bg: #def5f1;
-  --color-cat-from-pdf-ink: #0b665d;
-  --color-cat-edit-bg: #fdefdc;
-  --color-cat-edit-ink: #8f4406;
-  --color-cat-security-bg: #fde7ee;
-  --color-cat-security-ink: #a31845;
-  --color-cat-compress-bg: #e3f6ea;
-  --color-cat-compress-ink: #14602f;
+  --color-wash: rgba(21, 94, 117, 0.08);
+  --color-drop-line: #22809a;
+  /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+     the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+     group's hue in its .cat-* class. */
+  --color-cat-tint: oklch(0.955 0.03 0);
+  --color-cat-ink: oklch(0.42 0.085 0);
+  /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+  --color-logo: #155e75;
 }
 .scheme-dark,
 :root[data-theme="dark"] {
   color-scheme: dark;
   /* Surfaces */
-  --color-surface: #101829;
-  --color-surface-2: #141e33;
-  --color-surface-3: #1d2940;
-  --color-raised: #18223a;
-  --color-field: #0c1423;
+  --color-surface: #1b1a19;
+  --color-surface-2: #211f1d;
+  --color-surface-3: #2a2826;
+  --color-raised: #252321;
+  --color-field: #161615;
   /* Text */
-  --color-ink: #f1f4f9;
-  --color-ink-2: #c5cedc;
-  --color-ink-3: #95a2b8;
-  --color-placeholder: #8090a8;
+  --color-ink: #dcd8d0;
+  --color-ink-2: #c8c2b8;
+  --color-ink-3: #a39c91;
+  --color-placeholder: #9a9388;
   /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-  --color-line: #2b3852;
-  --color-line-soft: #212d45;
-  --color-control: #677791;
-  --color-focus: #6aa6f6;
+  --color-line: #34312d;
+  --color-line-soft: #2a2826;
+  --color-control: #7d776d;
+  --color-focus: #5fb3c7;
   /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-  --color-action: #2670ec;
-  --color-action-hover: #1d5fd6;
+  --color-action: #1f7a92;
+  --color-action-hover: #22809a;
   --color-on-action: #ffffff;
-  --color-action-soft: rgba(77, 143, 240, 0.18);
-  --color-action-ink: #8ebcf9;
+  --color-action-soft: #263235;
+  --color-action-ink: #7cc4d6;
   /* Success (Download, finished work) */
   --color-success: #34d399;
   --color-success-hover: #6ee7b7;
@@ -306,15 +315,15 @@
   --color-badge-bad-fg: #fecaca;
   --color-badge-info-bg: rgba(56, 189, 248, 0.16);
   --color-badge-info-fg: #bae6fd;
-  --color-badge-act-bg: rgba(77, 143, 240, 0.2);
-  --color-badge-act-fg: #b9d3fb;
+  --color-badge-act-bg: rgba(95, 179, 199, 0.18);
+  --color-badge-act-fg: #a9d9e5;
   /* Overlays, shadows, loading placeholders */
   --color-scrim: rgba(0, 0, 0, 0.6);
   --color-shadow: rgba(0, 0, 0, 0.6);
-  --color-skeleton-a: #1d2940;
-  --color-skeleton-b: #28354f;
+  --color-skeleton-a: #2a2826;
+  --color-skeleton-b: #34312d;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #1a2438;
+  --color-stage: #211f1d;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -336,54 +345,58 @@
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
   --color-diff-del-fg: #fecaca;
   /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
-  --color-canvas: #090e19;
-  --color-header: rgba(16, 24, 41, 0.92);
-  --color-action-deep: #1b58cf;
+  --color-canvas: #121211;
+  --color-header: rgba(18, 18, 17, 0.86);
+  /* The minimal look of 2026-11-13 */
+  --color-mark: #5a4a10;
+  --color-src-gpt: #4a453f;
+  --color-src-claude: #b4532a;
+  --color-src-gemini: #5b4bc4;
+  --color-src-word: #2d63c8;
+  --color-src-pdf: #c0392b;
+  --color-src-md: #635d55;
+  --color-on-src: #ffffff;
+  --color-action-deep: #1a6a80;
   --color-success-deep: #2bbd88;
   --color-shadow-soft: rgba(0, 0, 0, 0.35);
-  --color-glow: rgba(77, 143, 240, 0.4);
+  --color-glow: rgba(95, 179, 199, 0.35);
   --color-sheen: rgba(255, 255, 255, 0.14);
-  --color-wash: rgba(77, 143, 240, 0.14);
-  --color-drop-line: #6aa6f6;
-  --color-cat-organise-bg: rgba(77, 143, 240, 0.18);
-  --color-cat-organise-ink: #8ebcf9;
-  --color-cat-to-pdf-bg: rgba(150, 118, 247, 0.2);
-  --color-cat-to-pdf-ink: #c4b1fb;
-  --color-cat-from-pdf-bg: rgba(45, 190, 172, 0.17);
-  --color-cat-from-pdf-ink: #6fdccf;
-  --color-cat-edit-bg: rgba(240, 160, 60, 0.17);
-  --color-cat-edit-ink: #f7c27d;
-  --color-cat-security-bg: rgba(240, 90, 135, 0.18);
-  --color-cat-security-ink: #f9a8c0;
-  --color-cat-compress-bg: rgba(60, 190, 110, 0.17);
-  --color-cat-compress-ink: #86e0a6;
+  --color-wash: rgba(95, 179, 199, 0.12);
+  --color-drop-line: #5fb3c7;
+  /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+     the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+     group's hue in its .cat-* class. */
+  --color-cat-tint: oklch(0.72 0.1 0 / 0.18);
+  --color-cat-ink: oklch(0.84 0.09 0);
+  /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+  --color-logo: #5fb3c7;
 }
 .scheme-dark { background: var(--color-surface); color: var(--color-ink); }
 @media (prefers-color-scheme: dark) {
   :root[data-theme="system"] {
     color-scheme: dark;
     /* Surfaces */
-    --color-surface: #101829;
-    --color-surface-2: #141e33;
-    --color-surface-3: #1d2940;
-    --color-raised: #18223a;
-    --color-field: #0c1423;
+    --color-surface: #1b1a19;
+    --color-surface-2: #211f1d;
+    --color-surface-3: #2a2826;
+    --color-raised: #252321;
+    --color-field: #161615;
     /* Text */
-    --color-ink: #f1f4f9;
-    --color-ink-2: #c5cedc;
-    --color-ink-3: #95a2b8;
-    --color-placeholder: #8090a8;
+    --color-ink: #dcd8d0;
+    --color-ink-2: #c8c2b8;
+    --color-ink-3: #a39c91;
+    --color-placeholder: #9a9388;
     /* Lines. `control` is the border of anything you can operate: 3:1 against its background. */
-    --color-line: #2b3852;
-    --color-line-soft: #212d45;
-    --color-control: #677791;
-    --color-focus: #6aa6f6;
+    --color-line: #34312d;
+    --color-line-soft: #2a2826;
+    --color-control: #7d776d;
+    --color-focus: #5fb3c7;
     /* Action (the one primary thing). In dark mode the fill is light, so its text is dark. */
-    --color-action: #2670ec;
-    --color-action-hover: #1d5fd6;
+    --color-action: #1f7a92;
+    --color-action-hover: #22809a;
     --color-on-action: #ffffff;
-    --color-action-soft: rgba(77, 143, 240, 0.18);
-    --color-action-ink: #8ebcf9;
+    --color-action-soft: #263235;
+    --color-action-ink: #7cc4d6;
     /* Success (Download, finished work) */
     --color-success: #34d399;
     --color-success-hover: #6ee7b7;
@@ -418,15 +431,15 @@
     --color-badge-bad-fg: #fecaca;
     --color-badge-info-bg: rgba(56, 189, 248, 0.16);
     --color-badge-info-fg: #bae6fd;
-    --color-badge-act-bg: rgba(77, 143, 240, 0.2);
-    --color-badge-act-fg: #b9d3fb;
+    --color-badge-act-bg: rgba(95, 179, 199, 0.18);
+    --color-badge-act-fg: #a9d9e5;
     /* Overlays, shadows, loading placeholders */
     --color-scrim: rgba(0, 0, 0, 0.6);
     --color-shadow: rgba(0, 0, 0, 0.6);
-    --color-skeleton-a: #1d2940;
-    --color-skeleton-b: #28354f;
+    --color-skeleton-a: #2a2826;
+    --color-skeleton-b: #34312d;
   /* The page stage: the area around a page, the page itself (always white paper) and what is drawn on it */
-  --color-stage: #1a2438;
+  --color-stage: #211f1d;
   --color-paper: #ffffff;
   --color-paper-ink: #334155;
   --color-placement: #2772ed;
@@ -448,27 +461,31 @@
   --color-diff-del-bg: rgba(248, 113, 113, 0.16);
   --color-diff-del-fg: #fecaca;
     /* The refresh of 2026-11-11: the page behind the cards, depth, and a tint and an ink for each group of tools */
-    --color-canvas: #090e19;
-    --color-header: rgba(16, 24, 41, 0.92);
-    --color-action-deep: #1b58cf;
+    --color-canvas: #121211;
+    --color-header: rgba(18, 18, 17, 0.86);
+    /* The minimal look of 2026-11-13 */
+    --color-mark: #5a4a10;
+    --color-src-gpt: #4a453f;
+    --color-src-claude: #b4532a;
+    --color-src-gemini: #5b4bc4;
+    --color-src-word: #2d63c8;
+    --color-src-pdf: #c0392b;
+    --color-src-md: #635d55;
+    --color-on-src: #ffffff;
+    --color-action-deep: #1a6a80;
     --color-success-deep: #2bbd88;
     --color-shadow-soft: rgba(0, 0, 0, 0.35);
-    --color-glow: rgba(77, 143, 240, 0.4);
+    --color-glow: rgba(95, 179, 199, 0.35);
     --color-sheen: rgba(255, 255, 255, 0.14);
-    --color-wash: rgba(77, 143, 240, 0.14);
-    --color-drop-line: #6aa6f6;
-    --color-cat-organise-bg: rgba(77, 143, 240, 0.18);
-    --color-cat-organise-ink: #8ebcf9;
-    --color-cat-to-pdf-bg: rgba(150, 118, 247, 0.2);
-    --color-cat-to-pdf-ink: #c4b1fb;
-    --color-cat-from-pdf-bg: rgba(45, 190, 172, 0.17);
-    --color-cat-from-pdf-ink: #6fdccf;
-    --color-cat-edit-bg: rgba(240, 160, 60, 0.17);
-    --color-cat-edit-ink: #f7c27d;
-    --color-cat-security-bg: rgba(240, 90, 135, 0.18);
-    --color-cat-security-ink: #f9a8c0;
-    --color-cat-compress-bg: rgba(60, 190, 110, 0.17);
-    --color-cat-compress-ink: #86e0a6;
+    --color-wash: rgba(95, 179, 199, 0.12);
+    --color-drop-line: #5fb3c7;
+    /* Groups of tools (see .cat-* below): each group is one hue. These two are the recipe, as colours without a hue:
+       the tint behind a group's icon and the ink of its icon and links. Change the look of every group here; change one
+       group's hue in its .cat-* class. */
+    --color-cat-tint: oklch(0.72 0.1 0 / 0.18);
+    --color-cat-ink: oklch(0.84 0.09 0);
+    /* The logo: petrol on light surfaces, a lighter petrol on dark (decisions/0026) */
+    --color-logo: #5fb3c7;
   }
 }
 
@@ -479,8 +496,6 @@
   body {
     font-family: var(--font-sans); color: var(--color-ink); text-rendering: optimizeLegibility;
     background-color: var(--color-canvas);
-    background-image: radial-gradient(64rem 26rem at 50% -8rem, var(--color-wash), transparent 70%);
-    background-repeat: no-repeat;
   }
   h1, h2, h3 { text-wrap: balance; }
   p, li { text-wrap: pretty; }
@@ -497,9 +512,9 @@
    ===================================================================================== */
 @layer components {
   /* ---- Type: the few sizes the pages are set in. Headings tighten as they grow. ---- */
-  .display { font-size: clamp(2.25rem, 1.35rem + 3.8vw, 3.5rem); line-height: 1.04; font-weight: 700; letter-spacing: -0.03em; }
-  .title { font-size: clamp(1.875rem, 1.45rem + 1.9vw, 2.75rem); line-height: 1.08; font-weight: 700; letter-spacing: -0.025em; }
-  .section-title { font-size: 1.5rem; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+  .display { font-size: clamp(2.5rem, 1.4rem + 4.6vw, 4.125rem); line-height: 1.03; font-weight: 700; letter-spacing: -0.035em; }
+  .title { font-size: clamp(2.125rem, 1.5rem + 2.6vw, 3.5rem); line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; }
+  .section-title { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); line-height: 1.15; font-weight: 700; letter-spacing: -0.03em; }
   .lead { font-size: 1.125rem; line-height: 1.6; color: var(--color-ink-2); }
   @media (min-width: 40rem) { .lead { font-size: 1.1875rem; } }
   .eyebrow { font-size: 0.8125rem; line-height: 1.2; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-ink-3); }
@@ -510,13 +525,21 @@
   .lift-2 { box-shadow: 0 1px 2px var(--color-shadow-soft), 0 10px 24px -14px var(--color-shadow); }
   .lift-3 { box-shadow: 0 2px 6px var(--color-shadow-soft), 0 28px 60px -22px var(--color-shadow); }
 
-  /* ---- A group of tools carries a tint and an ink (tokens above). Put cat-<group> on a parent. ---- */
-  .cat-organise { --cat-bg: var(--color-cat-organise-bg); --cat-ink: var(--color-cat-organise-ink); }
-  .cat-to-pdf { --cat-bg: var(--color-cat-to-pdf-bg); --cat-ink: var(--color-cat-to-pdf-ink); }
-  .cat-from-pdf { --cat-bg: var(--color-cat-from-pdf-bg); --cat-ink: var(--color-cat-from-pdf-ink); }
-  .cat-edit { --cat-bg: var(--color-cat-edit-bg); --cat-ink: var(--color-cat-edit-ink); }
-  .cat-security { --cat-bg: var(--color-cat-security-bg); --cat-ink: var(--color-cat-security-ink); }
-  .cat-compress { --cat-bg: var(--color-cat-compress-bg); --cat-ink: var(--color-cat-compress-ink); }
+  /* ---- A group of tools: put cat-<group> on a parent and what is inside reads --cat-bg (the tint) and --cat-ink. ----
+     Both are the two recipe colours (--color-cat-tint, --color-cat-ink, one value per theme, above) with the group's hue
+     poured in, so the groups always match each other and the brand. Tune the whole set in the two tokens; tune a group by
+     its hue (an OKLCH hue angle: 215 petrol, 295 plum, 170 sea green, 70 ochre, 15 rose, 140 green). lib/tokens.ts reads
+     these hues for the link-preview pictures, so a new group needs its hue here and nowhere else. */
+  .cat-organise { --cat-hue: 215; }
+  .cat-to-pdf { --cat-hue: 295; }
+  .cat-from-pdf { --cat-hue: 170; }
+  .cat-edit { --cat-hue: 70; }
+  .cat-security { --cat-hue: 15; }
+  .cat-compress { --cat-hue: 140; }
+  :is(.cat-organise, .cat-to-pdf, .cat-from-pdf, .cat-edit, .cat-security, .cat-compress) {
+    --cat-bg: oklch(from var(--color-cat-tint) l c var(--cat-hue) / alpha);
+    --cat-ink: oklch(from var(--color-cat-ink) l c var(--cat-hue));
+  }
   .cat-ink { color: var(--cat-ink, var(--color-action-ink)); }
 
   /* ---- Buttons: one primary per state; the download is the only green one ---- */
@@ -768,12 +791,9 @@
   .tool-card {
     display: flex; gap: 1rem; height: 100%; padding: 1.125rem 1.25rem;
     border: 1px solid var(--color-line-soft); border-radius: 1rem; background: var(--color-surface);
-    box-shadow: 0 1px 2px var(--color-shadow-soft); transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+    transition: border-color 0.18s, transform 0.18s;
   }
-  .tool-card:hover {
-    border-color: var(--cat-ink, var(--color-action)); transform: translateY(-2px);
-    box-shadow: 0 2px 4px var(--color-shadow-soft), 0 16px 30px -14px var(--color-shadow);
-  }
+  .tool-card:hover { border-color: var(--color-ink-3); transform: translateY(-1px); }
   .tool-card-icon {
     display: flex; flex: none; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem;
     border-radius: 0.875rem; background: var(--cat-bg, var(--color-action-soft)); color: var(--cat-ink, var(--color-action-ink));
@@ -781,8 +801,34 @@
   .tool-card-icon-lg { width: 3.25rem; height: 3.25rem; border-radius: 1rem; }
   .step-num {
     display: flex; flex: none; align-items: center; justify-content: center; width: 2rem; height: 2rem;
-    border-radius: 999px; background: var(--cat-bg, var(--color-action-soft)); color: var(--cat-ink, var(--color-action-ink)); font-weight: 700;
+    border-radius: 999px; box-shadow: inset 0 0 0 1.5px var(--color-ink); color: var(--color-ink); font-size: 0.875rem; font-weight: 700;
   }
+
+  /* ---- The minimal look (2026-11-13): the home page and the tool page frame ---- */
+  .kicker { font-size: 0.875rem; font-weight: 600; color: var(--color-action-ink); }
+  .mark-hl { background: linear-gradient(transparent 62%, var(--color-mark) 62%, var(--color-mark) 92%, transparent 92%); padding: 0 0.06em; }
+  mark.mark-hl { color: inherit; border-radius: 2px; background: var(--color-mark); padding: 0 1px; }
+  .chip-link {
+    display: inline-flex; align-items: center; min-height: 2.25rem; padding: 0.25rem 0.875rem; border-radius: 999px;
+    border: 1px solid var(--color-line-soft); color: var(--color-ink-2); font-size: 0.875rem; transition: border-color 0.12s, color 0.12s;
+  }
+  .chip-link:hover { border-color: var(--color-ink-3); color: var(--color-ink); }
+  @media (max-width: 39.99rem) { .chip-link { min-height: 44px; } }
+  .tick-dot { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1.125rem; height: 1.125rem; border-radius: 999px; background: var(--color-action-soft); color: var(--color-action); }
+  .ok-ink { color: var(--color-success); }
+  .doodle { color: var(--color-ink-3); }
+  .soft { background: var(--color-surface-2); }
+  .src-badge {
+    display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1.375rem; height: 1.375rem;
+    border-radius: 0.375rem; font-size: 0.625rem; font-weight: 700; color: var(--color-on-src);
+  }
+  .src-badge-sm { width: 1rem; height: 1rem; border-radius: 0.25rem; font-size: 0.5rem; }
+  .src-gpt { background: var(--color-src-gpt); } .src-claude { background: var(--color-src-claude); } .src-gemini { background: var(--color-src-gemini); }
+  .src-word { background: var(--color-src-word); } .src-pdf { background: var(--color-src-pdf); } .src-md { background: var(--color-src-md); }
+  .hit { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-action), 0 0 0 3px var(--color-action-soft); }
+  .row-on { background: var(--color-action-soft); }
+  .dot-chrome { width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--color-line); }
+  .scatter-item { transform: rotate(var(--tilt, 0deg)); }
 }
 
 /* =====================================================================================
@@ -804,8 +850,8 @@
      The result tint is see-through in dark mode, so it is laid over the page colour: a stuck bar must hide what scrolls under it. */
   .actionbar-panel {
     margin: 1.125rem -1.25rem 0; padding-left: 1.25rem; padding-right: 1.25rem;
-    background: linear-gradient(var(--color-result), var(--color-result)), var(--color-canvas);
-    border-top-color: var(--color-success-line);
+    background: var(--color-surface);
+    border-top-color: var(--color-line-soft);
   }
   @container app (min-width: 520px) {
     .actionbar, .actionbar-panel {
@@ -823,11 +869,10 @@
     .filecard { flex-direction: row; align-items: center; justify-content: space-between; }
   }
 
-  /* The place every tool starts: a raised white panel with a wash of the brand tint and a dashed blue edge (3:1). */
+  /* The place every tool starts: a raised white panel with a wash of the brand tint and a dashed petrol edge (3:1). */
   .dropzone {
     text-align: center; border: 2px dashed var(--color-drop-line); border-radius: 1.25rem;
-    background-color: var(--color-surface); background-image: linear-gradient(180deg, var(--color-wash), transparent 80%);
-    box-shadow: 0 1px 2px var(--color-shadow-soft), 0 14px 30px -18px var(--color-shadow);
+    background-color: var(--color-surface-2);
     transition: border-color 0.15s, background-color 0.15s, box-shadow 0.18s;
   }
   .dropzone:hover { border-color: var(--color-action); }
@@ -856,15 +901,19 @@
   .thumb-wait { color: var(--color-ink-3); }
 
   /* The finished-work panel */
-  .result { padding: 1.25rem; border: 1px solid var(--color-success-line); border-radius: 1.25rem; background: var(--color-result); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 14px 30px -18px var(--color-shadow); }
+  /* The minimal look (2026-11-13): a white card like the rest of the page, with "Done" as a small green pill. */
+  .result { padding: 1.25rem; border: 1px solid var(--color-line-soft); border-radius: 1.25rem; background: var(--color-surface); box-shadow: 0 1px 2px var(--color-shadow-soft), 0 12px 40px -12px var(--color-shadow); }
+  /* A little more room inside once the column is wide; on a phone every pixel goes to the content (two picture tiles to a row). */
+  @container app (min-width: 520px) { .result { padding: 1.5rem; } }
   .result:focus { outline: none; }
   /* The tool's region takes focus only from a script (after "Back to options" or "Start over"), as the result panel does: no ring around the whole tool. */
   .tool-region:focus { outline: none; }
   .result-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-  .result-done { display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem; font-weight: 700; color: var(--color-success-ink); }
-  .result-summary { margin-top: 0.75rem; font-size: 1.125rem; }
-  .result-keep { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-success-line); }
-  .result-keep-title { margin-bottom: 0.6rem; font-size: 0.875rem; font-weight: 600; }
+  .result-done { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem 0.25rem 0.5rem; border-radius: 999px; background: var(--color-success-soft); font-size: 0.875rem; font-weight: 700; color: var(--color-success-ink); }
+  .result-done svg { width: 1rem; height: 1rem; }
+  .result-summary { margin-top: 0.875rem; font-size: 1.125rem; }
+  .result-keep { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-line-soft); }
+  .result-keep-title { margin-bottom: 0.6rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-ink-3); }
   .note { margin-top: 0.875rem; font-size: 0.875rem; }
   .note-warn {
     padding: 0.625rem 0.75rem; border: 1px solid var(--color-warn-line); border-radius: 0.75rem;
@@ -899,7 +948,18 @@
      The options column is a container of its own, so its fields pair up only when that column has room for two.
      The three-part form (Sign) keeps "make" first in the page's order, so a phone still reads make, page, options. */
   .stage-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
-  .stage-opts { display: grid; gap: 1.25rem; min-width: 0; container-type: inline-size; container-name: opts; }
+  /* The options sit in a card of their own beside the page or the files (the minimal look, 2026-11-13). */
+  .stage-opts {
+    display: grid; gap: 1.25rem; min-width: 0; container-type: inline-size; container-name: opts;
+    padding: 1.25rem; border: 1px solid var(--color-line-soft); border-radius: 1.25rem; background: var(--color-surface);
+  }
+  /* The files a tool will use: a soft tray of white rows, one card each. */
+  .file-tray { display: grid; gap: 0.625rem; padding: 0.75rem; border-radius: 1.25rem; background: var(--color-surface-2); }
+  .file-row { border: 1px solid var(--color-line-soft); border-radius: 0.875rem; background: var(--color-surface); }
+  /* "Add more": the whole width, with a dashed edge (3:1 like any control) that says files go here. */
+  .btn-dashed { width: 100%; background: transparent; box-shadow: none; border: 1.5px dashed var(--color-control); color: var(--color-ink-2); }
+  .btn-dashed:hover:not(:disabled) { border-color: var(--color-action); color: var(--color-action-ink); background: var(--color-action-soft); }
+  .summary-line { display: flex; justify-content: space-between; gap: 1rem; padding-top: 0.875rem; border-top: 1px solid var(--color-line-soft); font-size: 0.9375rem; color: var(--color-ink-2); }
   .stage-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
   .stage-wide { grid-column: 1 / -1; }
   .stage-make { grid-area: make; min-width: 0; }

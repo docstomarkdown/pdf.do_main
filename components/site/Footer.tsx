@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/site/Logo";
 import { Icon } from "@/components/ui/Icon";
 import { ABOUT_PAGES, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { presetPages, toolsByCategory, type CategoryId } from "@/lib/tools";
@@ -41,8 +42,11 @@ export function Footer() {
     <footer className="mt-16 border-t border-line-soft bg-surface">
       <div className="mx-auto max-w-5xl px-4 pt-12 sm:pb-10">
         <div className="max-w-md">
-          <Link href="/" className="tap rounded-lg text-xl font-bold tracking-tight">
-            pdf<span className="text-action">.do</span>
+          <Link href="/" className="tap inline-flex items-center gap-2 rounded-lg text-xl font-bold tracking-tight">
+            <Logo className="h-7 w-7 shrink-0 text-logo" />
+            <span>
+              pdf<span className="text-logo">.do</span>
+            </span>
           </Link>
           <p className="mt-3 font-semibold">{SITE_TAGLINE}</p>
           <p className="mt-1 text-sm leading-relaxed text-ink-2">

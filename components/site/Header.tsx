@@ -3,19 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { Logo } from "@/components/site/Logo";
 import { ToolSearch } from "@/components/site/ToolSearch";
-import { ABOUT_PAGES } from "@/lib/site";
+import { ABOUT_PAGES, PLATFORM_PREVIEW } from "@/lib/site";
 import { toolsByCategory } from "@/lib/tools";
 
 // A list's title in the menu: sentence case in the text colour, the same as in the footer.
 const heading = "mb-1 text-sm font-semibold text-ink";
 
+// The header says where each link goes, and little else (the minimal look of 2026-11-13). The two tools people come
+// for most stay first; "All tools" opens the full list. In the platform preview the AI-chats part of the home page is a
+// link of its own.
 const QUICK = [
   { href: "/merge-pdf", label: "Merge" },
   { href: "/compress-pdf", label: "Compress" },
-  { href: "/delete-pdf-pages", label: "Delete pages" },
+  ...(PLATFORM_PREVIEW ? [{ href: "/#layer", label: "Context layer" }] : []),
+  { href: "/how-it-works", label: "How it works" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -46,8 +51,11 @@ export function Header() {
       {/* On a phone the menu button is 44 px tall, not 40 (see "Tap targets" in globals.css): a little less padding
           keeps the header the height it was. */}
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:py-3.5">
-        <Link href="/" className="tap rounded-lg text-xl font-bold tracking-tight">
-          pdf<span className="text-action">.do</span>
+        <Link href="/" className="tap inline-flex items-center gap-2 rounded-lg text-xl font-bold tracking-tight">
+          <Logo className="h-7 w-7 shrink-0 text-logo" />
+          <span>
+            pdf<span className="text-logo">.do</span>
+          </span>
         </Link>
         <nav aria-label="Main" className="flex items-center gap-1">
           <ul className="hidden items-center gap-1 md:flex">
@@ -70,6 +78,8 @@ export function Header() {
           >
             All tools
           </Button>
+          {/* Preview only: there are no accounts yet, so the live site has no sign-up button. */}
+          {PLATFORM_PREVIEW && <ButtonLink href="/#tools" size="sm" className="ml-1 hidden sm:inline-flex">Start free</ButtonLink>}
         </nav>
       </div>
 

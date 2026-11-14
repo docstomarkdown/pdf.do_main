@@ -4,7 +4,7 @@ import { chooseOption, download, fixture, pageCount, pageText, size, watchOutbou
 
 test("home lists the tools and is marked noindex", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("PDF tools that run in your browser");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Do anything with a PDF");
   const main = page.locator("main");
   for (const name of [/Merge PDF/, /Compress PDF/, /Delete PDF pages/, /Extract PDF pages/]) {
     await expect(main.getByRole("link", { name }).first()).toBeVisible();

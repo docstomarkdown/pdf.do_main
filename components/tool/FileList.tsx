@@ -16,9 +16,9 @@ export type FileItem = {
  */
 export function FileList({ items, onMove, onRemove }: { items: FileItem[]; onMove: (index: number, delta: number) => void; onRemove: (id: number) => void }) {
   return (
-    <ul className="divide-y divide-line-soft overflow-hidden rounded-2xl border border-line-soft bg-surface">
+    <ul className="grid grid-cols-1 gap-2.5">
       {items.map((item, index) => (
-        <li key={item.id} className="flex items-center gap-1.5 py-1.5 pl-3 pr-1.5 sm:gap-2 sm:pl-4">
+        <li key={item.id} className="file-row flex items-center gap-1.5 py-2 pl-3 pr-1.5 sm:gap-2.5 sm:pl-4">
           <span aria-hidden="true" className="w-6 text-center text-sm text-ink-3">{index + 1}</span>
           {item.thumb ? (
             // eslint-disable-next-line @next/next/no-img-element

@@ -33,13 +33,15 @@ test("both themes resolve: the dark panel is dark, the light panel is light, and
   expect(await primary("dark")).toBe("rgb(38, 112, 236)");
 });
 
+// Since 2026-11-13 the font is loaded with next/font/local (app/layout.tsx), which names its face after the variable:
+// "googleSans", not "Google Sans". The faces are still declared, loaded and the body's first choice.
 test("Google Sans is the page font and is served from our own origin", async ({ page }) => {
   const info = await page.evaluate(async () => {
     await document.fonts.ready;
-    const faces = [...document.fonts].filter((f) => /Google Sans/.test(f.family));
+    const faces = [...document.fonts].filter((f) => /^"?googleSans"?$/.test(f.family));
     return { family: getComputedStyle(document.body).fontFamily, loaded: faces.filter((f) => f.status === "loaded").length, declared: faces.length };
   });
-  expect(info.family).toMatch(/Google Sans/);
+  expect(info.family).toMatch(/^"?googleSans"?,/);
   expect(info.declared).toBeGreaterThan(0);
   expect(info.loaded).toBeGreaterThan(0);
 });
