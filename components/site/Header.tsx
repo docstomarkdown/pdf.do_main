@@ -17,10 +17,8 @@ const heading = "mb-1 text-sm font-semibold text-ink";
 // for most stay first; "All tools" opens the full list. In the platform preview the AI-chats part of the home page is a
 // link of its own.
 const QUICK = [
-  { href: "/merge-pdf", label: "Merge" },
-  { href: "/compress-pdf", label: "Compress" },
-  ...(PLATFORM_PREVIEW ? [{ href: "/#layer", label: "Context layer" }] : []),
-  { href: "/how-it-works", label: "How it works" },
+  ...(PLATFORM_PREVIEW ? [{ href: "/#layer", label: "How the layer works" }] : [{ href: "/merge-pdf", label: "Merge" }, { href: "/compress-pdf", label: "Compress" }]),
+  { href: "/how-it-works", label: PLATFORM_PREVIEW ? "Privacy" : "How it works" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -76,7 +74,7 @@ export function Header() {
             aria-controls="all-tools"
             onClick={() => setOpenAt(open ? null : pathname)}
           >
-            All tools
+            {PLATFORM_PREVIEW ? "PDF tools" : "All tools"}
           </Button>
           {/* Preview only: there are no accounts yet, so the live site has no sign-up button. */}
           {PLATFORM_PREVIEW && <ButtonLink href="/#tools" size="sm" className="ml-1 hidden sm:inline-flex">Start free</ButtonLink>}

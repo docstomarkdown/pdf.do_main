@@ -5,12 +5,15 @@ import { FactRow, SectionHead } from "@/components/site/Section";
 import { PlatformHero, PlatformMore, PlatformStory, PlatformTrust } from "@/components/site/HomePlatform";
 import { JsonLd } from "@/components/blog/JsonLd";
 import { pageMeta } from "@/lib/seo";
+import { toolsByCategory } from "@/lib/tools";
 import { PLATFORM_PREVIEW, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 export const metadata = pageMeta({ path: "/", title: SITE_TAGLINE, description: SITE_DESCRIPTION, wholeTitle: `${SITE_NAME} — ${SITE_TAGLINE}` });
 
+const TOOL_COUNT = toolsByCategory().reduce((n, c) => n + c.tools.length, 0);
+
 // The tools most people come for, under the search.
-const POPULAR = ["merge-pdf", "compress-pdf", "sign-pdf", "fill-pdf-form", "add-text", "pdf-to-jpg", "split-pdf"];
+const POPULAR = ["merge-pdf", "sign-pdf", "fill-pdf-form", "compress-pdf", "split-pdf", "pdf-to-jpg", "images-to-pdf", "add-watermark"];
 
 /** The search and the most-used tools. */
 function Start() {
@@ -33,11 +36,12 @@ export default function Home() {
           <PlatformHero />
           <PlatformStory />
           <PlatformMore />
-          <section id="tools" className="mt-28" aria-labelledby="tools-title">
-            <SectionHead center id="tools-title" kicker="Put it to use" title="Do anything with a PDF"
-              lead="Merge, sign, fill and convert, on their own or on anything in your context. The tools are free, and you can use them without an account." />
-            <Start />
-            <ToolGroups level={3} />
+          {/* The tools are a part of the product, not the front of it: one line and a few of the most used. */}
+          <section id="tools" className="mt-28 text-center" aria-labelledby="tools-title">
+            <SectionHead center id="tools-title" kicker="Built in" title="Work on any document, right where it is"
+              lead={<>Merge, sign, fill, compress and convert, with {TOOL_COUNT} free PDF tools that run in your browser. Use them on a kept file, or on their own with no account.</>} />
+            <div className="mt-7"><ToolChips slugs={POPULAR} label="Popular tools" /></div>
+            <p className="mt-5"><TextLink href="/tools">See all {TOOL_COUNT} PDF tools</TextLink></p>
           </section>
           <PlatformTrust />
         </>

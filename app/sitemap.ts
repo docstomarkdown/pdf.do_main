@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: at("/") },
     ...TOOLS.map((t) => ({ url: at(`/${t.slug}`) })),
+    { url: at("/tools") },
     { url: at("/how-it-works") },
     { url: at("/blog") },
     ...posts.map((p) => ({ url: at(`/${p.slug}`), lastModified: p.updated ?? p.date })),

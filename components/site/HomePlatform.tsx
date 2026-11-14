@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { DocRow, DocSearch, Hit } from "@/components/site/DocRow";
+import { Logo } from "@/components/site/Logo";
 import { FactRow, Feature, SectionHead } from "@/components/site/Section";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -13,6 +13,11 @@ import { SOURCE_NAMES, SourceBadge, type Source } from "@/components/ui/SourceBa
  * a product that is not live yet, so app/page.tsx renders them only in the platform preview (PLATFORM_PREVIEW in
  * lib/site.ts). Everything in the pictures is made-up sample content.
  */
+
+/** A lead of short sentences, each its own paragraph, so a long sentence that wraps still reads as one. */
+function Lines({ children }: { children: string[] }) {
+  return <>{children.map((t, i) => <span key={t} className={i ? "mt-2.5 block" : "block"}>{t}</span>)}</>;
+}
 
 /** A rounded chip with a source's badge, as used across the pictures. */
 function SourceChip({ source, children }: { source?: Source; children: ReactNode }) {
@@ -27,8 +32,11 @@ function SourceChip({ source, children }: { source?: Source; children: ReactNode
 export function PlatformHero() {
   return (
     <section className="relative pt-6 text-center sm:pt-12">
-      <p className="inline-flex items-center gap-2 rounded-full border border-line-soft py-1 pl-1.5 pr-3 text-sm text-ink-2">
-        <span className="flex -space-x-1">{(["gpt", "claude", "gemini", "word", "pdf"] as const).map((s) => <SourceBadge key={s} source={s} small />)}</span>
+      {/* The name, once, above the claim: the header carries the mark, this is where a first-time visitor reads it. */}
+      <p className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line-soft py-1.5 pl-2.5 pr-3 text-[0.8rem] text-ink-2 sm:gap-2 sm:pr-3.5 sm:text-sm">
+        <Logo className="h-5 w-5 text-logo" />
+        <b className="text-ink">pdf<span className="text-logo">.do</span></b>
+        <span aria-hidden="true" className="text-ink-3">·</span>
         Context is the new layer
       </p>
       <h1 className="display mx-auto mt-6 max-w-[16ch]">The <span className="mark-hl">context layer</span> for your AI work</h1>
@@ -208,7 +216,7 @@ function ProductPicture() {
             </div>
           ))}
           <div className="mx-1 my-2.5 border-t border-line-soft" />
-          <div className="px-2.5 py-1 text-[0.69rem] uppercase tracking-wider text-ink-3">Collections</div>
+          <div className="px-2.5 py-1 text-xs text-ink-3">Collections</div>
           {["Fundraise 2026", "Client: Northwind", "Book, chapter 4"].map((c) => <div key={c} className="rounded-lg px-2.5 py-1.5 text-ink-2">{c}</div>)}
         </div>
         <div className="border-line-soft p-3.5 md:border-r">
@@ -257,22 +265,19 @@ export function PlatformStory() {
           lead="pdf.do sits between your work and your AI. It gathers what you make, keeps where each piece came from, and hands the right context to whichever AI you open." />
       </section>
       <Feature space="mt-16" anchor="ai-chats" id="capture" kicker="1 · Capture" title="Everything you work on becomes context"
-        lead="Save a chat from ChatGPT, Claude or Gemini in one click as you work, bring in your old chats from an export, and add your Word files and PDFs beside them."
-        ticks={["Every message, with who said it and when", "Images, code, tables and maths kept as they were", "Save the same chat again later, and it updates"]}
+        lead={<Lines>{["Save any chat from ChatGPT, Claude or Gemini in one click.", "Bring in old chats from an export, and your Word files and PDFs.", "Every message, image and table is kept as it was."]}</Lines>}
         picture={<SourcesPicture />} />
       <Feature pictureFirst id="connect" kicker="2 · Connect" title="Kept with where it came from"
-        lead="A file in a drive forgets its story. In pdf.do, a decision stays linked to the chat it was made in, the drafts it became and the PDF that was signed."
-        ticks={["Opens at the exact message or page", "Every edit, signature or merge saves a new version", "Collections by project: Fundraise, a client, a book"]}
+        lead={<Lines>{["A file in a drive forgets its story.", "In pdf.do, a decision stays linked to its chat, its drafts and the signed PDF.", "Each one opens at the exact message or page."]}</Lines>}
         picture={<TrailPicture />} />
       <Feature id="use" kicker="3 · Use" title="Any AI can draw on it, with sources"
-        lead="Connect pdf.do to Claude, ChatGPT or any app that speaks MCP. Ask for an update, a reply or a summary, and it is written from your own work, with a link back to every message and page."
-        ticks={["Switch AI without losing what it knew", "You choose which collections an AI can read", "Answers point to sources you can check"]}
+        lead={<Lines>{["Connect pdf.do to Claude, ChatGPT or any app that speaks MCP.", "Ask for an update, and it is written from your own work.", "Every claim links to its source, and you choose what each AI can read."]}</Lines>}
         picture={<UsePicture />} />
     </>
   );
 }
 
-/** Why a layer and not a drive, the workspace itself, and who it is for. */
+/** Why a layer and not a drive, and the workspace itself. */
 export function PlatformMore() {
   return (
     <>
@@ -286,19 +291,6 @@ export function PlatformMore() {
           { title: "One place to act", text: "Search, then turn a chat into Word, sign, fill or merge, right where it is." },
         ]} />
         <ProductPicture />
-      </section>
-      <section className="mt-28" aria-labelledby="made-for">
-        <SectionHead center id="made-for" kicker="Made for" title="People who think with AI every day" />
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["Founders", "Every pricing call and investor draft, so the next update writes itself from what was decided."],
-            ["Consultants", "One collection per client: the chats, the research and the deliverable, ready for the next brief."],
-            ["Researchers", "Sources and the conversations about them, together, so answers cite the page they came from."],
-            ["Writers", "Outlines, drafts and feedback rounds in order, so every session picks up where the last ended."],
-          ].map(([who, what]) => (
-            <li key={who}><Card className="h-full p-5"><b className="block">{who}</b><p className="mt-1.5 text-[0.92rem] text-ink-2">{what}</p></Card></li>
-          ))}
-        </ul>
       </section>
     </>
   );
@@ -314,9 +306,7 @@ export function PlatformTrust() {
           { title: "Private", text: "Stored encrypted. Never read by people, never used to train AI." },
           { title: "You decide what AI sees", text: "Connect one collection or all of it. Disconnect any time." },
           { title: "Yours to take", text: "Export everything, any time, as Word, PDF or Markdown." },
-          { title: "Gone when you say", text: "Delete a file or your account, and it's deleted." },
         ]} />
-        <p className="mt-4 text-sm text-ink-3">The PDF tools run in your browser and upload nothing. <Link href="/how-it-works" className="underline">How it works</Link></p>
       </section>
       <section className="mt-32 text-center" aria-labelledby="end">
         <h2 id="end" className="section-title mx-auto max-w-[20ch]">Stop starting every chat from zero</h2>

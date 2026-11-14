@@ -16,7 +16,7 @@ test("sitemap.xml lists the home page, every tool, the pages about the site and 
   for (const a of addresses) expect(a.startsWith(`${SITE}/`), `${a} is on the site's own name`).toBe(true);
   const paths = addresses.map((a) => a.slice(SITE.length));
 
-  for (const fixed of ["/", "/how-it-works", "/blog", "/licences"]) expect(paths, fixed).toContain(fixed);
+  for (const fixed of ["/", "/tools", "/how-it-works", "/blog", "/licences"]) expect(paths, fixed).toContain(fixed);
   for (const tool of TOOLS) expect(paths, tool.slug).toContain(`/${tool.slug}`);
   expect(paths.some((p) => p.startsWith("/gallery"))).toBe(false); // the component gallery is not part of the live site
   expect(paths.some((p) => p.startsWith("/blog/"))).toBe(false); // posts have direct addresses; topic pages are left out
@@ -28,7 +28,7 @@ test("sitemap.xml lists the home page, every tool, the pages about the site and 
     expect(p, "a post's address has nothing in front of it").toMatch(/^\/[a-z0-9-]+$/);
     expect(paths).toContain(p);
   }
-  expect(paths.length).toBe(4 + TOOLS.length + posts.length);
+  expect(paths.length).toBe(5 + TOOLS.length + posts.length);
 
   // Nothing in the sitemap is a dead end.
   for (const p of paths) expect((await request.get(p)).status(), `${p} opens`).toBe(200);

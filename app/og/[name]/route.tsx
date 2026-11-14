@@ -6,7 +6,7 @@ import { Logo } from "@/components/site/Logo";
 import { iconShapes, type IconName } from "@/components/ui/Icon";
 import { getPosts } from "@/lib/content";
 import { SHARE_SIZE } from "@/lib/seo";
-import { SITE_TAGLINE, SITE_URL } from "@/lib/site";
+import { PLATFORM_PREVIEW, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { categoryColours, token } from "@/lib/tokens";
 import { CATEGORIES, TOOLS, getTool, type CategoryId } from "@/lib/tools";
 
@@ -23,8 +23,9 @@ type Card = { key: string; label?: string; title: string; text: string; icon?: I
 async function cards(): Promise<Card[]> {
   const posts = await getPosts();
   return [
-    { key: "home", title: SITE_TAGLINE, text: "Merge, split, convert, edit and protect PDFs. No account, no watermark.", groups: true },
+    { key: "home", title: SITE_TAGLINE, text: PLATFORM_PREVIEW ? "Your chats, documents and decisions, kept together, for any AI to draw on." : "Merge, split, convert, edit and protect PDFs. No account, no watermark.", groups: !PLATFORM_PREVIEW },
     ...TOOLS.map((t) => ({ key: t.slug, label: CATEGORIES[t.category].name, title: t.name, text: t.short, icon: t.icon, group: t.category })),
+    { key: "tools", title: "PDF tools", text: "Merge, split, compress, sign, fill, convert and protect PDFs, all in your browser.", groups: true },
     { key: "how-it-works", label: "About", title: "How it works and your privacy", text: "What happens to your files, and how to check it yourself.", icon: "shield" as const },
     { key: "licences", label: "About", title: "Licences", text: "The open-source software and the font this site is built with.", icon: "text" as const },
     { key: "blog", label: "Blog", title: "Short guides on working with PDFs", text: "Making them smaller, taking them apart, and keeping what is in them private.", icon: "text" as const },

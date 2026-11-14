@@ -68,10 +68,10 @@ export class ContentError extends Error {
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const PAGES = new Set(["/", "/blog", "/how-it-works", "/licences"]);
+const PAGES = new Set(["/", "/blog", "/tools", "/how-it-works", "/licences"]);
 // A post's file name is its address at the top of the site (/its-file-name), so it must not be one that a page, a folder
 // of the site or a tool already has. Tools are looked up in the registry; these are the rest.
-const TAKEN = new Set(["blog", "how-it-works", "licences", "gallery", "engines", "sitemap", "robots", "tags", "og", "home"]);
+const TAKEN = new Set(["blog", "tools", "how-it-works", "licences", "gallery", "engines", "sitemap", "robots", "tags", "og", "home"]);
 
 const validDate = (value: string) => DATE.test(value) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 
